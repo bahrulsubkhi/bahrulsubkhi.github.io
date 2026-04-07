@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Peta Relasi & Pembagian Topik — S1 Informatika UPJB 2024</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:ital,wght@0,300;0,400;0,500;0,600;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:   #fafaf8;
+  --bg2:  #f2f1ec;
+  --bg3:  #e4e3dc;
+  --ink:  #1a1a18;
+  --ink2: #4a4a46;
+  --ink3: #9a9a94;
+  --rule: #d4d3cc;
+
+  --teal:      #085041; --teal-bg:   #e1f5ee; --teal-mid:  #0f6e56; --teal-str: #1d9e75;
+  --coral:     #712b13; --coral-bg:  #faece7; --coral-mid: #993c1d; --coral-str:#d85a30;
+  --purple:    #3c3489; --purple-bg: #eeedfe; --purple-mid:#534ab7; --purple-str:#7f77dd;
+  --amber:     #633806; --amber-bg:  #faeeda; --amber-mid: #854f0b; --amber-str:#ef9f27;
+  --blue:      #0c447c; --blue-bg:   #e6f1fb; --blue-mid:  #185fa5; --blue-str: #378add;
+  --pink:      #72243e; --pink-bg:   #fbeaf0; --pink-mid:  #993556; --pink-str: #d4537e;
+  --gray:      #444441; --gray-bg:   #f1efe8; --gray-mid:  #5f5e5a; --gray-str: #888780;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-size: 13px;
+  line-height: 1.55;
+  min-height: 100vh;
+}
+
+/* ── HEADER ── */
+.page-header {
+  border-bottom: 2px solid var(--ink);
+  padding: 1.25rem 2rem 1rem;
+  display: flex; align-items: flex-start;
+  justify-content: space-between; flex-wrap: wrap; gap: 1rem;
+}
+.header-left h1 { font-size: 1.1rem; font-weight: 600; }
+.header-left .mono {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--ink3); margin-top: 3px;
+}
+.legend { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 4px; }
+.leg { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--ink2); }
+.leg-dot { width: 9px; height: 9px; border-radius: 50%; }
+
+/* ── NAV TABS ── */
+.nav-tabs {
+  display: flex; border-bottom: 1px solid var(--rule);
+  padding: 0 2rem; background: var(--bg2); gap: 2px;
+}
+.ntab {
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  padding: 9px 16px; border: none; background: transparent;
+  color: var(--ink3); cursor: pointer; border-bottom: 2px solid transparent;
+  margin-bottom: -1px; transition: all .15s; white-space: nowrap;
+}
+.ntab:hover { color: var(--ink2); }
+.ntab.active { color: var(--ink); border-bottom-color: var(--ink); font-weight: 500; }
+
+/* ── PANELS ── */
+.panel { display: none; padding: 2rem; }
+.panel.active { display: block; }
+
+/* ── SECTION TITLE ── */
+.sec-title {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  letter-spacing: .1em; text-transform: uppercase;
+  color: var(--ink3); margin-bottom: 1rem;
+  padding-bottom: 6px; border-bottom: 1px solid var(--rule);
+}
+
+/* ── FLOW ROW (horizontal chain) ── */
+.flow-wrap { overflow-x: auto; margin-bottom: 2rem; }
+.flow-row {
+  display: flex; align-items: center; gap: 0;
+  min-width: max-content; padding-bottom: 4px;
+}
+.flow-node {
+  display: flex; flex-direction: column;
+  border: 1px solid; border-radius: 6px;
+  padding: 7px 12px; min-width: 130px; max-width: 160px;
+  position: relative;
+}
+.flow-node .fn-sem {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  font-weight: 500; letter-spacing: .05em; margin-bottom: 3px;
+}
+.flow-node .fn-name { font-size: 12px; font-weight: 500; line-height: 1.3; }
+.flow-node .fn-sks  { font-size: 10px; margin-top: 3px; opacity: .7; }
+
+.flow-arrow {
+  display: flex; align-items: center; justify-content: center;
+  width: 32px; flex-shrink: 0; color: var(--ink3); font-size: 14px;
+}
+.flow-fork {
+  display: flex; flex-direction: column; gap: 6px;
+}
+
+/* ── DETAIL GRID ── */
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1px; background: var(--rule);
+  border: 1px solid var(--rule); border-radius: 8px;
+  overflow: hidden; margin-bottom: 1.5rem;
+}
+.detail-card {
+  background: var(--bg); padding: 14px 16px;
+  border-left: 4px solid var(--cc);
+}
+.dc-head { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 8px; }
+.dc-sem {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  font-weight: 500; padding: 2px 7px; border-radius: 999px;
+  flex-shrink: 0; white-space: nowrap; margin-top: 1px;
+}
+.dc-name { font-size: 13px; font-weight: 600; line-height: 1.3; color: var(--ink); }
+.dc-tagline {
+  font-size: 11px; font-style: italic;
+  color: var(--ink3); margin-bottom: 8px;
+  padding-bottom: 8px; border-bottom: 1px solid var(--rule);
+}
+.dc-rows { display: flex; flex-direction: column; gap: 0; }
+.dc-row {
+  display: flex; gap: 8px; padding: 5px 0;
+  border-bottom: 1px solid var(--rule); font-size: 12px;
+}
+.dc-row:last-child { border-bottom: none; }
+.dc-lbl { color: var(--ink3); width: 64px; flex-shrink: 0; font-size: 11px; padding-top: 1px; }
+.dc-val { color: var(--ink); flex: 1; line-height: 1.5; }
+
+/* ── DIFF BOX ── */
+.diff-box {
+  background: var(--bg2); border: 1px solid var(--rule);
+  border-radius: 8px; padding: 12px 14px; margin-bottom: 1.25rem;
+}
+.diff-box-title {
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  color: var(--ink3); margin-bottom: 8px; letter-spacing: .05em;
+}
+.diff-row { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 6px; }
+.diff-row:last-child { margin-bottom: 0; }
+.diff-mark {
+  width: 16px; height: 16px; border-radius: 3px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 600; margin-top: 1px;
+}
+.diff-text { font-size: 12px; color: var(--ink2); line-height: 1.55; flex: 1; }
+.diff-text strong { color: var(--ink); font-weight: 600; }
+
+/* ── TOPIC TABLE ── */
+.topic-wrap {
+  border: 1px solid var(--rule); border-radius: 8px;
+  overflow: hidden; margin-bottom: 1.5rem;
+}
+.topic-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.topic-table th {
+  padding: 8px 12px; text-align: left;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px;
+  font-weight: 500; letter-spacing: .05em; background: var(--bg2);
+  border-bottom: 1px solid var(--rule); color: var(--ink2);
+}
+.topic-table td {
+  padding: 7px 12px; border-bottom: 1px solid var(--rule);
+  vertical-align: top; color: var(--ink2); line-height: 1.5;
+}
+.topic-table tr:last-child td { border-bottom: none; }
+.topic-table tr:nth-child(even) td { background: var(--bg2); }
+.topic-pill {
+  display: inline-block; font-size: 10px; padding: 1px 7px;
+  border-radius: 999px; font-weight: 500; white-space: nowrap;
+}
+
+/* ── OVERVIEW PANEL ── */
+.overview-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px; margin-bottom: 2rem;
+}
+.ov-card {
+  border: 1px solid var(--rule); border-radius: 8px;
+  padding: 12px 14px; background: var(--bg);
+  border-top: 3px solid var(--cc);
+}
+.ov-group {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--ink3); letter-spacing: .05em; text-transform: uppercase;
+  margin-bottom: 4px;
+}
+.ov-name { font-size: 13px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.ov-sem  { font-size: 11px; color: var(--ink3); }
+.ov-tags { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 8px; }
+.ov-tag  {
+  font-size: 10px; padding: 2px 7px; border-radius: 999px;
+  border: 1px solid var(--rule); color: var(--ink3);
+}
+
+/* ── PRINT ── */
+@media print {
+  .nav-tabs { display: none; }
+  .panel { display: block !important; break-before: page; }
+  .page-header { position: relative; }
+  body { background: white; }
+}
+
+@media (max-width: 600px) {
+  .page-header, .panel { padding: 1rem; }
+  .nav-tabs { padding: 0 1rem; overflow-x: auto; }
+  .detail-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<div class="page-header">
+  <div class="header-left">
+    <h1>Peta Relasi &amp; Pembagian Topik — S1 Informatika</h1>
+    <div class="mono">UPJB · Kurikulum 2024 · 147 SKS · Referensi Dosen</div>
+    <div class="legend" style="margin-top:10px">
+      <div class="leg"><div class="leg-dot" style="background:var(--teal-str)"></div>AI &amp; Data</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--blue-str)"></div>Sistem</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--pink-str)"></div>Rekayasa PL</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--purple-str)"></div>Matematika</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--gray-str)"></div>Pemrograman</div>
+      <div class="leg"><div class="leg-dot" style="background:var(--amber-str)"></div>Umum</div>
+      <div class="leg" style="margin-left:8px;border-left:1px solid var(--rule);padding-left:8px">
+        <span style="font-size:11px;color:var(--ink3)">→ garis = relasi/prasyarat</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="nav-tabs">
+  <button class="ntab active" data-p="p0">Overview</button>
+  <button class="ntab" data-p="p1">Kelompok AI &amp; Data</button>
+  <button class="ntab" data-p="p2">Kelompok Sistem</button>
+  <button class="ntab" data-p="p3">Kelompok Rekayasa PL</button>
+  <button class="ntab" data-p="p4">Kelompok Matematika</button>
+  <button class="ntab" data-p="p5">Kelompok Pemrograman</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL 0 — OVERVIEW
+══════════════════════════════════════════════════════ -->
+<div class="panel active" id="p0">
+  <div class="sec-title">Semua mata kuliah — klik tab untuk detail relasi per kelompok</div>
+
+  <div class="overview-grid" id="ovGrid"></div>
+
+  <div class="diff-box">
+    <div class="diff-box-title">CARA MEMBACA DOKUMEN INI</div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:#e1f5ee;color:#085041">→</div>
+      <div class="diff-text"><strong>Alur atas (flow)</strong> di tiap panel menunjukkan urutan prasyarat — dari kiri ke kanan, dari dasar ke lanjut.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:#faeeda;color:#633806">↓</div>
+      <div class="diff-text"><strong>Kartu detail</strong> memperlihatkan fokus, isi, dan kata kunci tiap MK agar tidak tumpang tindih dalam pengajaran.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:#eeedfe;color:#3c3489">≠</div>
+      <div class="diff-text"><strong>Kotak pembeda</strong> menjelaskan secara eksplisit batas topik antar MK yang sering membingungkan.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:#fbeaf0;color:#72243e">↔</div>
+      <div class="diff-text"><strong>Tabel pembagian topik</strong> menunjukkan topik mana dikerjakan di MK mana — cocok untuk koordinasi antar dosen pengampu.</div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL 1 — AI & DATA
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="p1">
+
+  <div class="sec-title">Alur prasyarat — AI &amp; Data</div>
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-node" style="--cc:var(--teal-str);background:var(--teal-bg);border-color:var(--teal-mid)">
+        <span class="fn-sem" style="color:var(--teal)">Sem 3</span>
+        <span class="fn-name" style="color:var(--teal)">Pengantar Kecerdasan Buatan</span>
+        <span class="fn-sks" style="color:var(--teal-mid)">2 SKS · teori</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--teal-bg);border-color:var(--teal-mid)">
+        <span class="fn-sem" style="color:var(--teal)">Sem 4</span>
+        <span class="fn-name" style="color:var(--teal)">Kecerdasan Buatan</span>
+        <span class="fn-sks" style="color:var(--teal-mid)">4 SKS · teori+praktik</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--coral-bg);border-color:var(--coral-mid)">
+          <span class="fn-sem" style="color:var(--coral)">Sem 5</span>
+          <span class="fn-name" style="color:var(--coral)">Machine Learning</span>
+          <span class="fn-sks" style="color:var(--coral-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+          <span class="fn-sem" style="color:var(--purple)">Sem 5</span>
+          <span class="fn-name" style="color:var(--purple)">Sistem Cerdas</span>
+          <span class="fn-sks" style="color:var(--purple-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--amber-bg);border-color:var(--amber-mid)">
+          <span class="fn-sem" style="color:var(--amber)">Sem 5</span>
+          <span class="fn-name" style="color:var(--amber)">Data Mining</span>
+          <span class="fn-sks" style="color:var(--amber-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--gray-bg);border-color:var(--gray-mid)">
+          <span class="fn-sem" style="color:var(--gray)">Sem 5</span>
+          <span class="fn-name" style="color:var(--gray)">Pengolahan Citra Digital</span>
+          <span class="fn-sks" style="color:var(--gray-mid)">3 SKS · teori</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Detail tiap mata kuliah</div>
+  <div class="detail-grid">
+
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head">
+        <span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 3 · 2 SKS</span>
+        <span class="dc-name">Pengantar Kecerdasan Buatan</span>
+      </div>
+      <div class="dc-tagline">"APA itu AI?" — konsep murni, belum ada implementasi ML</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Konsep, sejarah, dan logika dasar AI</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Turing test, jenis AI, representasi pengetahuan, BFS/DFS/A*, logika proposisional &amp; predikat</span></div>
+        <div class="dc-row"><span class="dc-lbl">Coding</span><span class="dc-val">Python dasar — belum pakai library ML</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa paham apa itu agen, pencarian, dan inferensi</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head">
+        <span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 4 · 4 SKS</span>
+        <span class="dc-name">Kecerdasan Buatan</span>
+      </div>
+      <div class="dc-tagline">"PAKAI AI" — implementasi algoritma AI ke masalah nyata</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Menerapkan AI ke kasus terapan</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">NLP &amp; sentiment analysis, klasifikasi (Naive Bayes, Decision Tree), clustering (K-Means), CNN dasar, deploy model</span></div>
+        <div class="dc-row"><span class="dc-lbl">Coding</span><span class="dc-val">Scikit-learn, TensorFlow/Keras dasar, Streamlit</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa membangun &amp; mendeploy model AI sederhana</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card" style="--cc:var(--coral-str)">
+      <div class="dc-head">
+        <span class="dc-sem" style="background:var(--coral-bg);color:var(--coral)">Sem 5 · 3 SKS</span>
+        <span class="dc-name">Machine Learning</span>
+      </div>
+      <div class="dc-tagline">"PAHAMI ML" — matematika &amp; teori di balik algoritma</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Fondasi matematis ML secara mendalam</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Gradient descent, backpropagation, cost function, feature engineering, cross-validation, model selection</span></div>
+        <div class="dc-row"><span class="dc-lbl">Coding</span><span class="dc-val">Scikit-learn &amp; PyTorch mendalam, custom training loop</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa memahami MENGAPA algoritma ML bekerja, bukan hanya cara pakainya</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head">
+        <span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 5 · 3 SKS</span>
+        <span class="dc-name">Sistem Cerdas</span>
+      </div>
+      <div class="dc-tagline">"LEBIH dari ML" — teknik AI yang bukan pure machine learning</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Algoritma AI non-statistik: rule-based, evolusioner, explainable</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Fuzzy logic &amp; FIS, sistem pakar, algoritma genetika, ensemble (XGBoost), Transformer &amp; BERT, XAI</span></div>
+        <div class="dc-row"><span class="dc-lbl">Coding</span><span class="dc-val">scikit-fuzzy, rule engine, fine-tuning BERT, SHAP/LIME</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa memilih teknik AI yang tepat untuk konteks yang memerlukan interpretabilitas</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card" style="--cc:var(--amber-str)">
+      <div class="dc-head">
+        <span class="dc-sem" style="background:var(--amber-bg);color:var(--amber)">Sem 5 · 3 SKS</span>
+        <span class="dc-name">Data Mining</span>
+      </div>
+      <div class="dc-tagline">"GALI DATA" — menemukan pola, bukan membangun model prediksi</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Ekstraksi insight &amp; pola tersembunyi dari data (deskriptif)</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Association rules (Apriori/FP-Growth), preprocessing, dimensionality reduction (PCA), text mining, anomaly detection</span></div>
+        <div class="dc-row"><span class="dc-lbl">Coding</span><span class="dc-val">Pandas, mlxtend, WEKA, atau Orange</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa menganalisis dataset besar dan menemukan pola yang actionable</span></div>
+      </div>
+    </div>
+
+    <div class="detail-card" style="--cc:var(--gray-str)">
+      <div class="dc-head">
+        <span class="dc-sem" style="background:var(--gray-bg);color:var(--gray)">Sem 5 · 3 SKS</span>
+        <span class="dc-name">Pengolahan Citra Digital</span>
+      </div>
+      <div class="dc-tagline">"OLAH GAMBAR" — pemrosesan matematis citra, bukan selalu AI</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Manipulasi &amp; analisis gambar secara matematis</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Histogram, filter spasial (blur/sharpen), edge detection (Canny/Sobel), segmentasi, morfologi, transformasi Fourier</span></div>
+        <div class="dc-row"><span class="dc-lbl">Coding</span><span class="dc-val">OpenCV, PIL/Pillow — belum tentu pakai deep learning</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa memproses &amp; menganalisis gambar dari level piksel hingga segmentasi objek</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="sec-title">Pembagian topik — koordinasi antar pengampu</div>
+  <div class="topic-wrap">
+    <table class="topic-table">
+      <thead>
+        <tr>
+          <th style="width:22%">Topik / Algoritma</th>
+          <th>Pengantar KB</th>
+          <th>Kecerdasan Buatan</th>
+          <th>Machine Learning</th>
+          <th>Sistem Cerdas</th>
+          <th>Data Mining</th>
+          <th>Pengolahan Citra</th>
+        </tr>
+      </thead>
+      <tbody id="aiTopicBody"></tbody>
+    </table>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-box-title">PEMBEDA UTAMA — agar tidak tumpang tindih</div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--teal-bg);color:var(--teal)">1</div>
+      <div class="diff-text"><strong>Pengantar KB vs Kecerdasan Buatan:</strong> KB = "kenalan dulu" (konsep &amp; teori tanpa ML), KecBu = "langsung implementasi dengan library." Jangan ajarkan Scikit-learn di Pengantar KB.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--coral-bg);color:var(--coral)">2</div>
+      <div class="diff-text"><strong>Kecerdasan Buatan vs Machine Learning:</strong> KecBu pakai ML sebagai alat (black box), ML mempelajari cara kerjanya dari sisi matematika. Gradient descent dan backprop masuk ML, bukan KecBu.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--purple-bg);color:var(--purple)">3</div>
+      <div class="diff-text"><strong>Machine Learning vs Sistem Cerdas:</strong> ML = statistical learning (optimasi fungsi loss), Sistem Cerdas = teknik AI non-statistik (fuzzy, genetika, rule-based) + AI modern (Transformer, XAI).</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--amber-bg);color:var(--amber)">4</div>
+      <div class="diff-text"><strong>Data Mining vs Machine Learning:</strong> DM = deskriptif (temukan pola yang ada), ML = prediktif (bangun model untuk data baru). K-Means di DM = eksplorasi cluster; K-Means di ML = latihan algoritma unsupervised.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--gray-bg);color:var(--gray)">5</div>
+      <div class="diff-text"><strong>Pengolahan Citra vs AI lainnya:</strong> PCD = matematika citra (filter, transformasi) yang bisa berdiri sendiri. CNN adalah salah satu alat, bukan seluruh matakuliah. Deep learning untuk citra masuk Sistem Cerdas atau MK pilihan.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL 2 — SISTEM
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="p2">
+
+  <div class="sec-title">Alur prasyarat — Sistem &amp; Infrastruktur</div>
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+          <span class="fn-sem" style="color:var(--blue)">Sem 1</span>
+          <span class="fn-name" style="color:var(--blue)">Sistem Digital</span>
+          <span class="fn-sks" style="color:var(--blue-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+          <span class="fn-sem" style="color:var(--blue)">Sem 1</span>
+          <span class="fn-name" style="color:var(--blue)">Org. &amp; Arsitektur Komputer</span>
+          <span class="fn-sks" style="color:var(--blue-mid)">3 SKS · teori</span>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+        <span class="fn-sem" style="color:var(--blue)">Sem 2</span>
+        <span class="fn-name" style="color:var(--blue)">Sistem Operasi</span>
+        <span class="fn-sks" style="color:var(--blue-mid)">2 SKS · teori</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+        <span class="fn-sem" style="color:var(--blue)">Sem 2</span>
+        <span class="fn-name" style="color:var(--blue)">Sistem Basis Data</span>
+        <span class="fn-sks" style="color:var(--blue-mid)">3 SKS · T+P</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+        <span class="fn-sem" style="color:var(--blue)">Sem 3</span>
+        <span class="fn-name" style="color:var(--blue)">Jaringan Komputer</span>
+        <span class="fn-sks" style="color:var(--blue-mid)">3 SKS · T+P</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+          <span class="fn-sem" style="color:var(--blue)">Sem 4</span>
+          <span class="fn-name" style="color:var(--blue)">Sistem Terdistribusi</span>
+          <span class="fn-sks" style="color:var(--blue-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+          <span class="fn-sem" style="color:var(--blue)">Sem 4</span>
+          <span class="fn-name" style="color:var(--blue)">Manajemen Database</span>
+          <span class="fn-sks" style="color:var(--blue-mid)">2 SKS · teori</span>
+        </div>
+        <div class="flow-node" style="background:var(--blue-bg);border-color:var(--blue-mid)">
+          <span class="fn-sem" style="color:var(--blue)">Sem 5</span>
+          <span class="fn-name" style="color:var(--blue)">Keamanan Informasi</span>
+          <span class="fn-sks" style="color:var(--blue-mid)">3 SKS · T+P</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Detail tiap mata kuliah</div>
+  <div class="detail-grid">
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 1 · 3 SKS</span><span class="dc-name">Sistem Digital</span></div>
+      <div class="dc-tagline">"Cara komputer berpikir" — level transistor &amp; gerbang</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Logika boolean, rangkaian digital kombinasional &amp; sekuensial</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">AND/OR/NOT, flip-flop, adder, MUX/DEMUX, encoder, counter, FSM</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Hardware — paling bawah dalam hierarki sistem</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 1 · 3 SKS</span><span class="dc-name">Organisasi &amp; Arsitektur Komputer</span></div>
+      <div class="dc-tagline">"Cara CPU &amp; memori bekerja" — level komponen</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Bagaimana CPU mengeksekusi instruksi secara efisien</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">ALU, register, cache, pipeline, ISA (RISC/CISC), memori hierarki, I/O</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Antara hardware dan software sistem</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 2 · 2 SKS</span><span class="dc-name">Sistem Operasi</span></div>
+      <div class="dc-tagline">"OS sebagai manajer" — resource &amp; proses</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">OS mengelola hardware agar bisa digunakan program</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Proses &amp; thread, scheduling, manajemen memori, deadlock, file system, virtual memory</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Software sistem — di atas hardware, di bawah aplikasi</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 2 · 3 SKS</span><span class="dc-name">Sistem Basis Data</span></div>
+      <div class="dc-tagline">"Cara data disimpan &amp; diquery" — perancangan &amp; SQL</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Perancangan skema &amp; operasi dasar database relasional</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">ER diagram, normalisasi (1NF–3NF/BCNF), DDL/DML SQL, join, transaksi, ACID</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Desain &amp; penggunaan — belum administrasi production</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 3 · 3 SKS</span><span class="dc-name">Jaringan Komputer</span></div>
+      <div class="dc-tagline">"Cara komputer berkomunikasi" — protokol &amp; routing</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Protokol komunikasi antar mesin</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Model OSI &amp; TCP/IP, IP addressing &amp; subnetting, routing, DNS, HTTP/HTTPS, socket programming</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Network — horizontal antar mesin</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 4 · 3 SKS</span><span class="dc-name">Sistem Terdistribusi</span></div>
+      <div class="dc-tagline">"Banyak komputer, satu sistem" — konsistensi &amp; skalabilitas</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Koordinasi &amp; konsistensi antar banyak node</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">CAP theorem, konsensus (Raft/Paxos), replikasi, microservices, fault tolerance, load balancing</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Arsitektur sistem skala besar — memerlukan Jaringan Komputer</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 4 · 2 SKS</span><span class="dc-name">Manajemen Database</span></div>
+      <div class="dc-tagline">"DB di production" — administrasi, optimasi, keamanan</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Mengelola database yang sudah berjalan di lingkungan nyata</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Query optimization &amp; indexing, backup &amp; recovery, user privilege, monitoring, replikasi DB</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Operasional — lanjutan dari Sistem Basis Data</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--blue-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--blue-bg);color:var(--blue)">Sem 5 · 3 SKS</span><span class="dc-name">Keamanan Informasi</span></div>
+      <div class="dc-tagline">"Proteksi sistem &amp; data" — kriptografi &amp; serangan</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Prinsip keamanan sistem informasi end-to-end</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Kriptografi (simetris/asimetris), hashing, PKI, OWASP Top 10, penetration testing dasar, keamanan jaringan</span></div>
+        <div class="dc-row"><span class="dc-lbl">Level</span><span class="dc-val">Cross-layer — menyentuh OS, Jaringan, dan Aplikasi sekaligus</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Pembagian topik — koordinasi antar pengampu</div>
+  <div class="topic-wrap">
+    <table class="topic-table">
+      <thead>
+        <tr>
+          <th style="width:22%">Topik</th>
+          <th>Sis. Digital</th>
+          <th>Org. Arkom</th>
+          <th>Sis. Operasi</th>
+          <th>Sis. Basis Data</th>
+          <th>Jaringan</th>
+          <th>Sis. Terdistribusi</th>
+          <th>Manj. DB</th>
+          <th>Keamanan Info</th>
+        </tr>
+      </thead>
+      <tbody id="sisTopicBody"></tbody>
+    </table>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-box-title">PEMBEDA UTAMA</div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--blue-bg);color:var(--blue)">1</div>
+      <div class="diff-text"><strong>Sistem Digital vs Org. Arkom:</strong> Digital = cara bit diproses (gerbang logika), Arkom = cara bit diorganisir menjadi CPU yang bermakna (instruksi, pipeline, cache).</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--blue-bg);color:var(--blue)">2</div>
+      <div class="diff-text"><strong>Sistem Operasi vs Arkom:</strong> Arkom = hardware yang dikelola, SO = software yang mengelolanya. Proses dan thread masuk SO, bukan Arkom.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--blue-bg);color:var(--blue)">3</div>
+      <div class="diff-text"><strong>Sistem Basis Data vs Manajemen DB:</strong> SBD = merancang &amp; menggunakan (SQL, normalisasi, ER), MDB = mengelola yang sudah ada di production (index, backup, tuning).</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--blue-bg);color:var(--blue)">4</div>
+      <div class="diff-text"><strong>Jaringan vs Sistem Terdistribusi:</strong> Jaringan = infrastruktur komunikasi (protokol, routing), Sistem Terdistribusi = bagaimana membangun aplikasi di atas banyak node menggunakan infrastruktur itu.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL 3 — REKAYASA PL
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="p3">
+
+  <div class="sec-title">Alur prasyarat — Rekayasa Perangkat Lunak</div>
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-node" style="background:var(--pink-bg);border-color:var(--pink-mid)">
+        <span class="fn-sem" style="color:var(--pink)">Sem 4</span>
+        <span class="fn-name" style="color:var(--pink)">Rekayasa Perangkat Lunak</span>
+        <span class="fn-sks" style="color:var(--pink-mid)">4 SKS · T+P</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--pink-bg);border-color:var(--pink-mid)">
+          <span class="fn-sem" style="color:var(--pink)">Sem 4 (paralel)</span>
+          <span class="fn-name" style="color:var(--pink)">Interaksi Manusia &amp; Komputer</span>
+          <span class="fn-sks" style="color:var(--pink-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--pink-bg);border-color:var(--pink-mid)">
+          <span class="fn-sem" style="color:var(--pink)">Sem 6</span>
+          <span class="fn-name" style="color:var(--pink)">Pemodelan &amp; Simulasi</span>
+          <span class="fn-sks" style="color:var(--pink-mid)">3 SKS · teori</span>
+        </div>
+        <div class="flow-node" style="background:var(--pink-bg);border-color:var(--pink-mid)">
+          <span class="fn-sem" style="color:var(--pink)">Sem 7</span>
+          <span class="fn-name" style="color:var(--pink)">Metode Penelitian</span>
+          <span class="fn-sks" style="color:var(--pink-mid)">3 SKS · teori</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Detail tiap mata kuliah</div>
+  <div class="detail-grid">
+    <div class="detail-card" style="--cc:var(--pink-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--pink-bg);color:var(--pink)">Sem 4 · 4 SKS</span><span class="dc-name">Rekayasa Perangkat Lunak</span></div>
+      <div class="dc-tagline">"Blueprint software" — SDLC, metodologi, &amp; manajemen proyek</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Proses &amp; metodologi membangun software secara profesional</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Waterfall vs Agile/Scrum, requirements engineering (use case, user story), UML, software testing (unit/integration), version control, CI/CD</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa mengelola proyek software dalam tim secara terstruktur</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--pink-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--pink-bg);color:var(--pink)">Sem 4 · 3 SKS</span><span class="dc-name">Interaksi Manusia &amp; Komputer</span></div>
+      <div class="dc-tagline">"Software yang nyaman dipakai" — UX &amp; usability</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Desain antarmuka yang berpusat pada pengguna</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Prinsip UX (Norman's 7 principles), cognitive load, usability testing, prototyping (Figma), aksesibilitas, Heuristic Evaluation</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa merancang &amp; mengevaluasi antarmuka berdasarkan data pengguna</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--pink-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--pink-bg);color:var(--pink)">Sem 6 · 3 SKS</span><span class="dc-name">Pemodelan &amp; Simulasi</span></div>
+      <div class="dc-tagline">"Model sistem kompleks" — representasi matematis dunia nyata</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Merepresentasikan &amp; mensimulasikan sistem nyata secara matematis</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Model diskret &amp; kontinyu, antrian (queuing theory), Monte Carlo, sistem dinamik, validasi &amp; verifikasi model</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa membangun model simulasi untuk mendukung pengambilan keputusan</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--pink-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--pink-bg);color:var(--pink)">Sem 7 · 3 SKS</span><span class="dc-name">Metode Penelitian</span></div>
+      <div class="dc-tagline">"Cara meneliti yang benar" — fondasi riset &amp; skripsi</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Metodologi riset ilmiah di bidang informatika</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Jenis penelitian (kualitatif/kuantitatif/R&amp;D), hipotesis, instrumen, analisis data, penulisan ilmiah, sitasi</span></div>
+        <div class="dc-row"><span class="dc-lbl">Luaran</span><span class="dc-val">Mahasiswa bisa menyusun proposal &amp; laporan penelitian yang valid secara ilmiah</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-box-title">PEMBEDA UTAMA</div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--pink-bg);color:var(--pink)">1</div>
+      <div class="diff-text"><strong>RPL vs IMK:</strong> RPL = cara MEMBANGUN software (proses, tim, metodologi), IMK = cara software DIRASAKAN pengguna (desain, usability). RPL mengurus sprint, IMK mengurus wireframe.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--pink-bg);color:var(--pink)">2</div>
+      <div class="diff-text"><strong>RPL vs Pemodelan &amp; Simulasi:</strong> RPL = membangun software yang berjalan, Pemodelan = membangun representasi matematis sistem untuk dianalisis. Keduanya bisa bersatu dalam penelitian berbasis simulasi.</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL 4 — MATEMATIKA
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="p4">
+
+  <div class="sec-title">Alur prasyarat — Matematika &amp; Fondasi Teori</div>
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+        <span class="fn-sem" style="color:var(--purple)">Sem 1</span>
+        <span class="fn-name" style="color:var(--purple)">Kalkulus</span>
+        <span class="fn-sks" style="color:var(--purple-mid)">3 SKS · teori</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+          <span class="fn-sem" style="color:var(--purple)">Sem 2</span>
+          <span class="fn-name" style="color:var(--purple)">Aljabar Linear</span>
+          <span class="fn-sks" style="color:var(--purple-mid)">3 SKS · teori</span>
+        </div>
+        <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+          <span class="fn-sem" style="color:var(--purple)">Sem 2</span>
+          <span class="fn-name" style="color:var(--purple)">Statistik &amp; Probabilitas</span>
+          <span class="fn-sks" style="color:var(--purple-mid)">3 SKS · teori</span>
+        </div>
+        <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+          <span class="fn-sem" style="color:var(--purple)">Sem 2</span>
+          <span class="fn-name" style="color:var(--purple)">Matematika Diskrit</span>
+          <span class="fn-sks" style="color:var(--purple-mid)">3 SKS · teori</span>
+        </div>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+          <span class="fn-sem" style="color:var(--purple)">Sem 3</span>
+          <span class="fn-name" style="color:var(--purple)">Metode Numerik</span>
+          <span class="fn-sks" style="color:var(--purple-mid)">2 SKS · teori</span>
+        </div>
+        <div class="flow-node" style="background:var(--purple-bg);border-color:var(--purple-mid)">
+          <span class="fn-sem" style="color:var(--purple)">Sem 6</span>
+          <span class="fn-name" style="color:var(--purple)">Teori Bahasa &amp; Automata</span>
+          <span class="fn-sks" style="color:var(--purple-mid)">2 SKS · teori</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Detail tiap mata kuliah</div>
+  <div class="detail-grid">
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 1 · 3 SKS</span><span class="dc-name">Kalkulus</span></div>
+      <div class="dc-tagline">"Matematika yang berubah" — perubahan &amp; akumulasi kontinyu</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Limit, turunan (diferensial), integral, optimasi fungsi, deret Taylor</span></div>
+        <div class="dc-row"><span class="dc-lbl">Dipakai di</span><span class="dc-val">ML (gradient descent), grafika 3D, metode numerik, pemodelan</span></div>
+        <div class="dc-row"><span class="dc-lbl">Kata kunci</span><span class="dc-val">Turunan, integral, limit, fungsi kontinu, optimasi</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 2 · 3 SKS</span><span class="dc-name">Aljabar Linear</span></div>
+      <div class="dc-tagline">"Matematika ruang" — vektor, matriks, transformasi dimensi</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Vektor &amp; operasinya, matriks, determinan, eigenvalue/eigenvector, ruang vektor, transformasi linear</span></div>
+        <div class="dc-row"><span class="dc-lbl">Dipakai di</span><span class="dc-val">ML/Deep Learning (layer = transformasi matriks), grafika 3D, PCA, computer vision</span></div>
+        <div class="dc-row"><span class="dc-lbl">Kata kunci</span><span class="dc-val">Matriks, vektor, transformasi, eigenvalue, ruang dimensi</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 2 · 3 SKS</span><span class="dc-name">Statistik &amp; Probabilitas</span></div>
+      <div class="dc-tagline">"Matematika ketidakpastian" — data, peluang, &amp; inferensi</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Distribusi probabilitas, mean/var/std, uji hipotesis, regresi linear, korelasi, Bayes theorem</span></div>
+        <div class="dc-row"><span class="dc-lbl">Dipakai di</span><span class="dc-val">ML (semua algoritma probabilistik), Data Mining, riset, Keamanan Informasi (kriptografi probabilistik)</span></div>
+        <div class="dc-row"><span class="dc-lbl">Kata kunci</span><span class="dc-val">Distribusi, probabilitas, inferensi, hipotesis, p-value</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 2 · 3 SKS</span><span class="dc-name">Matematika Diskrit</span></div>
+      <div class="dc-tagline">"Matematika terhitung" — logika, himpunan, &amp; struktur</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Logika proposisional &amp; predikat, himpunan &amp; relasi, fungsi, induksi matematis, kombinatorik, teori graph</span></div>
+        <div class="dc-row"><span class="dc-lbl">Dipakai di</span><span class="dc-val">Algoritma &amp; struktur data, kriptografi, teori bahasa, basis data (relasi), AI (representasi pengetahuan)</span></div>
+        <div class="dc-row"><span class="dc-lbl">Kata kunci</span><span class="dc-val">Logika, himpunan, graph, kombinatorik, induksi</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 3 · 2 SKS</span><span class="dc-name">Metode Numerik</span></div>
+      <div class="dc-tagline">"Kalkulus yang dikomputasi" — solusi aproksimasi berbasis komputer</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Galat, akar persamaan (Newton-Raphson, bisection), interpolasi, integrasi numerik, ODE numerik</span></div>
+        <div class="dc-row"><span class="dc-lbl">Dipakai di</span><span class="dc-val">Simulasi fisika, grafika, ML (integrasi numerik dalam training)</span></div>
+        <div class="dc-row"><span class="dc-lbl">Kata kunci</span><span class="dc-val">Aproksimasi, galat, iterasi, konvergensi</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--purple-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--purple-bg);color:var(--purple)">Sem 6 · 2 SKS</span><span class="dc-name">Teori Bahasa &amp; Automata</span></div>
+      <div class="dc-tagline">"Fondasi kompilator &amp; komputasi" — bahasa formal &amp; mesin abstrak</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Bahasa reguler, DFA/NFA, context-free grammar, pushdown automata, Turing machine, decidability</span></div>
+        <div class="dc-row"><span class="dc-lbl">Dipakai di</span><span class="dc-val">Kompilator/interpreter, lexer, regex engine, verifikasi formal</span></div>
+        <div class="dc-row"><span class="dc-lbl">Kata kunci</span><span class="dc-val">Automata, grammar, bahasa formal, Turing, decidable</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Pembagian topik — tiap MK matematika mengisi celah yang berbeda</div>
+  <div class="topic-wrap">
+    <table class="topic-table">
+      <thead>
+        <tr>
+          <th style="width:22%">Topik / Konsep</th>
+          <th>Kalkulus</th>
+          <th>Aljabar Linear</th>
+          <th>Statistik &amp; Prob.</th>
+          <th>Mat. Diskrit</th>
+          <th>Metode Numerik</th>
+          <th>Teori Bahasa</th>
+        </tr>
+      </thead>
+      <tbody id="mathTopicBody"></tbody>
+    </table>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-box-title">PEMBEDA UTAMA</div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--purple-bg);color:var(--purple)">1</div>
+      <div class="diff-text"><strong>Kalkulus vs Aljabar Linear:</strong> Kalkulus = perubahan pada satu (atau beberapa) variabel kontinu, Aljabar Linear = struktur dan transformasi ruang multi-dimensi. Di Deep Learning: kalkulus untuk backprop, aljabar linear untuk forward pass.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--purple-bg);color:var(--purple)">2</div>
+      <div class="diff-text"><strong>Statistik vs tiga lainnya:</strong> Statistik satu-satunya yang berurusan dengan data empiris dan ketidakpastian. Tiga lainnya berurusan dengan struktur matematis yang deterministik.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--purple-bg);color:var(--purple)">3</div>
+      <div class="diff-text"><strong>Matematika Diskrit vs Kalkulus/Aljabar Linear/Statistik:</strong> MatDis = objek terhitung (bilangan bulat, graph, himpunan), tiga lainnya = objek kontinu. MatDis adalah fondasi berpikir algoritmik dan logika, bukan numerik.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--purple-bg);color:var(--purple)">4</div>
+      <div class="diff-text"><strong>Metode Numerik vs Kalkulus:</strong> Kalkulus = solusi analitik eksak, Metode Numerik = aproksimasi komputasional ketika solusi eksak tidak ada atau tidak praktis. MN adalah "kalkulus yang dijalankan di komputer."</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     PANEL 5 — PEMROGRAMAN
+══════════════════════════════════════════════════════ -->
+<div class="panel" id="p5">
+
+  <div class="sec-title">Alur prasyarat — Pemrograman</div>
+  <div class="flow-wrap">
+    <div class="flow-row">
+      <div class="flow-node" style="background:var(--teal-bg);border-color:var(--teal-mid)">
+        <span class="fn-sem" style="color:var(--teal)">Sem 1</span>
+        <span class="fn-name" style="color:var(--teal)">Dasar Pemrograman</span>
+        <span class="fn-sks" style="color:var(--teal-mid)">4 SKS · T+P</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--teal-bg);border-color:var(--teal-mid)">
+        <span class="fn-sem" style="color:var(--teal)">Sem 2</span>
+        <span class="fn-name" style="color:var(--teal)">Pemrograman Lanjut</span>
+        <span class="fn-sks" style="color:var(--teal-mid)">3 SKS · T+P</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-node" style="background:var(--teal-bg);border-color:var(--teal-mid)">
+        <span class="fn-sem" style="color:var(--teal)">Sem 3</span>
+        <span class="fn-name" style="color:var(--teal)">Pemrograman Berorientasi Objek</span>
+        <span class="fn-sks" style="color:var(--teal-mid)">3 SKS · T+P</span>
+      </div>
+      <div class="flow-arrow">→</div>
+      <div class="flow-fork">
+        <div class="flow-node" style="background:var(--teal-bg);border-color:var(--teal-mid)">
+          <span class="fn-sem" style="color:var(--teal)">Sem 3</span>
+          <span class="fn-name" style="color:var(--teal)">Pemrograman Web</span>
+          <span class="fn-sks" style="color:var(--teal-mid)">3 SKS · T+P</span>
+        </div>
+        <div class="flow-node" style="background:var(--teal-bg);border-color:var(--teal-mid)">
+          <span class="fn-sem" style="color:var(--teal)">Sem 4</span>
+          <span class="fn-name" style="color:var(--teal)">Pemrograman Mobile</span>
+          <span class="fn-sks" style="color:var(--teal-mid)">3 SKS · T+P</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sec-title">Detail tiap mata kuliah</div>
+  <div class="detail-grid">
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 1 · 4 SKS</span><span class="dc-name">Dasar Pemrograman</span></div>
+      <div class="dc-tagline">"Menulis kode pertama" — sintaks, logika, &amp; kontrol alur</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Konsep dasar pemrograman prosedural</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Variabel, tipe data, operator, if-else, loop (for/while), fungsi/prosedur, array 1D &amp; 2D, I/O dasar</span></div>
+        <div class="dc-row"><span class="dc-lbl">Batasan</span><span class="dc-val">Belum OOP, belum struktur data kompleks</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 2 · 3 SKS</span><span class="dc-name">Pemrograman Lanjut</span></div>
+      <div class="dc-tagline">"Lebih dari prosedural" — menuju OOP &amp; pola desain</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Memperdalam struktur program, exception handling, dan pengantar OOP</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Rekursi, pointer/reference, exception handling, generics/template, file I/O, pengantar class &amp; object</span></div>
+        <div class="dc-row"><span class="dc-lbl">Batasan</span><span class="dc-val">OOP masih pengantar — inheritance &amp; polymorphism penuh masuk PBO</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 3 · 3 SKS</span><span class="dc-name">Pemrograman Berorientasi Objek</span></div>
+      <div class="dc-tagline">"Paradigma industri" — OOP penuh &amp; pola desain</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Paradigma OOP secara menyeluruh beserta pola desain</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Encapsulation, inheritance, polymorphism, abstraksi, interface, design patterns (Singleton, Factory, Observer), SOLID principles</span></div>
+        <div class="dc-row"><span class="dc-lbl">Batasan</span><span class="dc-val">Domain coding — belum menyentuh arsitektur sistem skala besar (itu masuk RPL)</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 3 · 3 SKS</span><span class="dc-name">Pemrograman Web</span></div>
+      <div class="dc-tagline">"Software untuk browser" — frontend &amp; backend dasar</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Pengembangan aplikasi berbasis web dari frontend ke backend</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">HTML/CSS, JavaScript DOM, REST API, framework backend (Laravel/Express), database integration, deployment dasar</span></div>
+        <div class="dc-row"><span class="dc-lbl">Batasan</span><span class="dc-val">Belum advanced — arsitektur microservices masuk Sistem Terdistribusi</span></div>
+      </div>
+    </div>
+    <div class="detail-card" style="--cc:var(--teal-str)">
+      <div class="dc-head"><span class="dc-sem" style="background:var(--teal-bg);color:var(--teal)">Sem 4 · 3 SKS</span><span class="dc-name">Pemrograman Mobile</span></div>
+      <div class="dc-tagline">"Software untuk smartphone" — Android/iOS native</div>
+      <div class="dc-rows">
+        <div class="dc-row"><span class="dc-lbl">Fokus</span><span class="dc-val">Pengembangan aplikasi mobile native atau cross-platform</span></div>
+        <div class="dc-row"><span class="dc-lbl">Topik</span><span class="dc-val">Activity/Fragment lifecycle, UI components, state management, API consumption, local storage, push notification, build &amp; publish</span></div>
+        <div class="dc-row"><span class="dc-lbl">Batasan</span><span class="dc-val">Bisa pakai Android (Kotlin/Java) atau Flutter — koordinasikan dengan kurikulum praktikum</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="diff-box">
+    <div class="diff-box-title">PEMBEDA UTAMA — batas topik antar MK pemrograman</div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--teal-bg);color:var(--teal)">1</div>
+      <div class="diff-text"><strong>Dasar Pemrograman vs Pemrograman Lanjut:</strong> Dasar = prosedural murni (variabel, loop, fungsi). Lanjut = rekursi, exception, file I/O, dan pengantar class. Jangan ajarkan inheritance penuh di Pemrograman Lanjut.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--teal-bg);color:var(--teal)">2</div>
+      <div class="diff-text"><strong>Pemrograman Lanjut vs PBO:</strong> Lanjut = kenalan OOP (class &amp; object), PBO = OOP penuh (inheritance, polymorphism, SOLID, design patterns). Duplikasi di sini paling sering terjadi — koordinasi penting.</div>
+    </div>
+    <div class="diff-row">
+      <div class="diff-mark" style="background:var(--teal-bg);color:var(--teal)">3</div>
+      <div class="diff-text"><strong>Pemrograman Web vs Mobile:</strong> Sama-sama front-end + back-end, tapi platform dan paradigma berbeda. Web = HTTP/REST/browser, Mobile = lifecycle, sensor, push notification. Backend bisa shared (REST API).</div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const AI_TOPICS = [
+  { t:'Sejarah &amp; filosofi AI',             v:['✦ Penuh','—','—','—','—','—'] },
+  { t:'Algoritma pencarian (BFS/DFS/A*)',    v:['✦ Penuh','— Ulasan','—','—','—','—'] },
+  { t:'Representasi pengetahuan',            v:['✦ Penuh','— Referensi','—','— Fuzzy saja','—','—'] },
+  { t:'Logika proposisional &amp; predikat', v:['✦ Penuh','—','—','—','—','—'] },
+  { t:'Klasifikasi (Naive Bayes, DT, SVM)',  v:['—','✦ Penuh','— Matematikanya','—','— Eksplorasi','—'] },
+  { t:'Clustering (K-Means, DBSCAN)',        v:['—','✦ Penuh','— Mendalam','—','✦ Eksplorasi','—'] },
+  { t:'Neural Network dasar',               v:['—','✦ Terapan','— Matematis','—','—','—'] },
+  { t:'Backprop &amp; gradient descent',    v:['—','—','✦ Penuh','—','—','—'] },
+  { t:'Feature engineering &amp; seleksi',  v:['—','—','✦ Penuh','—','✦ Preprocessing','—'] },
+  { t:'Cross-validation &amp; tuning',      v:['—','—','✦ Penuh','—','—','—'] },
+  { t:'Fuzzy logic &amp; FIS',              v:['—','—','—','✦ Penuh','—','—'] },
+  { t:'Sistem pakar &amp; rule engine',     v:['— Konsep','—','—','✦ Implementasi','—','—'] },
+  { t:'Algoritma genetika &amp; EA',        v:['—','—','—','✦ Penuh','—','—'] },
+  { t:'Transformer &amp; BERT',             v:['—','—','—','✦ Penuh','—','—'] },
+  { t:'Explainable AI (SHAP/LIME)',          v:['—','—','—','✦ Penuh','—','—'] },
+  { t:'Association rules (Apriori)',         v:['—','—','—','—','✦ Penuh','—'] },
+  { t:'Dimensionality reduction (PCA)',      v:['—','—','— Teori','—','✦ Terapan','—'] },
+  { t:'Anomaly detection',                  v:['—','—','—','—','✦ Penuh','—'] },
+  { t:'Filter spasial &amp; konvolusi',     v:['—','—','—','—','—','✦ Penuh'] },
+  { t:'Edge detection (Canny/Sobel)',        v:['—','—','—','—','—','✦ Penuh'] },
+  { t:'Segmentasi citra',                   v:['—','—','—','—','—','✦ Penuh'] },
+  { t:'CNN (Computer Vision)',               v:['—','✦ Terapan','— Mendalam','✦ Advanced','—','— Referensi'] },
+  { t:'NLP &amp; Sentiment Analysis',        v:['—','✦ Penuh','—','— BERT saja','—','—'] },
+];
+const AI_HEADERS = ['Pengantar KB','Kecerdasan Buatan','Machine Learning','Sistem Cerdas','Data Mining','Pengolahan Citra'];
+
+const SIS_TOPICS = [
+  { t:'Gerbang logika &amp; boolean',       v:['✦','—','—','—','—','—','—','—'] },
+  { t:'Rangkaian sekuensial &amp; FSM',     v:['✦','—','—','—','—','—','—','—'] },
+  { t:'ALU, register, pipeline',           v:['—','✦','—','—','—','—','—','—'] },
+  { t:'Memori hierarki &amp; cache',        v:['—','✦','—','—','—','—','—','—'] },
+  { t:'Proses &amp; thread',               v:['—','—','✦','—','—','—','—','—'] },
+  { t:'CPU scheduling',                    v:['—','—','✦','—','—','—','—','—'] },
+  { t:'Virtual memory &amp; paging',        v:['—','✦ Konsep','✦ Penuh','—','—','—','—','—'] },
+  { t:'File system',                       v:['—','—','✦','—','—','—','—','—'] },
+  { t:'ER diagram &amp; normalisasi',       v:['—','—','—','✦','—','—','—','—'] },
+  { t:'SQL (DDL/DML)',                     v:['—','—','—','✦ Dasar','—','—','✦ Lanjut','—'] },
+  { t:'Transaksi &amp; ACID',              v:['—','—','—','✦','—','—','✦ Lanjut','—'] },
+  { t:'Indexing &amp; query plan',          v:['—','—','—','—','—','—','✦','—'] },
+  { t:'Backup &amp; recovery',             v:['—','—','—','—','—','—','✦','—'] },
+  { t:'Model OSI &amp; TCP/IP',             v:['—','—','—','—','✦','—','—','✦ Referensi'] },
+  { t:'IP addressing &amp; routing',        v:['—','—','—','—','✦','—','—','—'] },
+  { t:'Socket programming',               v:['—','—','—','—','✦','—','—','—'] },
+  { t:'CAP theorem &amp; konsensus',        v:['—','—','—','—','—','✦','—','—'] },
+  { t:'Microservices &amp; replikasi',      v:['—','—','—','—','—','✦','—','—'] },
+  { t:'Kriptografi (AES/RSA/hash)',         v:['—','—','—','—','—','—','—','✦'] },
+  { t:'OWASP Top 10',                      v:['—','—','—','—','—','—','—','✦'] },
+  { t:'Keamanan jaringan &amp; firewall',   v:['—','—','—','—','— Konsep','—','—','✦'] },
+];
+
+const MATH_TOPICS = [
+  { t:'Limit, turunan, integral',          v:['✦','—','—','—','— Aplikasi','—'] },
+  { t:'Optimasi fungsi (minmax)',           v:['✦','—','—','—','✦ Numerik','—'] },
+  { t:'Vektor &amp; operasi',              v:['—','✦','—','—','—','—'] },
+  { t:'Matriks &amp; determinan',          v:['—','✦','—','—','✦ Sistem linear','—'] },
+  { t:'Eigenvalue &amp; eigenvector',       v:['—','✦','—','—','—','—'] },
+  { t:'Distribusi probabilitas',           v:['—','—','✦','—','—','—'] },
+  { t:'Uji hipotesis &amp; inferensi',     v:['—','—','✦','—','—','—'] },
+  { t:'Regresi linear',                   v:['—','—','✦ Statistik','—','—','—'] },
+  { t:'Logika proposisional',             v:['—','—','—','✦','—','—'] },
+  { t:'Teori graph',                      v:['—','—','—','✦','—','—'] },
+  { t:'Kombinatorik &amp; counting',       v:['—','—','—','✦','—','—'] },
+  { t:'Galat &amp; konvergensi',           v:['—','—','—','—','✦','—'] },
+  { t:'Newton-Raphson &amp; bisection',    v:['—','—','—','—','✦','—'] },
+  { t:'Interpolasi &amp; integrasi num.',  v:['—','—','—','—','✦','—'] },
+  { t:'DFA/NFA &amp; regex',              v:['—','—','—','—','—','✦'] },
+  { t:'Context-free grammar',             v:['—','—','—','—','—','✦'] },
+  { t:'Turing machine &amp; decidability', v:['—','—','—','—','—','✦'] },
+];
+
+function buildTable(bodyId, topics) {
+  const tbody = document.getElementById(bodyId);
+  if (!tbody) return;
+  topics.forEach((row, ri) => {
+    const tr = document.createElement('tr');
+    const tdT = document.createElement('td');
+    tdT.style.cssText = 'font-weight:500;color:var(--ink)';
+    tdT.innerHTML = row.t;
+    tr.appendChild(tdT);
+    row.v.forEach(val => {
+      const td = document.createElement('td');
+      td.style.textAlign = 'center';
+      if (val === '—') {
+        td.innerHTML = '<span style="color:var(--ink3);font-size:13px">—</span>';
+      } else {
+        const isPartial = val.includes('Referensi') || val.includes('Konsep') || val.includes('saja') || val.includes('Ulasan');
+        const bg = isPartial ? 'var(--bg3)' : 'var(--teal-bg)';
+        const co = isPartial ? 'var(--ink3)' : 'var(--teal)';
+        td.innerHTML = `<span class="topic-pill" style="background:${bg};color:${co}">${val.replace('✦ ','').replace('— ','')}</span>`;
+      }
+      tr.appendChild(td);
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+buildTable('aiTopicBody', AI_TOPICS);
+buildTable('sisTopicBody', SIS_TOPICS);
+buildTable('mathTopicBody', MATH_TOPICS);
+
+const ALL_MK = [
+  { name:'Algoritma Pemrograman', sem:'Sem 1', cc:'var(--teal-str)', g:'Pemrograman', tags:['Konsep','Dasar'] },
+  { name:'Dasar Pemrograman', sem:'Sem 1', cc:'var(--teal-str)', g:'Pemrograman', tags:['Prosedural','Praktik'] },
+  { name:'Kalkulus', sem:'Sem 1', cc:'var(--purple-str)', g:'Matematika', tags:['Kontinu','Optimasi'] },
+  { name:'Sistem Digital', sem:'Sem 1', cc:'var(--blue-str)', g:'Sistem', tags:['Hardware','Gate'] },
+  { name:'Org. &amp; Arsitektur Komputer', sem:'Sem 1', cc:'var(--blue-str)', g:'Sistem', tags:['CPU','Pipeline'] },
+  { name:'Pengantar TI', sem:'Sem 1', cc:'var(--blue-str)', g:'Umum', tags:['Orientasi'] },
+  { name:'ESP 1', sem:'Sem 1', cc:'var(--amber-str)', g:'Umum', tags:['Bahasa'] },
+  { name:'Statistik &amp; Probabilitas', sem:'Sem 2', cc:'var(--purple-str)', g:'Matematika', tags:['Data','Inferensi'] },
+  { name:'Aljabar Linear', sem:'Sem 2', cc:'var(--purple-str)', g:'Matematika', tags:['Matriks','Ruang'] },
+  { name:'Matematika Diskrit', sem:'Sem 2', cc:'var(--purple-str)', g:'Matematika', tags:['Logika','Graph'] },
+  { name:'Pemrograman Lanjut', sem:'Sem 2', cc:'var(--teal-str)', g:'Pemrograman', tags:['Rekursi','Exception'] },
+  { name:'Sistem Operasi', sem:'Sem 2', cc:'var(--blue-str)', g:'Sistem', tags:['Proses','Thread'] },
+  { name:'Sistem Basis Data', sem:'Sem 2', cc:'var(--blue-str)', g:'Sistem', tags:['SQL','Normalisasi'] },
+  { name:'Pendidikan Agama', sem:'Sem 2', cc:'var(--amber-str)', g:'Umum', tags:['Karakter'] },
+  { name:'Pemrograman Berorientasi Objek', sem:'Sem 3', cc:'var(--teal-str)', g:'Pemrograman', tags:['OOP','SOLID'] },
+  { name:'Pemrograman Web', sem:'Sem 3', cc:'var(--teal-str)', g:'Pemrograman', tags:['Frontend','Backend'] },
+  { name:'Jaringan Komputer', sem:'Sem 3', cc:'var(--blue-str)', g:'Sistem', tags:['TCP/IP','Routing'] },
+  { name:'Struktur Data', sem:'Sem 3', cc:'var(--teal-str)', g:'Pemrograman', tags:['Tree','Graph','Hash'] },
+  { name:'Metode Numerik', sem:'Sem 3', cc:'var(--purple-str)', g:'Matematika', tags:['Aproksimasi','Galat'] },
+  { name:'Pengantar Kecerdasan Buatan', sem:'Sem 3', cc:'var(--teal-str)', g:'AI &amp; Data', tags:['Konsep AI','BFS/DFS'] },
+  { name:'Pengantar Game', sem:'Sem 3', cc:'var(--teal-str)', g:'Pemrograman', tags:['Game Dev','Event Loop'] },
+  { name:'Kewarganegaraan', sem:'Sem 3', cc:'var(--amber-str)', g:'Umum', tags:['Etika Digital'] },
+  { name:'Rekayasa Perangkat Lunak', sem:'Sem 4', cc:'var(--pink-str)', g:'Rekayasa PL', tags:['SDLC','Agile'] },
+  { name:'Kecerdasan Buatan', sem:'Sem 4', cc:'var(--teal-str)', g:'AI &amp; Data', tags:['Klasifikasi','NLP','CNN'] },
+  { name:'Sistem Terdistribusi', sem:'Sem 4', cc:'var(--blue-str)', g:'Sistem', tags:['CAP','Microservices'] },
+  { name:'Interaksi Manusia &amp; Komputer', sem:'Sem 4', cc:'var(--pink-str)', g:'Rekayasa PL', tags:['UX','Usability'] },
+  { name:'Grafika Komputer', sem:'Sem 4', cc:'var(--teal-str)', g:'Pemrograman', tags:['OpenGL','Transformasi'] },
+  { name:'Manajemen Database', sem:'Sem 4', cc:'var(--blue-str)', g:'Sistem', tags:['Index','Backup'] },
+  { name:'Pemrograman Mobile', sem:'Sem 4', cc:'var(--teal-str)', g:'Pemrograman', tags:['Android/iOS','API'] },
+  { name:'Pendidikan Pancasila', sem:'Sem 5', cc:'var(--amber-str)', g:'Umum', tags:['Nilai Bangsa'] },
+  { name:'Machine Learning', sem:'Sem 5', cc:'var(--coral-str)', g:'AI &amp; Data', tags:['Backprop','Optimasi'] },
+  { name:'Sistem Cerdas', sem:'Sem 5', cc:'var(--purple-str)', g:'AI &amp; Data', tags:['Fuzzy','Genetika','XAI'] },
+  { name:'Data Mining', sem:'Sem 5', cc:'var(--amber-str)', g:'AI &amp; Data', tags:['Pola','Apriori'] },
+  { name:'Keamanan Informasi', sem:'Sem 5', cc:'var(--blue-str)', g:'Sistem', tags:['Kriptografi','OWASP'] },
+  { name:'Pengolahan Citra Digital', sem:'Sem 5', cc:'var(--gray-str)', g:'AI &amp; Data', tags:['Filter','Segmentasi'] },
+  { name:'Teori Bahasa &amp; Automata', sem:'Sem 6', cc:'var(--purple-str)', g:'Matematika', tags:['FSM','Grammar'] },
+  { name:'Technopreneurship', sem:'Sem 6', cc:'var(--amber-str)', g:'Umum', tags:['Startup','Bisnis'] },
+  { name:'Pemodelan &amp; Simulasi', sem:'Sem 6', cc:'var(--pink-str)', g:'Rekayasa PL', tags:['Model','Monte Carlo'] },
+  { name:'ESP 2', sem:'Sem 6', cc:'var(--amber-str)', g:'Umum', tags:['Penulisan Ilmiah'] },
+  { name:'Magang', sem:'Sem 7', cc:'var(--amber-str)', g:'Umum', tags:['Industri','Praktik'] },
+  { name:'Metode Penelitian', sem:'Sem 7', cc:'var(--pink-str)', g:'Rekayasa PL', tags:['Riset','Metodologi'] },
+  { name:'Bahasa Indonesia', sem:'Sem 7', cc:'var(--amber-str)', g:'Umum', tags:['Penulisan'] },
+  { name:'Etika Profesi', sem:'Sem 7', cc:'var(--amber-str)', g:'Umum', tags:['Hukum TI','Privasi'] },
+  { name:'KKN', sem:'Sem 7', cc:'var(--amber-str)', g:'Umum', tags:['Pengabdian'] },
+  { name:'Skripsi', sem:'Sem 8', cc:'var(--amber-str)', g:'Umum', tags:['Penelitian','Karya Ilmiah'] },
+];
+
+const grid = document.getElementById('ovGrid');
+ALL_MK.forEach(mk => {
+  const card = document.createElement('div');
+  card.className = 'ov-card';
+  card.style.setProperty('--cc', mk.cc);
+  card.innerHTML = `
+    <div class="ov-group">${mk.g}</div>
+    <div class="ov-name">${mk.name}</div>
+    <div class="ov-sem">${mk.sem}</div>
+    <div class="ov-tags">${mk.tags.map(t=>`<span class="ov-tag">${t}</span>`).join('')}</div>
+  `;
+  grid.appendChild(card);
+});
+
+document.querySelectorAll('.ntab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.ntab').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.p).classList.add('active');
+  });
+});
+</script>
+</body>
+</html>
