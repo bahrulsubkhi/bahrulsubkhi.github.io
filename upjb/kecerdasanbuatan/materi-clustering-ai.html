@@ -1,0 +1,1845 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Clustering — Kecerdasan Buatan</title>
+<style>
+  :root {
+    --bg: #f5f4f0;
+    --bg2: #ffffff;
+    --bg3: #eceae4;
+    --text: #1a1a18;
+    --text2: #5a5a56;
+    --text3: #8a8a84;
+    --border: rgba(0,0,0,0.1);
+    --border2: rgba(0,0,0,0.18);
+    --blue: #185FA5; --blue-bg: #E6F1FB; --blue-dark: #0C447C;
+    --teal: #0F6E56; --teal-bg: #E1F5EE; --teal-dark: #085041;
+    --amber: #854F0B; --amber-bg: #FAEEDA; --amber-dark: #633806;
+    --coral: #993C1D; --coral-bg: #FAECE7; --coral-dark: #4A1B0C;
+    --purple: #534AB7; --purple-bg: #EEEDFE; --purple-dark: #26215C;
+    --green: #3B6D11; --green-bg: #EAF3DE; --green-dark: #27500A;
+    --red: #A32D2D; --red-bg: #FCEBEB;
+    --accent: #185FA5;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #141412; --bg2: #1e1e1c; --bg3: #252523;
+      --text: #e8e6e0; --text2: #a8a6a0; --text3: #686660;
+      --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+      --blue-bg: #0c2a4a; --blue-dark: #B5D4F4;
+      --teal-bg: #062a20; --teal-dark: #9FE1CB;
+      --amber-bg: #2e1e04; --amber-dark: #FAC775;
+      --coral-bg: #2a100a; --coral-dark: #F5C4B3;
+      --purple-bg: #16123a; --purple-dark: #CECBF6;
+      --green-bg: #0e2004; --green-dark: #C0DD97;
+      --red-bg: #2a0a0a;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.6;
+    min-height: 100vh;
+  }
+
+  /* HEADER */
+  .header {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    position: sticky; top: 0; z-index: 100;
+  }
+  .header-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; gap: 20px;
+    height: 58px;
+  }
+  .header-logo {
+    font-size: 13px; font-weight: 600; letter-spacing: .5px;
+    color: var(--blue); text-transform: uppercase; white-space: nowrap;
+  }
+  .header-divider { width: 1px; height: 20px; background: var(--border2); }
+  .header-title { font-size: 14px; color: var(--text2); }
+
+  /* NAV TABS */
+  .nav-wrap {
+    background: var(--bg2);
+    border-bottom: 1px solid var(--border);
+    padding: 0 32px;
+    position: sticky; top: 58px; z-index: 99;
+  }
+  .nav {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; gap: 0; overflow-x: auto;
+  }
+  .nav::-webkit-scrollbar { display: none; }
+  .nav button {
+    padding: 14px 18px; border: none; background: transparent;
+    color: var(--text2); font-size: 13px; cursor: pointer;
+    border-bottom: 2px solid transparent; white-space: nowrap;
+    transition: all .2s; font-family: inherit;
+  }
+  .nav button:hover { color: var(--text); }
+  .nav button.active { color: var(--blue); border-bottom-color: var(--blue); font-weight: 500; }
+
+  /* MAIN */
+  .main { max-width: 1100px; margin: 0 auto; padding: 32px 32px 80px; }
+
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 20px 24px; margin-bottom: 16px;
+  }
+  .card-sm {
+    background: var(--bg2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 16px 18px;
+  }
+
+  /* GRID */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+  .grid3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 16px; }
+  .grid4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+  @media (max-width: 700px) {
+    .grid2, .grid3, .grid4 { grid-template-columns: 1fr; }
+  }
+
+  /* TYPOGRAPHY */
+  .page-title { font-size: 26px; font-weight: 700; margin-bottom: 6px; }
+  .page-sub { font-size: 15px; color: var(--text2); margin-bottom: 24px; }
+  h2 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+  h3 { font-size: 15px; font-weight: 600; margin-bottom: 8px; }
+  p { font-size: 14px; color: var(--text2); line-height: 1.65; }
+  ul { font-size: 14px; color: var(--text2); line-height: 1.9; padding-left: 18px; }
+
+  /* BADGES */
+  .badge {
+    display: inline-block; font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px; margin-bottom: 8px;
+    letter-spacing: .3px; text-transform: uppercase;
+  }
+  .b-blue { background: var(--blue-bg); color: var(--blue-dark); }
+  .b-teal { background: var(--teal-bg); color: var(--teal-dark); }
+  .b-amber { background: var(--amber-bg); color: var(--amber-dark); }
+  .b-coral { background: var(--coral-bg); color: var(--coral-dark); }
+  .b-purple { background: var(--purple-bg); color: var(--purple-dark); }
+  .b-green { background: var(--green-bg); color: var(--green-dark); }
+
+  /* TAGS */
+  .tag { display: inline-block; font-size: 11px; padding: 3px 9px; border-radius: 4px; margin: 2px; }
+  .t-yes { background: var(--green-bg); color: var(--green-dark); }
+  .t-no { background: var(--red-bg); color: var(--red); }
+
+  /* FORMULA */
+  .formula {
+    background: var(--bg3);
+    border-left: 3px solid var(--blue);
+    border-radius: 0 6px 6px 0;
+    padding: 10px 16px;
+    font-family: 'Courier New', monospace;
+    font-size: 13px; color: var(--text);
+    margin: 10px 0;
+  }
+
+  /* STEPS */
+  .step-item { display: flex; gap: 12px; margin-bottom: 10px; align-items: flex-start; }
+  .step-num {
+    min-width: 26px; height: 26px; border-radius: 50%;
+    background: var(--blue-bg); color: var(--blue-dark);
+    font-size: 12px; font-weight: 700; display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* CONTROLS */
+  .ctrl { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+  .ctrl label { font-size: 13px; color: var(--text2); font-weight: 500; }
+  .ctrl span { font-size: 13px; font-weight: 600; min-width: 22px; color: var(--text); }
+  .ctrl input[type=range] {
+    -webkit-appearance: none; appearance: none;
+    height: 4px; border-radius: 2px; background: var(--border2); outline: none; cursor: pointer;
+    width: 120px;
+  }
+  .ctrl input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: var(--blue); cursor: pointer; border: 2px solid var(--bg2);
+  }
+
+  /* BUTTONS */
+  .btn {
+    padding: 7px 18px; border-radius: var(--radius-sm);
+    border: 1px solid var(--border2); background: var(--bg3);
+    font-size: 13px; font-weight: 500; cursor: pointer; color: var(--text);
+    font-family: inherit; transition: all .15s;
+  }
+  .btn:hover { background: var(--border2); }
+  .btn-primary {
+    background: var(--blue); color: #fff; border-color: var(--blue);
+  }
+  .btn-primary:hover { background: var(--blue-dark); }
+
+  /* CANVAS */
+  canvas { border-radius: 8px; display: block; max-width: 100%; }
+
+  /* COMPARE TABLE */
+  .compare-card {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 14px 16px;
+  }
+  .compare-card h4 { font-size: 13px; font-weight: 600; margin-bottom: 10px; }
+  .cmp-row { display: flex; justify-content: space-between; font-size: 12px; margin-bottom: 5px; }
+  .cmp-label { color: var(--text2); }
+  .cmp-val { font-weight: 600; color: var(--text); }
+  .cmp-good { color: var(--teal); }
+  .cmp-bad { color: var(--red); }
+
+  /* SOAL */
+  .soal-card {
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 16px 20px; margin-bottom: 10px;
+    cursor: pointer; transition: background .15s;
+  }
+  .soal-card:hover { background: var(--bg3); }
+  .soal-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .soal-q { font-size: 14px; font-weight: 500; color: var(--text); line-height: 1.5; }
+  .soal-icon { font-size: 16px; color: var(--text3); flex-shrink: 0; transition: transform .2s; }
+  .soal-icon.open { transform: rotate(180deg); }
+  .soal-ans {
+    display: none; margin-top: 14px; padding-top: 14px;
+    border-top: 1px solid var(--border);
+    font-size: 13px; color: var(--text2); line-height: 1.7;
+  }
+  .soal-ans.show { display: block; }
+  .soal-ans strong { color: var(--text); font-weight: 600; }
+
+  /* METRIC CARDS */
+  .metric { background: var(--bg3); border-radius: var(--radius-sm); padding: 12px 16px; }
+  .metric-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; font-weight: 500; text-transform: uppercase; letter-spacing: .4px; }
+  .metric-val { font-size: 22px; font-weight: 700; color: var(--text); }
+  .metric-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+  /* DENDROGRAM */
+  .dendro-svg { overflow: visible; }
+
+  /* TOGGLE */
+  .toggle-wrap { display: flex; align-items: center; gap: 8px; }
+  .toggle-track {
+    position: relative; width: 36px; height: 20px;
+    background: var(--border2); border-radius: 10px;
+    transition: background .2s; cursor: pointer; display: inline-block;
+  }
+  .toggle-track:has(input:checked) { background: var(--blue); }
+  .toggle-thumb {
+    position: absolute; top: 2px; left: 2px;
+    width: 16px; height: 16px; border-radius: 50%;
+    background: #fff; transition: transform .2s; pointer-events: none;
+  }
+  .toggle-track input:checked ~ .toggle-thumb { transform: translateX(16px); }
+  .toggle-track input { position: absolute; opacity: 0; width: 100%; height: 100%; cursor: pointer; margin: 0; }
+
+  /* DIVIDER */
+  .divider { height: 1px; background: var(--border); margin: 20px 0; }
+
+  /* SECTION TITLE */
+  .section-title {
+    display: flex; align-items: center; gap: 10px; margin-bottom: 20px;
+  }
+  .section-title-bar { width: 4px; height: 28px; background: var(--blue); border-radius: 2px; }
+
+  /* INFO BOX */
+  .info-box {
+    background: var(--blue-bg); border: 1px solid rgba(24,95,165,0.2);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    font-size: 13px; color: var(--blue-dark); line-height: 1.6;
+    margin: 10px 0;
+  }
+
+  /* POINT TYPES LEGEND */
+  .legend-item { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--text2); }
+
+  /* CODE HINT */
+  .code-block {
+    background: var(--bg3); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 14px 16px;
+    font-family: 'Courier New', monospace; font-size: 12px;
+    color: var(--text); line-height: 1.8; overflow-x: auto; margin: 8px 0;
+  }
+  .code-block .kw { color: #7F77DD; }
+  .code-block .fn { color: #1D9E75; }
+  .code-block .cm { color: var(--text3); }
+  .code-block .st { color: #BA7517; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center; padding: 32px;
+    font-size: 12px; color: var(--text3);
+    border-top: 1px solid var(--border); margin-top: 40px;
+  }
+
+  /* ANIMATION */
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+  .section.active { animation: fadeIn .25s ease; }
+
+  /* PROGRESS BAR */
+  .prob-bar { height: 6px; border-radius: 3px; background: var(--border2); overflow: hidden; margin-top: 4px; }
+  .prob-fill { height: 100%; border-radius: 3px; transition: width .3s; }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="header-logo">🎓 Kecerdasan Buatan</div>
+    <div class="header-divider"></div>
+    <div class="header-title">Materi 7 — Clustering & Unsupervised Learning</div>
+    <div style="margin-left:auto;font-size:12px;color:var(--text3)">Informatika · 2025</div>
+  </div>
+</header>
+
+<nav class="nav-wrap">
+  <div class="nav">
+    <button class="active" onclick="showTab('intro',this)">📖 Pengantar</button>
+    <button onclick="showTab('kmeans',this)">⭕ K-Means</button>
+    <button onclick="showTab('dbscan',this)">🔷 DBSCAN</button>
+    <button onclick="showTab('hierarchical',this)">🌳 Hierarki</button>
+    <button onclick="showTab('gmm',this)">🫧 GMM</button>
+    <button onclick="showTab('compare',this)">📊 Perbandingan</button>
+    <button onclick="showTab('code',this)">💻 Kode Python</button>
+    <button onclick="showTab('latihan',this)">✏️ Latihan</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ===================== INTRO ===================== -->
+<section id="tab-intro" class="section active">
+  <div class="section-title">
+    <div class="section-title-bar"></div>
+    <div>
+      <div class="page-title">Clustering</div>
+      <div class="page-sub">Menemukan struktur tersembunyi dalam data tanpa label — Unsupervised Learning</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <span class="badge b-blue">Definisi</span>
+    <h2>Apa itu Clustering?</h2>
+    <p style="margin-top:8px">Clustering adalah teknik <strong>unsupervised learning</strong> yang mengelompokkan data berdasarkan kemiripan (similarity) tanpa label kelas yang sudah ditentukan. Berbeda dengan klasifikasi, clustering menemukan pola atau struktur tersembunyi secara otomatis.</p>
+    <div class="formula">Tujuan: Maximize(intra-cluster similarity) AND Minimize(inter-cluster similarity)</div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Clustering vs Klasifikasi</h3>
+      <svg width="100%" viewBox="0 0 360 140" style="margin-top:10px">
+        <text x="80" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor" opacity=".7">Klasifikasi</text>
+        <circle cx="40" cy="55" r="9" fill="#378ADD" opacity=".85"/>
+        <circle cx="62" cy="40" r="9" fill="#378ADD" opacity=".85"/>
+        <circle cx="55" cy="70" r="9" fill="#378ADD" opacity=".85"/>
+        <circle cx="108" cy="90" r="9" fill="#E24B4A" opacity=".85"/>
+        <circle cx="128" cy="72" r="9" fill="#E24B4A" opacity=".85"/>
+        <circle cx="120" cy="102" r="9" fill="#E24B4A" opacity=".85"/>
+        <line x1="88" y1="20" x2="88" y2="125" stroke="currentColor" stroke-width="1.5" stroke-dasharray="5 3" opacity=".3"/>
+        <text x="40" y="130" text-anchor="middle" font-size="10" fill="#185FA5">Kelas A</text>
+        <text x="120" y="130" text-anchor="middle" font-size="10" fill="#A32D2D">Kelas B</text>
+        <text x="88" y="138" text-anchor="middle" font-size="9" fill="currentColor" opacity=".5">Label sudah diketahui</text>
+
+        <text x="270" y="16" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor" opacity=".7">Clustering</text>
+        <circle cx="220" cy="50" r="9" fill="#1D9E75" opacity=".75"/>
+        <circle cx="240" cy="35" r="9" fill="#1D9E75" opacity=".75"/>
+        <circle cx="230" cy="68" r="9" fill="#1D9E75" opacity=".75"/>
+        <circle cx="300" cy="85" r="9" fill="#EF9F27" opacity=".75"/>
+        <circle cx="320" cy="67" r="9" fill="#EF9F27" opacity=".75"/>
+        <circle cx="310" cy="100" r="9" fill="#EF9F27" opacity=".75"/>
+        <circle cx="268" cy="45" r="9" fill="#7F77DD" opacity=".75"/>
+        <text x="270" y="138" text-anchor="middle" font-size="9" fill="currentColor" opacity=".5">Pola ditemukan otomatis</text>
+        <ellipse cx="230" cy="52" rx="28" ry="28" fill="none" stroke="#1D9E75" stroke-width="1.2" stroke-dasharray="4 3" opacity=".5"/>
+        <ellipse cx="310" cy="84" rx="28" ry="26" fill="none" stroke="#EF9F27" stroke-width="1.2" stroke-dasharray="4 3" opacity=".5"/>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Aplikasi Nyata</h3>
+      <ul style="margin-top:8px">
+        <li>📦 Segmentasi pelanggan (e-commerce)</li>
+        <li>🔍 Deteksi anomali & fraud perbankan</li>
+        <li>🖼️ Kompresi gambar (color quantization)</li>
+        <li>📰 Pengelompokan dokumen & berita</li>
+        <li>🎬 Sistem rekomendasi film/musik</li>
+        <li>🧬 Analisis gen & bioinformatika</li>
+        <li>🌐 Deteksi komunitas social network</li>
+        <li>🏥 Segmentasi pasien medis</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Taksonomi Algoritma Clustering</h3>
+    <svg width="100%" viewBox="0 0 980 220" style="margin-top:12px">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" opacity=".4"/>
+        </marker>
+      </defs>
+      <!-- Root -->
+      <rect x="390" y="10" width="200" height="40" rx="10" fill="#E6F1FB" stroke="#185FA5" stroke-width="1"/>
+      <text x="490" y="35" text-anchor="middle" font-size="14" font-weight="700" fill="#0C447C">Clustering</text>
+      <!-- Lines -->
+      <line x1="490" y1="50" x2="120" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arr)"/>
+      <line x1="490" y1="50" x2="310" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arr)"/>
+      <line x1="490" y1="50" x2="490" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arr)"/>
+      <line x1="490" y1="50" x2="670" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arr)"/>
+      <line x1="490" y1="50" x2="860" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arr)"/>
+      <!-- Nodes -->
+      <rect x="50" y="100" width="140" height="40" rx="8" fill="#E1F5EE" stroke="#0F6E56" stroke-width="1"/>
+      <text x="120" y="125" text-anchor="middle" font-size="12" font-weight="600" fill="#085041">Partisi</text>
+      <rect x="230" y="100" width="160" height="40" rx="8" fill="#EEEDFE" stroke="#534AB7" stroke-width="1"/>
+      <text x="310" y="125" text-anchor="middle" font-size="12" font-weight="600" fill="#26215C">Hierarki</text>
+      <rect x="415" y="100" width="150" height="40" rx="8" fill="#FAEEDA" stroke="#854F0B" stroke-width="1"/>
+      <text x="490" y="125" text-anchor="middle" font-size="12" font-weight="600" fill="#633806">Density</text>
+      <rect x="595" y="100" width="150" height="40" rx="8" fill="#FAECE7" stroke="#993C1D" stroke-width="1"/>
+      <text x="670" y="125" text-anchor="middle" font-size="12" font-weight="600" fill="#4A1B0C">Model-based</text>
+      <rect x="790" y="100" width="140" height="40" rx="8" fill="#EAF3DE" stroke="#3B6D11" stroke-width="1"/>
+      <text x="860" y="125" text-anchor="middle" font-size="12" font-weight="600" fill="#27500A">Grid-based</text>
+      <!-- Sub -->
+      <text x="120" y="165" text-anchor="middle" font-size="11" fill="currentColor" opacity=".5">K-Means, K-Medoids</text>
+      <text x="310" y="165" text-anchor="middle" font-size="11" fill="currentColor" opacity=".5">Agglomerative, Divisive</text>
+      <text x="490" y="165" text-anchor="middle" font-size="11" fill="currentColor" opacity=".5">DBSCAN, OPTICS, HDBSCAN</text>
+      <text x="670" y="165" text-anchor="middle" font-size="11" fill="currentColor" opacity=".5">GMM, EM Algorithm</text>
+      <text x="860" y="165" text-anchor="middle" font-size="11" fill="currentColor" opacity=".5">STING, CLIQUE</text>
+    </svg>
+  </div>
+
+  <div class="grid3">
+    <div class="metric"><div class="metric-label">Algoritma dibahas</div><div class="metric-val">4</div><div class="metric-sub">K-Means, DBSCAN, Hierarki, GMM</div></div>
+    <div class="metric"><div class="metric-label">Tipe masalah</div><div class="metric-val">Unsupervised</div><div class="metric-sub">Tidak ada label training</div></div>
+    <div class="metric"><div class="metric-label">Output</div><div class="metric-val">Cluster assignment</div><div class="metric-sub">Hard atau soft assignment</div></div>
+  </div>
+</section>
+
+<!-- ===================== K-MEANS ===================== -->
+<section id="tab-kmeans" class="section">
+  <div class="section-title">
+    <div class="section-title-bar" style="background:var(--teal)"></div>
+    <div><div class="page-title">K-Means Clustering</div>
+    <div class="page-sub">Algoritma partisi berbasis centroid — simpel, cepat, dan efektif</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="badge b-teal">Algoritma Partisi</span>
+      <h2>Definisi & Objektif</h2>
+      <p style="margin-top:8px">K-Means mempartisi <em>n</em> titik data ke dalam <em>K</em> cluster dengan meminimalkan <strong>Within-Cluster Sum of Squares (WCSS)</strong>.</p>
+      <div class="formula">J = Σᵢ₌₁ᴷ Σ_{x∈Cᵢ} ||x - μᵢ||²</div>
+      <p>μᵢ = centroid cluster ke-i, Cᵢ = himpunan titik dalam cluster i</p>
+      <div class="formula">Kompleksitas: O(n · k · i · d)</div>
+      <p>n=data, k=cluster, i=iterasi, d=dimensi</p>
+    </div>
+    <div class="card">
+      <h3>Langkah Algoritma</h3>
+      <div style="margin-top:10px">
+        <div class="step-item"><div class="step-num">1</div><p><strong>Inisialisasi:</strong> Pilih K centroid awal (random atau K-Means++)</p></div>
+        <div class="step-item"><div class="step-num">2</div><p><strong>Assignment:</strong> Setiap titik → cluster centroid terdekat berdasarkan Euclidean distance</p></div>
+        <div class="step-item"><div class="step-num">3</div><p><strong>Update:</strong> Hitung ulang centroid = rata-rata titik dalam cluster</p></div>
+        <div class="step-item"><div class="step-num">4</div><p><strong>Konvergen?</strong> Jika centroid tidak bergerak → selesai. Jika tidak → ke langkah 2</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Kelebihan & Kekurangan</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+        <span class="tag t-yes">Simple & intuitif</span>
+        <span class="tag t-yes">Scalable O(nki)</span>
+        <span class="tag t-yes">Mudah diinterpretasi</span>
+        <span class="tag t-yes">Efisien data besar</span>
+        <span class="tag t-no">Harus tentukan K</span>
+        <span class="tag t-no">Sensitif outlier</span>
+        <span class="tag t-no">Hanya cluster bulat</span>
+        <span class="tag t-no">Bergantung inisialisasi</span>
+        <span class="tag t-no">Fitur perlu normalisasi</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Memilih K Optimal — Elbow Method</h3>
+      <p style="margin-top:6px;margin-bottom:10px">Jalankan K-Means untuk K=1..10, plot WCSS. Pilih K di "siku" kurva.</p>
+      <canvas id="elbow-canvas" width="380" height="150"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎮 Simulasi Interaktif K-Means</h3>
+    <div class="ctrl">
+      <label>K (jumlah cluster):</label>
+      <input type="range" min="2" max="6" value="3" id="km-k" oninput="document.getElementById('km-kv').textContent=this.value">
+      <span id="km-kv">3</span>
+      <button class="btn btn-primary" onclick="runKMeans()">▶ Jalankan K-Means</button>
+      <button class="btn" onclick="resetKMeans()">↺ Reset Data</button>
+      <button class="btn" onclick="addRandomKMPoints()">+ Tambah Titik Acak</button>
+    </div>
+    <canvas id="km-canvas" width="900" height="340" style="width:100%;cursor:crosshair;border:1px solid var(--border);border-radius:8px" onclick="addKMPoint(event)"></canvas>
+    <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap;align-items:center">
+      <p style="font-size:12px">💡 Klik canvas untuk tambah titik manual</p>
+      <div id="km-stats" style="font-size:12px;color:var(--text2)"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== DBSCAN ===================== -->
+<section id="tab-dbscan" class="section">
+  <div class="section-title">
+    <div class="section-title-bar" style="background:var(--amber)"></div>
+    <div><div class="page-title">DBSCAN</div>
+    <div class="page-sub">Density-Based Spatial Clustering of Applications with Noise</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="badge b-amber">Density-based</span>
+      <h2>Konsep Dasar</h2>
+      <p style="margin-top:8px">DBSCAN menemukan cluster berdasarkan <strong>kepadatan lokal</strong> data. Tidak perlu menentukan K, mampu mendeteksi cluster berbentuk arbitrer, dan robust terhadap noise/outlier.</p>
+      <div class="formula">N_ε(p) = {q ∈ D | dist(p,q) ≤ ε}</div>
+      <p>N_ε(p) = neighborhood titik p dalam radius ε</p>
+    </div>
+    <div class="card">
+      <h3>Parameter & Tipe Titik</h3>
+      <div style="margin-top:8px">
+        <div style="margin-bottom:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:4px">ε (epsilon) — Radius Neighborhood</div>
+          <p style="font-size:13px">Dua titik dianggap "tetangga" jika jarak mereka ≤ ε</p>
+        </div>
+        <div style="margin-bottom:14px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:4px">MinPts — Minimum Titik</div>
+          <p style="font-size:13px">Jumlah minimum titik dalam N_ε(p) agar p menjadi core point</p>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#1D9E75"/></svg><strong>Core point:</strong>&nbsp;|N_ε(p)| ≥ MinPts</div>
+          <div class="legend-item"><svg width="14" height="14"><circle cx="7" cy="7" r="6" fill="#EF9F27"/></svg><strong>Border point:</strong>&nbsp;dalam N_ε core point, bukan core</div>
+          <div class="legend-item"><svg width="14" height="14"><line x1="2" y1="2" x2="12" y2="12" stroke="#E24B4A" stroke-width="2"/><line x1="12" y1="2" x2="2" y2="12" stroke="#E24B4A" stroke-width="2"/></svg><strong>Noise/Outlier:</strong>&nbsp;tidak terjangkau dari mana pun</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎛️ Visualisasi DBSCAN Interaktif</h3>
+    <div class="ctrl">
+      <label>ε (epsilon):</label>
+      <input type="range" min="15" max="90" value="45" id="db-eps" oninput="document.getElementById('db-epsv').textContent=this.value;drawDBSCAN()">
+      <span id="db-epsv">45</span>
+      <label>MinPts:</label>
+      <input type="range" min="2" max="10" value="3" id="db-min" oninput="document.getElementById('db-minv').textContent=this.value;drawDBSCAN()">
+      <span id="db-minv">3</span>
+      <label>Tampilkan ε-circle:</label>
+      <label class="toggle-wrap">
+        <span class="toggle-track">
+          <input type="checkbox" id="db-show-eps" checked onchange="drawDBSCAN()">
+          <span class="toggle-thumb"></span>
+        </span>
+      </label>
+      <button class="btn" onclick="resetDBPoints()">↺ Reset Data</button>
+    </div>
+    <canvas id="db-canvas" width="900" height="360" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:crosshair" onclick="addDBPoint(event)"></canvas>
+    <div style="display:flex;gap:20px;margin-top:10px;align-items:center;flex-wrap:wrap">
+      <div class="legend-item"><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#1D9E75"/></svg> Core</div>
+      <div class="legend-item"><svg width="12" height="12"><circle cx="6" cy="6" r="5" fill="#EF9F27"/></svg> Border</div>
+      <div class="legend-item"><svg width="12" height="12"><line x1="2" y1="2" x2="10" y2="10" stroke="#E24B4A" stroke-width="1.5"/><line x1="10" y1="2" x2="2" y2="10" stroke="#E24B4A" stroke-width="1.5"/></svg> Noise</div>
+      <div id="db-stats" style="font-size:12px;color:var(--text2);margin-left:auto"></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">💡 Klik canvas untuk tambah titik. Geser slider untuk lihat efek ε dan MinPts secara live.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Algoritma DBSCAN</h3>
+      <div style="margin-top:8px">
+        <div class="step-item"><div class="step-num">1</div><p>Untuk setiap titik p yang belum dikunjungi, hitung N_ε(p)</p></div>
+        <div class="step-item"><div class="step-num">2</div><p>Jika |N_ε(p)| &lt; MinPts → tandai sebagai noise</p></div>
+        <div class="step-item"><div class="step-num">3</div><p>Jika |N_ε(p)| ≥ MinPts → buat cluster baru, expand dari p</p></div>
+        <div class="step-item"><div class="step-num">4</div><p>Expand: tambahkan semua density-reachable titik ke cluster</p></div>
+        <div class="step-item"><div class="step-num">5</div><p>Ulangi untuk semua titik yang belum dikunjungi</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Kapan Gunakan DBSCAN?</h3>
+      <ul style="margin-top:8px">
+        <li>Data mengandung <strong>outlier/noise</strong> signifikan</li>
+        <li>Jumlah cluster <strong>tidak diketahui</strong> sebelumnya</li>
+        <li>Cluster berbentuk <strong>non-konveks</strong> (ring, spiral, dsb.)</li>
+        <li>Data spasial (koordinat GPS, peta)</li>
+        <li>Deteksi anomali pada sensor data</li>
+      </ul>
+      <div class="info-box" style="margin-top:12px">
+        ⚠️ DBSCAN kurang efektif jika densitas cluster sangat bervariasi (gunakan HDBSCAN untuk kasus tersebut)
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== HIERARCHICAL ===================== -->
+<section id="tab-hierarchical" class="section">
+  <div class="section-title">
+    <div class="section-title-bar" style="background:var(--purple)"></div>
+    <div><div class="page-title">Hierarchical Clustering</div>
+    <div class="page-sub">Membangun hierarki cluster yang divisualisasikan sebagai dendrogram</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="badge b-purple">Agglomerative (Bottom-up)</span>
+      <h3>Proses</h3>
+      <div style="margin-top:8px">
+        <div class="step-item"><div class="step-num">1</div><p>Setiap titik data = satu cluster tersendiri (n cluster)</p></div>
+        <div class="step-item"><div class="step-num">2</div><p>Hitung jarak antar semua pasang cluster</p></div>
+        <div class="step-item"><div class="step-num">3</div><p>Gabungkan dua cluster yang paling dekat</p></div>
+        <div class="step-item"><div class="step-num">4</div><p>Update matriks jarak</p></div>
+        <div class="step-item"><div class="step-num">5</div><p>Ulangi langkah 3-4 hingga tersisa 1 cluster</p></div>
+        <div class="step-item" style="margin-top:4px"><div class="step-num" style="background:var(--purple-bg);color:var(--purple-dark)">✂</div><p>Potong dendrogram pada ketinggian yang diinginkan untuk mendapatkan K cluster</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Linkage Methods</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
+        <div style="border-left:3px solid var(--blue);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Single Linkage (min)</div>
+          <p style="font-size:12px">d(A,B) = min{dist(a,b) | a∈A, b∈B} — cenderung membentuk cluster panjang/chain</p>
+        </div>
+        <div style="border-left:3px solid var(--teal);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Complete Linkage (max)</div>
+          <p style="font-size:12px">d(A,B) = max{dist(a,b)} — menghasilkan cluster yang lebih kompak</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Average Linkage (UPGMA)</div>
+          <p style="font-size:12px">d(A,B) = avg semua pasang — keseimbangan antara single & complete</p>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Ward Linkage ⭐</div>
+          <p style="font-size:12px">Minimasi peningkatan total within-cluster variance — paling populer</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Dendrogram Interaktif</h3>
+    <div class="ctrl">
+      <label>Potong di level:</label>
+      <input type="range" min="1" max="5" value="3" id="dendro-cut" oninput="document.getElementById('dendro-cutv').textContent=this.value;drawDendrogram()">
+      <span id="dendro-cutv">3</span>
+      <span style="font-size:13px;color:var(--text2)">cluster</span>
+    </div>
+    <canvas id="dendro-canvas" width="900" height="340" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+    <p style="font-size:12px;color:var(--text3);margin-top:8px">Garis merah = cut level. Geser slider untuk pilih jumlah cluster.</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Kelebihan</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+        <span class="tag t-yes">Tidak perlu tentukan K</span>
+        <span class="tag t-yes">Visualisasi kaya (dendrogram)</span>
+        <span class="tag t-yes">Deterministik</span>
+        <span class="tag t-yes">Bisa cut berbagai level</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Kekurangan</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:8px">
+        <span class="tag t-no">O(n²) memori & waktu</span>
+        <span class="tag t-no">Tidak scalable</span>
+        <span class="tag t-no">Sensitif outlier</span>
+        <span class="tag t-no">Merge tidak bisa di-undo</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== GMM ===================== -->
+<section id="tab-gmm" class="section">
+  <div class="section-title">
+    <div class="section-title-bar" style="background:var(--coral)"></div>
+    <div><div class="page-title">Gaussian Mixture Models (GMM)</div>
+    <div class="page-sub">Model probabilistik dengan Expectation-Maximization — soft assignment</div></div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <span class="badge b-coral">Model-based</span>
+      <h2>Definisi</h2>
+      <p style="margin-top:8px">GMM mengasumsikan data berasal dari campuran K distribusi Gaussian. Setiap titik memiliki <strong>probabilitas keanggotaan</strong> terhadap setiap cluster (soft assignment).</p>
+      <div class="formula">p(x) = Σₖ₌₁ᴷ πₖ · N(x | μₖ, Σₖ)</div>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:4px">
+        <p style="font-size:13px">• <strong>πₖ</strong> = mixing coefficient (prior), Σπₖ = 1</p>
+        <p style="font-size:13px">• <strong>μₖ</strong> = mean vektor Gaussian ke-k</p>
+        <p style="font-size:13px">• <strong>Σₖ</strong> = covariance matrix Gaussian ke-k</p>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Algoritma EM (Expectation-Maximization)</h3>
+      <div style="margin-top:8px">
+        <div class="step-item">
+          <div class="step-num" style="background:var(--blue-bg);color:var(--blue-dark);font-weight:700">E</div>
+          <div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:2px">Expectation Step</div>
+            <p style="font-size:13px">Hitung responsibility: r(nk) = πₖN(xₙ|μₖ,Σₖ) / Σⱼπⱼ N(xₙ|μⱼ,Σⱼ)</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--teal-bg);color:var(--teal-dark);font-weight:700">M</div>
+          <div>
+            <div style="font-weight:600;font-size:13px;margin-bottom:2px">Maximization Step</div>
+            <p style="font-size:13px">Update μₖ, Σₖ, πₖ menggunakan responsibility yang dihitung di E-step</p>
+          </div>
+        </div>
+        <div class="step-item">
+          <div class="step-num" style="background:var(--amber-bg);color:var(--amber-dark)">∞</div>
+          <p>Ulangi E↔M sampai log-likelihood konvergen</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🫧 Visualisasi GMM — Soft Assignment</h3>
+    <div class="ctrl">
+      <label>K Gaussian:</label>
+      <input type="range" min="2" max="5" value="3" id="gmm-k" oninput="document.getElementById('gmm-kv').textContent=this.value;drawGMM()">
+      <span id="gmm-kv">3</span>
+      <button class="btn" onclick="drawGMM()">↺ Generate ulang</button>
+    </div>
+    <canvas id="gmm-canvas" width="900" height="340" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+    <p style="font-size:12px;color:var(--text3);margin-top:8px">Warna campuran = probabilitas keanggotaan. Elips = 1σ, 2σ, 3σ dari setiap Gaussian. ☆ = centroid (μ).</p>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>GMM vs K-Means</h3>
+      <div style="margin-top:8px;overflow-x:auto">
+        <table style="width:100%;font-size:13px;border-collapse:collapse">
+          <thead><tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:6px 8px;font-weight:600;color:var(--text2)">Aspek</th>
+            <th style="text-align:center;padding:6px 8px;font-weight:600;color:var(--teal)">K-Means</th>
+            <th style="text-align:center;padding:6px 8px;font-weight:600;color:var(--coral)">GMM</th>
+          </tr></thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;color:var(--text2)">Assignment</td><td style="text-align:center;padding:6px 8px">Hard (0/1)</td><td style="text-align:center;padding:6px 8px">Soft (prob.)</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;color:var(--text2)">Bentuk cluster</td><td style="text-align:center;padding:6px 8px">Bulat</td><td style="text-align:center;padding:6px 8px">Elips bebas</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;color:var(--text2)">Kecepatan</td><td style="text-align:center;padding:6px 8px">Cepat</td><td style="text-align:center;padding:6px 8px">Lebih lambat</td></tr>
+            <tr style="border-bottom:1px solid var(--border)"><td style="padding:6px 8px;color:var(--text2)">Interpretasi</td><td style="text-align:center;padding:6px 8px">Mudah</td><td style="text-align:center;padding:6px 8px">Lebih kompleks</td></tr>
+            <tr><td style="padding:6px 8px;color:var(--text2)">Model selection</td><td style="text-align:center;padding:6px 8px">Elbow/Silhouette</td><td style="text-align:center;padding:6px 8px">BIC/AIC</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Covariance Types</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
+        <div style="border-left:3px solid var(--blue);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Full Covariance</div>
+          <p style="font-size:12px">Cluster bebas berorientasi dan berskala apa pun (paling fleksibel)</p>
+        </div>
+        <div style="border-left:3px solid var(--teal);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Tied Covariance</div>
+          <p style="font-size:12px">Semua cluster berbagi matriks kovarians yang sama</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Diagonal Covariance</div>
+          <p style="font-size:12px">Fitur independen, sumbu cluster sejajar sumbu koordinat</p>
+        </div>
+        <div style="border-left:3px solid var(--coral);padding-left:10px">
+          <div style="font-weight:600;font-size:13px">Spherical Covariance</div>
+          <p style="font-size:12px">Cluster berbentuk bulat (setara K-Means)</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== COMPARE ===================== -->
+<section id="tab-compare" class="section">
+  <div class="section-title">
+    <div class="section-title-bar"></div>
+    <div><div class="page-title">Perbandingan & Evaluasi</div>
+    <div class="page-sub">Panduan memilih algoritma yang tepat dan mengukur kualitas cluster</div></div>
+  </div>
+
+  <div class="grid4">
+    <div class="compare-card">
+      <div class="badge b-teal" style="margin-bottom:10px">K-Means</div>
+      <div class="cmp-row"><span class="cmp-label">Bentuk cluster</span><span class="cmp-val">Bulat</span></div>
+      <div class="cmp-row"><span class="cmp-label">Tentukan K</span><span class="cmp-val cmp-bad">Ya, wajib</span></div>
+      <div class="cmp-row"><span class="cmp-label">Outlier</span><span class="cmp-val cmp-bad">Sangat sensitif</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kecepatan</span><span class="cmp-val cmp-good">Sangat cepat</span></div>
+      <div class="cmp-row"><span class="cmp-label">Assignment</span><span class="cmp-val">Hard</span></div>
+      <div class="cmp-row"><span class="cmp-label">Data besar</span><span class="cmp-val cmp-good">Sangat baik</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kompleksitas</span><span class="cmp-val">O(nki)</span></div>
+    </div>
+    <div class="compare-card">
+      <div class="badge b-amber" style="margin-bottom:10px">DBSCAN</div>
+      <div class="cmp-row"><span class="cmp-label">Bentuk cluster</span><span class="cmp-val cmp-good">Bebas/arbitrer</span></div>
+      <div class="cmp-row"><span class="cmp-label">Tentukan K</span><span class="cmp-val cmp-good">Tidak perlu</span></div>
+      <div class="cmp-row"><span class="cmp-label">Outlier</span><span class="cmp-val cmp-good">Sangat robust</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kecepatan</span><span class="cmp-val">Sedang</span></div>
+      <div class="cmp-row"><span class="cmp-label">Assignment</span><span class="cmp-val">Hard</span></div>
+      <div class="cmp-row"><span class="cmp-label">Data besar</span><span class="cmp-val">Sedang</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kompleksitas</span><span class="cmp-val">O(n log n)</span></div>
+    </div>
+    <div class="compare-card">
+      <div class="badge b-purple" style="margin-bottom:10px">Hierarchical</div>
+      <div class="cmp-row"><span class="cmp-label">Bentuk cluster</span><span class="cmp-val">Fleksibel</span></div>
+      <div class="cmp-row"><span class="cmp-label">Tentukan K</span><span class="cmp-val cmp-good">Tidak (pasca)</span></div>
+      <div class="cmp-row"><span class="cmp-label">Outlier</span><span class="cmp-val cmp-bad">Cukup sensitif</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kecepatan</span><span class="cmp-val cmp-bad">Lambat</span></div>
+      <div class="cmp-row"><span class="cmp-label">Assignment</span><span class="cmp-val">Hard</span></div>
+      <div class="cmp-row"><span class="cmp-label">Data besar</span><span class="cmp-val cmp-bad">Tidak cocok</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kompleksitas</span><span class="cmp-val">O(n²) / O(n³)</span></div>
+    </div>
+    <div class="compare-card">
+      <div class="badge b-coral" style="margin-bottom:10px">GMM</div>
+      <div class="cmp-row"><span class="cmp-label">Bentuk cluster</span><span class="cmp-val">Elips bebas</span></div>
+      <div class="cmp-row"><span class="cmp-label">Tentukan K</span><span class="cmp-val cmp-bad">Ya, wajib</span></div>
+      <div class="cmp-row"><span class="cmp-label">Outlier</span><span class="cmp-val">Moderat</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kecepatan</span><span class="cmp-val">Sedang</span></div>
+      <div class="cmp-row"><span class="cmp-label">Assignment</span><span class="cmp-val cmp-good">Soft (prob.)</span></div>
+      <div class="cmp-row"><span class="cmp-label">Data besar</span><span class="cmp-val">Sedang</span></div>
+      <div class="cmp-row"><span class="cmp-label">Kompleksitas</span><span class="cmp-val">O(nkd²)</span></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3>🧭 Decision Guide — Pilih Algoritma yang Tepat</h3>
+    <svg width="100%" viewBox="0 0 900 280" style="margin-top:12px">
+      <defs>
+        <marker id="da" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"/>
+        </marker>
+      </defs>
+      <rect x="330" y="10" width="240" height="44" rx="10" fill="var(--blue-bg)" stroke="var(--blue)" stroke-width="1"/>
+      <text x="450" y="37" text-anchor="middle" font-size="14" font-weight="700" fill="var(--blue-dark)">Data kamu seperti apa?</text>
+      
+      <text x="90" y="85" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">Banyak outlier?</text>
+      <text x="310" y="85" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">Cluster non-konveks?</text>
+      <text x="540" y="85" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">Butuh probabilitas?</text>
+      <text x="760" y="85" text-anchor="middle" font-size="11" fill="currentColor" opacity=".6">Butuh dendrogram?</text>
+      
+      <line x1="450" y1="54" x2="90" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#da)"/>
+      <line x1="450" y1="54" x2="310" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#da)"/>
+      <line x1="450" y1="54" x2="540" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#da)"/>
+      <line x1="450" y1="54" x2="760" y2="100" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#da)"/>
+      
+      <rect x="20" y="110" width="140" height="44" rx="8" fill="var(--amber-bg)" stroke="var(--amber)" stroke-width="1"/>
+      <text x="90" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="var(--amber-dark)">DBSCAN</text>
+      
+      <rect x="230" y="110" width="160" height="44" rx="8" fill="var(--amber-bg)" stroke="var(--amber)" stroke-width="1"/>
+      <text x="310" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="var(--amber-dark)">DBSCAN / Hier.</text>
+      
+      <rect x="465" y="110" width="150" height="44" rx="8" fill="var(--coral-bg)" stroke="var(--coral)" stroke-width="1"/>
+      <text x="540" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="var(--coral-dark)">GMM</text>
+      
+      <rect x="680" y="110" width="160" height="44" rx="8" fill="var(--purple-bg)" stroke="var(--purple)" stroke-width="1"/>
+      <text x="760" y="136" text-anchor="middle" font-size="13" font-weight="700" fill="var(--purple-dark)">Hierarchical</text>
+      
+      <text x="450" y="200" text-anchor="middle" font-size="12" fill="currentColor" opacity=".5">Baseline / Data besar / K cluster sederhana / Interpretasi mudah</text>
+      <rect x="320" y="215" width="260" height="44" rx="8" fill="var(--teal-bg)" stroke="var(--teal)" stroke-width="1"/>
+      <text x="450" y="241" text-anchor="middle" font-size="13" font-weight="700" fill="var(--teal-dark)">K-Means (default choice)</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h3>📏 Metrik Evaluasi Clustering</h3>
+    <div class="grid2" style="margin-top:12px;margin-bottom:0">
+      <div>
+        <h3 style="color:var(--text2);font-size:13px;margin-bottom:10px">Internal (tanpa ground truth)</h3>
+        <div style="margin-bottom:12px;border-left:3px solid var(--blue);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">Silhouette Score [-1, 1]</div>
+          <p style="font-size:12px">Seberapa mirip titik dengan clusternya vs cluster tetangga. Semakin tinggi semakin baik.</p>
+          <div class="formula" style="font-size:11px;margin:6px 0 0">s(i) = (b - a) / max(a, b)</div>
+        </div>
+        <div style="margin-bottom:12px;border-left:3px solid var(--teal);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">Davies-Bouldin Index</div>
+          <p style="font-size:12px">Rasio rata-rata cluster radius terhadap jarak antar centroid. Lebih kecil = lebih baik.</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">Calinski-Harabász (CH) Index</div>
+          <p style="font-size:12px">Rasio between-cluster vs within-cluster dispersion. Lebih besar = lebih baik.</p>
+        </div>
+      </div>
+      <div>
+        <h3 style="color:var(--text2);font-size:13px;margin-bottom:10px">External (dengan ground truth label)</h3>
+        <div style="margin-bottom:12px;border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">Adjusted Rand Index (ARI) [-1, 1]</div>
+          <p style="font-size:12px">Kemiripan antara hasil clustering dengan label sebenarnya, terkoreksi random chance.</p>
+        </div>
+        <div style="margin-bottom:12px;border-left:3px solid var(--coral);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">Normalized Mutual Information (NMI)</div>
+          <p style="font-size:12px">Mutual information ternormalisasi antara cluster dan label. Range [0, 1].</p>
+        </div>
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:2px">Fowlkes-Mallows Score</div>
+          <p style="font-size:12px">Geometric mean dari precision dan recall atas pasang titik dalam cluster yang sama.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CODE ===================== -->
+<section id="tab-code" class="section">
+  <div class="section-title">
+    <div class="section-title-bar" style="background:#1D9E75"></div>
+    <div><div class="page-title">Implementasi Python</div>
+    <div class="page-sub">Kode siap pakai dengan scikit-learn — copy & run di Jupyter Notebook</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Setup & Import</h3>
+    <div class="code-block">
+<span class="cm"># Install jika belum ada: pip install scikit-learn matplotlib seaborn</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">from</span> sklearn.cluster <span class="kw">import</span> KMeans, DBSCAN, AgglomerativeClustering
+<span class="kw">from</span> sklearn.mixture <span class="kw">import</span> GaussianMixture
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> silhouette_score, davies_bouldin_score
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> make_blobs, make_moons, make_circles
+<span class="kw">from</span> scipy.cluster.hierarchy <span class="kw">import</span> dendrogram, linkage
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Generate Dataset</h3>
+    <div class="code-block">
+<span class="cm"># ---- Dataset 1: Blob clusters (cocok untuk K-Means) ----</span>
+X_blobs, y_blobs = make_blobs(n_samples=<span class="st">300</span>, centers=<span class="st">4</span>, cluster_std=<span class="st">0.8</span>, random_state=<span class="st">42</span>)
+
+<span class="cm"># ---- Dataset 2: Two moons (cocok untuk DBSCAN) ----</span>
+X_moons, y_moons = make_moons(n_samples=<span class="st">300</span>, noise=<span class="st">0.05</span>, random_state=<span class="st">42</span>)
+
+<span class="cm"># ---- Dataset 3: Circles (cocok untuk DBSCAN) ----</span>
+X_circles, y_circles = make_circles(n_samples=<span class="st">300</span>, noise=<span class="st">0.05</span>, factor=<span class="st">0.5</span>, random_state=<span class="st">42</span>)
+
+<span class="cm"># Normalisasi (PENTING untuk K-Means & DBSCAN) ----</span>
+scaler = StandardScaler()
+X_scaled = scaler.<span class="fn">fit_transform</span>(X_blobs)
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>K-Means</h3>
+      <div class="code-block">
+<span class="cm"># ---- K-Means dengan K-Means++ init ----</span>
+kmeans = KMeans(
+    n_clusters=<span class="st">4</span>,
+    init=<span class="st">'k-means++'</span>,   <span class="cm"># lebih stabil</span>
+    n_init=<span class="st">10</span>,           <span class="cm"># 10x restart</span>
+    max_iter=<span class="st">300</span>,
+    random_state=<span class="st">42</span>
+)
+labels = kmeans.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="cm"># Elbow Method untuk K optimal</span>
+inertias = []
+K_range = <span class="fn">range</span>(<span class="st">1</span>, <span class="st">11</span>)
+<span class="kw">for</span> k <span class="kw">in</span> K_range:
+    km = KMeans(n_clusters=k, random_state=<span class="st">42</span>, n_init=<span class="st">10</span>)
+    km.<span class="fn">fit</span>(X_scaled)
+    inertias.<span class="fn">append</span>(km.inertia_)
+
+plt.<span class="fn">plot</span>(K_range, inertias, <span class="st">'bo-'</span>)
+plt.<span class="fn">xlabel</span>(<span class="st">'K'</span>); plt.<span class="fn">ylabel</span>(<span class="st">'Inertia (WCSS)'</span>)
+plt.<span class="fn">title</span>(<span class="st">'Elbow Method'</span>); plt.<span class="fn">show</span>()
+
+<span class="cm"># Evaluasi</span>
+sil = <span class="fn">silhouette_score</span>(X_scaled, labels)
+db  = <span class="fn">davies_bouldin_score</span>(X_scaled, labels)
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"Silhouette: {sil:.3f}, DB Index: {db:.3f}"</span>)
+      </div>
+    </div>
+    <div class="card">
+      <h3>DBSCAN</h3>
+      <div class="code-block">
+<span class="cm"># ---- DBSCAN ----</span>
+dbscan = DBSCAN(
+    eps=<span class="st">0.3</span>,        <span class="cm"># radius neighborhood</span>
+    min_samples=<span class="st">5</span>   <span class="cm"># MinPts</span>
+)
+labels_db = dbscan.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="cm"># -1 = noise/outlier</span>
+n_clusters = <span class="fn">len</span>(<span class="fn">set</span>(labels_db)) - (<span class="st">1</span> <span class="kw">if</span> -<span class="st">1</span> <span class="kw">in</span> labels_db <span class="kw">else</span> <span class="st">0</span>)
+n_noise = <span class="fn">list</span>(labels_db).<span class="fn">count</span>(-<span class="st">1</span>)
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"Clusters: {n_clusters}, Noise: {n_noise}"</span>)
+
+<span class="cm"># Mencari eps optimal dengan k-distance graph</span>
+<span class="kw">from</span> sklearn.neighbors <span class="kw">import</span> NearestNeighbors
+nbrs = NearestNeighbors(n_neighbors=<span class="st">5</span>).<span class="fn">fit</span>(X_scaled)
+distances, _ = nbrs.<span class="fn">kneighbors</span>(X_scaled)
+distances = np.<span class="fn">sort</span>(distances[:, -<span class="st">1</span>])
+plt.<span class="fn">plot</span>(distances)
+plt.<span class="fn">ylabel</span>(<span class="st">'5th nearest distance'</span>)
+plt.<span class="fn">title</span>(<span class="st">'K-Distance Graph (cari "siku")'</span>)
+plt.<span class="fn">show</span>()
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Hierarchical Clustering + Dendrogram</h3>
+      <div class="code-block">
+<span class="cm"># ---- Agglomerative Clustering ----</span>
+agg = AgglomerativeClustering(
+    n_clusters=<span class="st">4</span>,
+    linkage=<span class="st">'ward'</span>   <span class="cm"># 'ward','complete','average','single'</span>
+)
+labels_agg = agg.<span class="fn">fit_predict</span>(X_scaled)
+
+<span class="cm"># ---- Dendrogram dengan scipy ----</span>
+linkage_matrix = <span class="fn">linkage</span>(X_scaled[:<span class="st">50</span>], method=<span class="st">'ward'</span>)  <span class="cm"># sample kecil</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="st">12, 4</span>))
+<span class="fn">dendrogram</span>(linkage_matrix, truncate_mode=<span class="st">'level'</span>, p=<span class="st">5</span>)
+plt.<span class="fn">title</span>(<span class="st">'Dendrogram'</span>)
+plt.<span class="fn">xlabel</span>(<span class="st">'Data points'</span>)
+plt.<span class="fn">ylabel</span>(<span class="st">'Distance'</span>)
+plt.<span class="fn">show</span>()
+      </div>
+    </div>
+    <div class="card">
+      <h3>Gaussian Mixture Models</h3>
+      <div class="code-block">
+<span class="cm"># ---- GMM ----</span>
+gmm = GaussianMixture(
+    n_components=<span class="st">4</span>,
+    covariance_type=<span class="st">'full'</span>,  <span class="cm"># 'full','tied','diag','spherical'</span>
+    n_init=<span class="st">5</span>,
+    random_state=<span class="st">42</span>
+)
+gmm.<span class="fn">fit</span>(X_scaled)
+
+<span class="cm"># Hard assignment</span>
+labels_gmm = gmm.<span class="fn">predict</span>(X_scaled)
+
+<span class="cm"># Soft assignment (probabilitas)</span>
+probs = gmm.<span class="fn">predict_proba</span>(X_scaled)
+<span class="fn">print</span>(<span class="st">"Probabilitas titik pertama:"</span>, probs[<span class="st">0</span>])
+
+<span class="cm"># Model selection dengan BIC/AIC</span>
+bics = []
+<span class="kw">for</span> k <span class="kw">in</span> <span class="fn">range</span>(<span class="st">1</span>, <span class="st">10</span>):
+    g = GaussianMixture(n_components=k, random_state=<span class="st">42</span>)
+    g.<span class="fn">fit</span>(X_scaled)
+    bics.<span class="fn">append</span>(g.<span class="fn">bic</span>(X_scaled))
+<span class="cm"># Pilih K dengan BIC minimum</span>
+optimal_k = np.<span class="fn">argmin</span>(bics) + <span class="st">1</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== LATIHAN ===================== -->
+<section id="tab-latihan" class="section">
+  <div class="section-title">
+    <div class="section-title-bar" style="background:var(--amber)"></div>
+    <div><div class="page-title">Latihan & Diskusi</div>
+    <div class="page-sub">Klik soal untuk melihat jawaban/pembahasan</div></div>
+  </div>
+
+  <div id="soal-list">
+
+    <div class="soal-card" onclick="toggleSoal('s1')">
+      <div class="soal-head">
+        <div>
+          <span class="badge b-blue" style="margin-bottom:6px">Konseptual</span>
+          <div class="soal-q">1. Apa perbedaan utama antara supervised learning (klasifikasi) dan unsupervised learning (clustering)? Berikan contoh algoritma masing-masing dan jelaskan kapan masing-masing digunakan.</div>
+        </div>
+        <div class="soal-icon" id="s1-icon">▾</div>
+      </div>
+      <div class="soal-ans" id="s1-ans">
+        <strong>Supervised Learning (Klasifikasi):</strong> Memerlukan data berlabel (training set dengan class label). Model belajar memetakan input → output berdasarkan contoh. Algoritma: Decision Tree, SVM, Neural Network, Naive Bayes. Digunakan saat kita punya data berlabel dan ingin memprediksi kategori data baru.<br><br>
+        <strong>Unsupervised Learning (Clustering):</strong> Tidak memerlukan label. Model menemukan struktur/pola tersembunyi dari data itu sendiri. Algoritma: K-Means, DBSCAN, Hierarchical, GMM. Digunakan saat tidak ada label, atau ingin eksplorasi data, atau menemukan segmen alami dalam data.
+      </div>
+    </div>
+
+    <div class="soal-card" onclick="toggleSoal('s2')">
+      <div class="soal-head">
+        <div>
+          <span class="badge b-teal" style="margin-bottom:6px">K-Means Hitung Manual</span>
+          <div class="soal-q">2. Diberikan 6 titik: A(1,1), B(2,1), C(1,2), D(8,8), E(9,8), F(8,9). Lakukan K-Means dengan K=2, centroid awal C₁=(1,1) dan C₂=(8,8). Tunjukkan hasil iterasi pertama dan kedua hingga konvergen.</div>
+        </div>
+        <div class="soal-icon" id="s2-icon">▾</div>
+      </div>
+      <div class="soal-ans" id="s2-ans">
+        <strong>Iterasi 1 — Assignment:</strong><br>
+        Euclidean distance ke C₁(1,1): A=0, B=1, C=1, D=9.90, E=10.63, F=10.63<br>
+        Euclidean distance ke C₂(8,8): A=9.90, B=9.22, C=9.22, D=0, E=1, F=1<br>
+        → <strong>Cluster 1: {A, B, C}</strong> &nbsp;|&nbsp; <strong>Cluster 2: {D, E, F}</strong><br><br>
+        <strong>Iterasi 1 — Update Centroid:</strong><br>
+        C₁ baru = ((1+2+1)/3, (1+1+2)/3) = <strong>(1.33, 1.33)</strong><br>
+        C₂ baru = ((8+9+8)/3, (8+8+9)/3) = <strong>(8.33, 8.33)</strong><br><br>
+        <strong>Iterasi 2 — Assignment (dengan centroid baru):</strong><br>
+        Jarak A(1,1) ke C₁(1.33,1.33) = 0.47 &nbsp;|&nbsp; ke C₂(8.33,8.33) = 10.37 → Cluster 1<br>
+        Semua titik tetap di cluster yang sama → <strong>Konvergen!</strong> Tidak ada perubahan assignment.
+      </div>
+    </div>
+
+    <div class="soal-card" onclick="toggleSoal('s3')">
+      <div class="soal-head">
+        <div>
+          <span class="badge b-amber" style="margin-bottom:6px">DBSCAN Analisis</span>
+          <div class="soal-q">3. Mengapa DBSCAN lebih unggul dari K-Means untuk mendeteksi cluster berbentuk cincin (ring-shaped) atau bulan sabit (crescent)? Jelaskan secara matematis dan intuitif.</div>
+        </div>
+        <div class="soal-icon" id="s3-icon">▾</div>
+      </div>
+      <div class="soal-ans" id="s3-ans">
+        <strong>Intuitif:</strong> K-Means menetapkan setiap titik ke centroid TERDEKAT. Cluster cincin memiliki centroid di tengah lingkaran — area yang kosong! K-Means akan salah mempartisi titik-titik di cincin ke "sisi" yang berbeda berdasarkan jarak ke centroid.<br><br>
+        <strong>Matematis:</strong> Objective K-Means J = Σ||x - μₖ||² mengasumsikan cluster berbentuk <em>convex dan bulat</em> (isotropic). Bentuk cincin tidak convex — tidak ada centroid yang mewakilinya dengan baik.<br><br>
+        <strong>DBSCAN:</strong> Bekerja berdasarkan <em>kepadatan lokal</em>: menghubungkan titik yang saling berdekatan dalam radius ε. Titik-titik di sepanjang cincin saling terhubung karena setiap titik memiliki tetangga yang cukup dekat. Algoritma "merangkak" mengikuti kepadatan tanpa asumsi bentuk cluster tertentu.
+      </div>
+    </div>
+
+    <div class="soal-card" onclick="toggleSoal('s4')">
+      <div class="soal-head">
+        <div>
+          <span class="badge b-purple" style="margin-bottom:6px">Evaluasi</span>
+          <div class="soal-q">4. Jelaskan Silhouette Score: rumus, interpretasi nilai, dan bagaimana kamu menggunakannya untuk memilih K optimal di K-Means. Apa keterbatasannya?</div>
+        </div>
+        <div class="soal-icon" id="s4-icon">▾</div>
+      </div>
+      <div class="soal-ans" id="s4-ans">
+        <strong>Rumus:</strong> s(i) = (b(i) - a(i)) / max(a(i), b(i))<br>
+        • a(i) = rata-rata jarak titik i ke semua titik DALAM clusternya (cohesion)<br>
+        • b(i) = rata-rata jarak titik i ke semua titik di cluster TETANGGA terdekat (separation)<br><br>
+        <strong>Interpretasi:</strong><br>
+        • s ≈ +1: titik berada sangat jauh dari cluster lain → clustering sangat baik<br>
+        • s ≈ 0: titik berada di perbatasan antar cluster<br>
+        • s ≈ -1: titik kemungkinan salah cluster<br><br>
+        <strong>Memilih K:</strong> Hitung rata-rata Silhouette Score untuk K=2..10. Pilih K dengan skor tertinggi.<br><br>
+        <strong>Keterbatasan:</strong> (1) Mahal secara komputasi O(n²). (2) Bisa bias terhadap cluster berbentuk konveks. (3) Tidak cocok untuk data berdimensi sangat tinggi.
+      </div>
+    </div>
+
+    <div class="soal-card" onclick="toggleSoal('s5')">
+      <div class="soal-head">
+        <div>
+          <span class="badge b-coral" style="margin-bottom:6px">Studi Kasus</span>
+          <div class="soal-q">5. Startup e-commerce ingin segmentasi 500.000 pelanggan berdasarkan: frekuensi beli/bulan, total pengeluaran, kategori produk favorit, dan waktu aktif. Algoritma apa yang kamu rekomendasikan? Jelaskan langkah preprocessing dan validasi.</div>
+        </div>
+        <div class="soal-icon" id="s5-icon">▾</div>
+      </div>
+      <div class="soal-ans" id="s5-ans">
+        <strong>Rekomendasi: K-Means (skala besar) atau GMM (analisis mendalam)</strong><br><br>
+        <strong>Preprocessing:</strong><br>
+        1. Handle missing values (imputation median/modus)<br>
+        2. Encode kategori (One-Hot Encoding untuk kategori produk)<br>
+        3. <strong>Standardisasi wajib</strong>: StandardScaler() — frekuensi (0-30) dan pengeluaran (0-10jt) berbeda skala<br>
+        4. Optionally: PCA untuk reduksi dimensi jika >20 fitur<br><br>
+        <strong>Pemilihan K:</strong> Gunakan Elbow Method + Silhouette Score. Ekspektasi 4-6 segmen (misal: loyal high-spender, occasional buyer, bargain hunter, new user).<br><br>
+        <strong>Validasi bisnis:</strong> Beri nama setiap cluster, pastikan segmen masuk akal secara bisnis. Gunakan cluster sebagai input untuk strategi marketing berbeda.
+      </div>
+    </div>
+
+    <div class="soal-card" onclick="toggleSoal('s6')">
+      <div class="soal-head">
+        <div>
+          <span class="badge b-blue" style="margin-bottom:6px">Pemrograman</span>
+          <div class="soal-q">6. Tulis kode Python lengkap: load dataset Iris (sklearn.datasets.load_iris), lakukan K-Means dengan K=3, visualisasikan cluster dalam 2D menggunakan PCA, dan cetak Silhouette Score.</div>
+        </div>
+        <div class="soal-icon" id="s6-icon">▾</div>
+      </div>
+      <div class="soal-ans" id="s6-ans">
+        <div class="code-block" style="font-family:'Courier New',monospace;font-size:12px;line-height:1.7">
+from sklearn.datasets import load_iris<br>
+from sklearn.cluster import KMeans<br>
+from sklearn.preprocessing import StandardScaler<br>
+from sklearn.decomposition import PCA<br>
+from sklearn.metrics import silhouette_score<br>
+import matplotlib.pyplot as plt<br>
+import numpy as np<br><br>
+<span style="color:var(--text3)"># Load data</span><br>
+iris = load_iris()<br>
+X = iris.data  <span style="color:var(--text3)"># 150 sampel, 4 fitur</span><br><br>
+<span style="color:var(--text3)"># Preprocessing</span><br>
+scaler = StandardScaler()<br>
+X_scaled = scaler.fit_transform(X)<br><br>
+<span style="color:var(--text3)"># K-Means</span><br>
+kmeans = KMeans(n_clusters=3, init='k-means++', n_init=10, random_state=42)<br>
+labels = kmeans.fit_predict(X_scaled)<br><br>
+<span style="color:var(--text3)"># Evaluasi</span><br>
+sil = silhouette_score(X_scaled, labels)<br>
+print(f"Silhouette Score: {sil:.4f}")<br><br>
+<span style="color:var(--text3)"># Visualisasi dengan PCA 2D</span><br>
+pca = PCA(n_components=2)<br>
+X_2d = pca.fit_transform(X_scaled)<br><br>
+plt.figure(figsize=(8, 6))<br>
+colors = ['#1D9E75', '#EF9F27', '#378ADD']<br>
+for i in range(3):<br>
+&nbsp;&nbsp;&nbsp;&nbsp;mask = labels == i<br>
+&nbsp;&nbsp;&nbsp;&nbsp;plt.scatter(X_2d[mask, 0], X_2d[mask, 1],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;c=colors[i], label=f'Cluster {i+1}', alpha=0.7)<br>
+plt.title(f'K-Means Iris (Silhouette={sil:.3f})')<br>
+plt.xlabel('PC1'); plt.ylabel('PC2')<br>
+plt.legend(); plt.show()
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  Materi Kecerdasan Buatan — Clustering & Unsupervised Learning &nbsp;·&nbsp; Informatika 2025
+</footer>
+
+<script>
+// ============================================================
+// TAB NAVIGATION
+// ============================================================
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  if (btn) btn.classList.add('active');
+  else document.querySelector('.nav button').classList.add('active');
+  if (id === 'dbscan') setTimeout(drawDBSCAN, 50);
+  if (id === 'gmm') setTimeout(drawGMM, 50);
+  if (id === 'hierarchical') setTimeout(drawDendrogram, 50);
+  if (id === 'kmeans') { setTimeout(drawElbow, 50); }
+}
+
+// ============================================================
+// SOAL TOGGLE
+// ============================================================
+function toggleSoal(id) {
+  const ans = document.getElementById(id + '-ans');
+  const icon = document.getElementById(id + '-icon');
+  ans.classList.toggle('show');
+  icon.classList.toggle('open');
+  icon.textContent = ans.classList.contains('show') ? '▴' : '▾';
+}
+
+// ============================================================
+// UTILS
+// ============================================================
+const COLORS = ['#378ADD','#1D9E75','#EF9F27','#D4537E','#7F77DD','#D85A30'];
+
+function isDark() {
+  return window.matchMedia('(prefers-color-scheme: dark)').matches;
+}
+
+function canvasBg() { return isDark() ? '#1a1a18' : '#f8f7f4'; }
+function textCol() { return isDark() ? '#a0a098' : '#8a8a84'; }
+
+// ============================================================
+// ELBOW METHOD CHART
+// ============================================================
+function drawElbow() {
+  const c = document.getElementById('elbow-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const w = c.width, h = c.height;
+  ctx.clearRect(0, 0, w, h);
+  ctx.fillStyle = canvasBg();
+  ctx.fillRect(0, 0, w, h);
+
+  const inertias = [2400, 1200, 580, 420, 390, 370, 360, 355, 351, 349];
+  const Ks = [1,2,3,4,5,6,7,8,9,10];
+  const pad = {l:40, r:20, t:15, b:35};
+  const pw = w - pad.l - pad.r, ph = h - pad.t - pad.b;
+  const maxI = Math.max(...inertias), minI = Math.min(...inertias);
+
+  function xOf(i) { return pad.l + (i / (Ks.length - 1)) * pw; }
+  function yOf(v) { return pad.t + ph - ((v - minI) / (maxI - minI)) * ph; }
+
+  // Grid
+  ctx.strokeStyle = isDark() ? 'rgba(255,255,255,0.06)' : 'rgba(0,0,0,0.06)';
+  ctx.lineWidth = 0.5;
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.t + (i / 4) * ph;
+    ctx.beginPath(); ctx.moveTo(pad.l, y); ctx.lineTo(w - pad.r, y); ctx.stroke();
+  }
+
+  // Line
+  ctx.beginPath(); ctx.strokeStyle = '#185FA5'; ctx.lineWidth = 2;
+  inertias.forEach((v, i) => {
+    if (i === 0) ctx.moveTo(xOf(i), yOf(v));
+    else ctx.lineTo(xOf(i), yOf(v));
+  });
+  ctx.stroke();
+
+  // Dots
+  inertias.forEach((v, i) => {
+    ctx.beginPath();
+    ctx.arc(xOf(i), yOf(v), i === 2 ? 7 : 4, 0, Math.PI * 2);
+    ctx.fillStyle = i === 2 ? '#E24B4A' : '#185FA5';
+    ctx.fill();
+  });
+
+  // Labels
+  ctx.fillStyle = textCol(); ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  Ks.forEach((k, i) => ctx.fillText(k, xOf(i), h - pad.b + 14));
+  ctx.textAlign = 'left'; ctx.font = '10px sans-serif';
+  ctx.fillStyle = '#E24B4A';
+  ctx.fillText('← Elbow (K=3)', xOf(2) + 8, yOf(inertias[2]) - 6);
+
+  // Axis labels
+  ctx.fillStyle = textCol(); ctx.font = '10px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText('K', w / 2, h);
+  ctx.save(); ctx.translate(12, h / 2); ctx.rotate(-Math.PI / 2);
+  ctx.fillText('WCSS', 0, 0); ctx.restore();
+}
+
+// ============================================================
+// K-MEANS
+// ============================================================
+let kmPoints = [];
+
+function generateBlobs() {
+  const centers = [[150, 90],[300, 220],[480, 100],[420, 260]];
+  const pts = [];
+  centers.forEach(([cx, cy]) => {
+    for (let i = 0; i < 20; i++) {
+      pts.push({
+        x: cx + (Math.random() - 0.5) * 90,
+        y: cy + (Math.random() - 0.5) * 70,
+        cluster: -1
+      });
+    }
+  });
+  return pts;
+}
+
+function resetKMeans() {
+  kmPoints = generateBlobs();
+  drawKMeans();
+  document.getElementById('km-stats').textContent = '';
+}
+
+function addRandomKMPoints() {
+  for (let i = 0; i < 10; i++) {
+    kmPoints.push({ x: 30 + Math.random() * 820, y: 20 + Math.random() * 300, cluster: -1 });
+  }
+  drawKMeans();
+}
+
+function addKMPoint(e) {
+  const c = document.getElementById('km-canvas');
+  const r = c.getBoundingClientRect();
+  kmPoints.push({
+    x: (e.clientX - r.left) * (c.width / r.width),
+    y: (e.clientY - r.top) * (c.height / r.height),
+    cluster: -1
+  });
+  drawKMeans();
+}
+
+function runKMeans() {
+  const k = +document.getElementById('km-k').value;
+  if (kmPoints.length < k) return;
+  // K-Means++ init
+  const cents = [];
+  cents.push({...kmPoints[Math.floor(Math.random() * kmPoints.length)]});
+  while (cents.length < k) {
+    const dists = kmPoints.map(p => {
+      const d = Math.min(...cents.map(c => Math.hypot(p.x - c.x, p.y - c.y)));
+      return d * d;
+    });
+    const sum = dists.reduce((a, b) => a + b, 0);
+    let r = Math.random() * sum, acc = 0;
+    for (let i = 0; i < dists.length; i++) {
+      acc += dists[i];
+      if (acc >= r) { cents.push({...kmPoints[i]}); break; }
+    }
+  }
+  // Iterate
+  let changed = true;
+  for (let iter = 0; iter < 100 && changed; iter++) {
+    changed = false;
+    kmPoints.forEach(p => {
+      let best = 0, bd = Infinity;
+      cents.forEach((c, i) => { const d = Math.hypot(p.x - c.x, p.y - c.y); if (d < bd) { bd = d; best = i; } });
+      if (p.cluster !== best) { p.cluster = best; changed = true; }
+    });
+    cents.forEach((c, i) => {
+      const pts = kmPoints.filter(p => p.cluster === i);
+      if (pts.length) {
+        c.x = pts.reduce((s, p) => s + p.x, 0) / pts.length;
+        c.y = pts.reduce((s, p) => s + p.y, 0) / pts.length;
+      }
+    });
+  }
+  drawKMeans(cents);
+  // Stats
+  let wcss = 0;
+  kmPoints.forEach(p => {
+    const c = cents[p.cluster];
+    wcss += Math.hypot(p.x - c.x, p.y - c.y) ** 2;
+  });
+  document.getElementById('km-stats').textContent = `WCSS: ${Math.round(wcss).toLocaleString()} | Titik: ${kmPoints.length} | K: ${k}`;
+}
+
+function drawKMeans(cents) {
+  const c = document.getElementById('km-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.fillStyle = canvasBg(); ctx.fillRect(0, 0, c.width, c.height);
+  kmPoints.forEach(p => {
+    const col = p.cluster >= 0 ? COLORS[p.cluster % COLORS.length] : (isDark() ? '#555' : '#ccc');
+    ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2);
+    ctx.fillStyle = col + 'cc'; ctx.fill();
+    ctx.strokeStyle = col; ctx.lineWidth = 1; ctx.stroke();
+  });
+  if (cents) {
+    cents.forEach((ce, i) => {
+      // Draw star shape for centroid
+      ctx.beginPath();
+      for (let j = 0; j < 5; j++) {
+        const a = (j * 4 * Math.PI / 5) - Math.PI / 2;
+        const a2 = a + 2 * Math.PI / 10;
+        if (j === 0) ctx.moveTo(ce.x + Math.cos(a) * 12, ce.y + Math.sin(a) * 12);
+        ctx.lineTo(ce.x + Math.cos(a) * 12, ce.y + Math.sin(a) * 12);
+        ctx.lineTo(ce.x + Math.cos(a2) * 6, ce.y + Math.sin(a2) * 6);
+      }
+      ctx.closePath();
+      ctx.fillStyle = COLORS[i % COLORS.length];
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+      ctx.fill(); ctx.stroke();
+    });
+  }
+}
+
+resetKMeans();
+setTimeout(drawElbow, 100);
+
+// ============================================================
+// DBSCAN
+// ============================================================
+let dbPoints = [];
+
+function generateDBPoints() {
+  const pts = [];
+  // Cluster 1: crescent
+  for (let i = 0; i < 50; i++) {
+    const t = (i / 50) * Math.PI;
+    pts.push({ x: 100 + Math.cos(t) * 100 + (Math.random() - .5) * 20, y: 120 + Math.sin(t) * 80 + (Math.random() - .5) * 20 });
+  }
+  // Cluster 2: blob
+  for (let i = 0; i < 40; i++) {
+    pts.push({ x: 500 + (Math.random() - .5) * 120, y: 140 + (Math.random() - .5) * 100 });
+  }
+  // Cluster 3: ring
+  for (let i = 0; i < 40; i++) {
+    const t = (i / 40) * Math.PI * 2;
+    const r = 60 + (Math.random() - .5) * 16;
+    pts.push({ x: 720 + Math.cos(t) * r, y: 190 + Math.sin(t) * r * 0.7 });
+  }
+  // Outliers
+  for (let i = 0; i < 10; i++) {
+    pts.push({ x: 30 + Math.random() * 840, y: 20 + Math.random() * 320 });
+  }
+  return pts;
+}
+
+function resetDBPoints() {
+  dbPoints = generateDBPoints();
+  drawDBSCAN();
+}
+
+function addDBPoint(e) {
+  const c = document.getElementById('db-canvas');
+  const r = c.getBoundingClientRect();
+  dbPoints.push({ x: (e.clientX - r.left) * (c.width / r.width), y: (e.clientY - r.top) * (c.height / r.height) });
+  drawDBSCAN();
+}
+
+function runDBSCAN_algo(eps, minPts) {
+  const n = dbPoints.length;
+  const visited = new Array(n).fill(false);
+  const cluster = new Array(n).fill(-2); // -2 = unvisited
+  let clId = 0;
+
+  function neighbors(i) {
+    return dbPoints.reduce((acc, p, j) => {
+      if (Math.hypot(dbPoints[i].x - p.x, dbPoints[i].y - p.y) <= eps) acc.push(j);
+      return acc;
+    }, []);
+  }
+
+  for (let i = 0; i < n; i++) {
+    if (visited[i]) continue;
+    visited[i] = true;
+    const nb = neighbors(i);
+    if (nb.length < minPts) { cluster[i] = -1; continue; }
+    cluster[i] = clId;
+    const queue = nb.filter(j => !visited[j]);
+    while (queue.length) {
+      const j = queue.shift();
+      if (!visited[j]) {
+        visited[j] = true;
+        const nb2 = neighbors(j);
+        if (nb2.length >= minPts) queue.push(...nb2.filter(x => !visited[x]));
+      }
+      if (cluster[j] < 0) cluster[j] = clId;
+    }
+    clId++;
+  }
+  return { cluster, clId };
+}
+
+function drawDBSCAN() {
+  const c = document.getElementById('db-canvas');
+  if (!c) return;
+  const eps = +document.getElementById('db-eps').value;
+  const minPts = +document.getElementById('db-min').value;
+  const showEps = document.getElementById('db-show-eps').checked;
+  const ctx = c.getContext('2d');
+  ctx.clearRect(0, 0, c.width, c.height);
+  ctx.fillStyle = canvasBg(); ctx.fillRect(0, 0, c.width, c.height);
+
+  if (!dbPoints.length) return;
+  const { cluster, clId } = runDBSCAN_algo(eps, minPts);
+
+  function getNeighborCount(i) {
+    return dbPoints.filter((p, j) => Math.hypot(dbPoints[i].x - p.x, dbPoints[i].y - p.y) <= eps).length;
+  }
+
+  // Draw epsilon circles for core points
+  if (showEps) {
+    dbPoints.forEach((p, i) => {
+      if (getNeighborCount(i) >= minPts) {
+        ctx.beginPath(); ctx.arc(p.x, p.y, eps, 0, Math.PI * 2);
+        ctx.strokeStyle = isDark() ? 'rgba(100,160,220,0.08)' : 'rgba(30,100,200,0.06)';
+        ctx.fillStyle = isDark() ? 'rgba(100,160,220,0.03)' : 'rgba(30,100,200,0.03)';
+        ctx.lineWidth = 0.8; ctx.fill(); ctx.stroke();
+      }
+    });
+  }
+
+  dbPoints.forEach((p, i) => {
+    const isCore = getNeighborCount(i) >= minPts;
+    const isNoise = cluster[i] === -1;
+    const col = isNoise ? '#E24B4A' : (cluster[i] >= 0 ? COLORS[cluster[i] % COLORS.length] : '#EF9F27');
+
+    if (isNoise) {
+      ctx.strokeStyle = '#E24B4A'; ctx.lineWidth = 2;
+      ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(p.x - 4, p.y - 4); ctx.lineTo(p.x + 4, p.y + 4);
+      ctx.moveTo(p.x + 4, p.y - 4); ctx.lineTo(p.x - 4, p.y + 4);
+      ctx.lineWidth = 1.5; ctx.stroke();
+    } else {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, isCore ? 7 : 5, 0, Math.PI * 2);
+      ctx.fillStyle = col + (isCore ? 'cc' : '88');
+      ctx.fill();
+      ctx.strokeStyle = col; ctx.lineWidth = 1.2; ctx.stroke();
+    }
+  });
+
+  const nNoise = cluster.filter(c => c === -1).length;
+  const stats = `Cluster: ${clId} | Core: ${dbPoints.filter((_,i) => getNeighborCount(i)>=minPts && cluster[i]>=0).length} | Border: ${cluster.filter((c,i) => c>=0 && getNeighborCount(i)<minPts).length} | Noise: ${nNoise}`;
+  document.getElementById('db-stats').textContent = stats;
+}
+
+resetDBPoints();
+
+// ============================================================
+// DENDROGRAM
+// ============================================================
+const DENDRO_POINTS = ['A','B','C','D','E','F','G','H','I','J','K','L'];
+const DENDRO_COLORS = [
+  ['#378ADD','#378ADD','#1D9E75','#1D9E75','#1D9E75','#EF9F27','#EF9F27','#D4537E','#D4537E','#D4537E','#7F77DD','#7F77DD'],
+  ['#185FA5','#185FA5','#0F6E56','#0F6E56','#0F6E56','#854F0B','#854F0B','#993C1D','#993C1D','#993C1D','#534AB7','#534AB7'],
+  ['#185FA5','#185FA5','#0F6E56','#0F6E56','#0F6E56','#854F0B','#854F0B','#A32D2D','#A32D2D','#A32D2D','#534AB7','#534AB7'],
+  ['#185FA5','#185FA5','#0F6E56','#0F6E56','#0F6E56','#854F0B','#854F0B','#854F0B','#854F0B','#854F0B','#534AB7','#534AB7'],
+  ['#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5','#185FA5'],
+];
+
+function drawDendrogram() {
+  const c = document.getElementById('dendro-canvas');
+  if (!c) return;
+  const cut = +document.getElementById('dendro-cut').value;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = canvasBg(); ctx.fillRect(0, 0, W, H);
+
+  const n = DENDRO_POINTS.length;
+  const pad = { l: 40, r: 20, t: 20, b: 45 };
+  const step = (W - pad.l - pad.r) / (n - 1);
+  const levels = [0.12, 0.28, 0.48, 0.68, 0.85]; // normalized heights
+
+  function xOf(i) { return pad.l + i * step; }
+  function yOf(h) { return pad.t + (1 - h) * (H - pad.t - pad.b); }
+
+  // Merges: [idx1, idx2, merged_to, level_idx]
+  const merges = [
+    [0, 1, 0.5, 0],
+    [3, 4, 3.5, 0],
+    [5, 6, 5.5, 0],
+    [7, 8, 7.5, 0],
+    [10, 11, 10.5, 0],
+    [0.5, 2, 1.25, 1],
+    [3.5, 4, 3.5, 1],
+    [9, 7.5, 8.25, 1],
+    [0.5, 2, 1.25, 1],
+    [5.5, 8.25, 6.875, 2],
+    [1.25, 3.5, 2.375, 2],
+    [10.5, 2.375, 6.4375, 3],
+    [6.875, 6.4375, 6.65625, 4],
+  ];
+
+  // Draw merge lines
+  const lineData = [
+    {pts: [xOf(0), yOf(0), xOf(1), yOf(0), levels[0]], l: [0,1]},
+    {pts: [xOf(3), yOf(0), xOf(4), yOf(0), levels[0]], l: [3,4]},
+    {pts: [xOf(5), yOf(0), xOf(6), yOf(0), levels[0]], l: [5,6]},
+    {pts: [xOf(7), yOf(0), xOf(8), yOf(0), levels[0]], l: [7,8]},
+    {pts: [xOf(10), yOf(0), xOf(11), yOf(0), levels[0]], l: [10,11]},
+    {pts: [(xOf(0)+xOf(1))/2, yOf(levels[0]), xOf(2), yOf(levels[0]), levels[1]], l: [0,2]},
+    {pts: [(xOf(3)+xOf(4))/2, yOf(levels[0]), (xOf(3)+xOf(4))/2, yOf(levels[0]), levels[1]], l: [3,4]},
+    {pts: [(xOf(7)+xOf(8))/2, yOf(levels[0]), xOf(9), yOf(levels[0]), levels[1]], l: [7,9]},
+  ];
+
+  // Simple merge visualization
+  const clusterCuts = {
+    1: [[0,1,2,3,4,5,6,7,8,9,10,11]],
+    2: [[0,1,2,3,4,5,6,7,8,9],[10,11]],
+    3: [[0,1,2],[3,4,5,6],[7,8,9,10,11]],
+    4: [[0,1,2],[3,4],[5,6,7,8,9],[10,11]],
+    5: [[0,1],[2],[3,4,5,6],[7,8,9],[10,11]],
+  };
+
+  // Draw colored dots at bottom
+  const colMap = DENDRO_COLORS[cut - 1];
+  DENDRO_POINTS.forEach((lbl, i) => {
+    ctx.beginPath(); ctx.arc(xOf(i), yOf(0) + 10, 6, 0, Math.PI * 2);
+    ctx.fillStyle = colMap[i] + 'cc'; ctx.fill();
+    ctx.strokeStyle = colMap[i]; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.fillStyle = textCol(); ctx.font = '11px sans-serif';
+    ctx.textAlign = 'center';
+    ctx.fillText(lbl, xOf(i), H - pad.b + 28);
+  });
+
+  // Draw hierarchical lines
+  const tree = [
+    {x1:0,x2:1,y:levels[0]}, {x1:3,x2:4,y:levels[0]}, {x1:5,x2:6,y:levels[0]},
+    {x1:7,x2:8,y:levels[0]}, {x1:10,x2:11,y:levels[0]},
+    {x1:0,x2:2,y:levels[1],m:0.5}, {x1:3,x2:5,y:levels[1],m:3.5},
+    {x1:7,x2:9,y:levels[1],m:7.5}, {x1:10,x2:11,y:levels[1],m:10.5},
+    {x1:0,x2:5,y:levels[2],m:1.25,m2:4.25}, {x1:7,x2:11,y:levels[2],m:8.5,m2:10.5},
+    {x1:0,x2:11,y:levels[3],m:2.5,m2:9.25},
+  ];
+
+  // Cut line y position
+  const cutLevels = [0, levels[4], levels[3], levels[2], levels[1]];
+  const cutY = yOf(cutLevels[cut - 1] + 0.04);
+
+  // Draw tree manually
+  function lineSegment(x1, y1, x2, y2, col) {
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2);
+    ctx.strokeStyle = col; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  // Level 1 merges
+  const lvlY1 = yOf(levels[0]);
+  lineSegment(xOf(0), yOf(0)+10, xOf(0), lvlY1, '#378ADD');
+  lineSegment(xOf(1), yOf(0)+10, xOf(1), lvlY1, '#378ADD');
+  lineSegment(xOf(0), lvlY1, xOf(1), lvlY1, '#378ADD');
+  lineSegment(xOf(3), yOf(0)+10, xOf(3), lvlY1, '#1D9E75');
+  lineSegment(xOf(4), yOf(0)+10, xOf(4), lvlY1, '#1D9E75');
+  lineSegment(xOf(3), lvlY1, xOf(4), lvlY1, '#1D9E75');
+  lineSegment(xOf(5), yOf(0)+10, xOf(5), lvlY1, '#EF9F27');
+  lineSegment(xOf(6), yOf(0)+10, xOf(6), lvlY1, '#EF9F27');
+  lineSegment(xOf(5), lvlY1, xOf(6), lvlY1, '#EF9F27');
+  lineSegment(xOf(7), yOf(0)+10, xOf(7), lvlY1, '#D4537E');
+  lineSegment(xOf(8), yOf(0)+10, xOf(8), lvlY1, '#D4537E');
+  lineSegment(xOf(7), lvlY1, xOf(8), lvlY1, '#D4537E');
+  lineSegment(xOf(10), yOf(0)+10, xOf(10), lvlY1, '#7F77DD');
+  lineSegment(xOf(11), yOf(0)+10, xOf(11), lvlY1, '#7F77DD');
+  lineSegment(xOf(10), lvlY1, xOf(11), lvlY1, '#7F77DD');
+  lineSegment(xOf(2), yOf(0)+10, xOf(2), lvlY1, '#1D9E75');
+  lineSegment(xOf(9), yOf(0)+10, xOf(9), lvlY1, '#D4537E');
+
+  // Level 2
+  const lvlY2 = yOf(levels[1]);
+  const m01 = (xOf(0)+xOf(1))/2;
+  lineSegment(m01, lvlY1, m01, lvlY2, '#185FA5');
+  lineSegment(m01, lvlY2, xOf(2), lvlY2, '#185FA5');
+  lineSegment(xOf(2), lvlY1, xOf(2), lvlY2, '#185FA5');
+  const m34 = (xOf(3)+xOf(4))/2;
+  lineSegment(m34, lvlY1, m34, lvlY2, '#0F6E56');
+  lineSegment(m34, lvlY2, xOf(5), lvlY2, '#0F6E56');
+  lineSegment(xOf(5), lvlY1, xOf(5), lvlY2, '#0F6E56');
+  const m78 = (xOf(7)+xOf(8))/2;
+  lineSegment(m78, lvlY1, m78, lvlY2, '#993C1D');
+  lineSegment(m78, lvlY2, xOf(9), lvlY2, '#993C1D');
+  lineSegment(xOf(9), lvlY1, xOf(9), lvlY2, '#993C1D');
+  const m1011 = (xOf(10)+xOf(11))/2;
+  lineSegment(m1011, lvlY1, m1011, lvlY2, '#534AB7');
+
+  // Level 3
+  const lvlY3 = yOf(levels[2]);
+  const m012 = (m01+xOf(2))/2;
+  lineSegment(m012, lvlY2, m012, lvlY3, '#0C447C');
+  const m345 = (m34+xOf(5))/2;
+  lineSegment(m345, lvlY2, m345, lvlY3, '#0C447C');
+  lineSegment(m012, lvlY3, m345, lvlY3, '#0C447C');
+  const m789 = (m78+xOf(9))/2;
+  lineSegment(m789, lvlY2, m789, lvlY3, '#6B2020');
+  lineSegment(m789, lvlY3, m1011, lvlY3, '#6B2020');
+  lineSegment(m1011, lvlY2, m1011, lvlY3, '#6B2020');
+
+  // Level 4
+  const lvlY4 = yOf(levels[3]);
+  const m_left = (m012+m345)/2;
+  lineSegment(m_left, lvlY3, m_left, lvlY4, isDark()?'#888':'#555');
+  const m_right = (m789+m1011)/2;
+  lineSegment(m_right, lvlY3, m_right, lvlY4, isDark()?'#888':'#555');
+  lineSegment(m_left, lvlY4, m_right, lvlY4, isDark()?'#888':'#555');
+
+  // Cut line
+  ctx.beginPath();
+  ctx.setLineDash([8, 5]);
+  ctx.moveTo(pad.l - 10, cutY); ctx.lineTo(W - pad.r + 10, cutY);
+  ctx.strokeStyle = '#E24B4A'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = '#E24B4A'; ctx.font = '11px sans-serif'; ctx.textAlign = 'left';
+  ctx.fillText(`→ ${cut} cluster${cut > 1 ? 's' : ''}`, W - pad.r - 70, cutY - 5);
+}
+
+// ============================================================
+// GMM
+// ============================================================
+function drawGMM() {
+  const c = document.getElementById('gmm-canvas');
+  if (!c) return;
+  const k = +document.getElementById('gmm-k').value;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = canvasBg(); ctx.fillRect(0, 0, W, H);
+
+  const gmmColors = [[55,142,221],[29,158,117],[239,159,39],[212,83,126],[127,119,221]];
+  
+  // Generate Gaussian configs
+  const xSpread = W / (k + 1);
+  const gaussians = Array.from({length: k}, (_, i) => ({
+    mx: xSpread * (i + 1) + (Math.random() - 0.5) * 60,
+    my: 80 + Math.random() * (H - 160),
+    sx: 50 + Math.random() * 60,
+    sy: 35 + Math.random() * 50,
+    angle: (Math.random() - 0.5) * Math.PI * 0.8,
+    col: gmmColors[i % gmmColors.length]
+  }));
+
+  // Generate points per Gaussian
+  function sampleGaussian(g) {
+    const u1 = Math.random(), u2 = Math.random();
+    const n1 = Math.sqrt(-2 * Math.log(Math.max(u1, 1e-10))) * Math.cos(2 * Math.PI * u2);
+    const n2 = Math.sqrt(-2 * Math.log(Math.max(u1, 1e-10))) * Math.sin(2 * Math.PI * u2);
+    const rx = n1 * g.sx, ry = n2 * g.sy;
+    return {
+      x: g.mx + rx * Math.cos(g.angle) - ry * Math.sin(g.angle),
+      y: g.my + rx * Math.sin(g.angle) + ry * Math.cos(g.angle)
+    };
+  }
+
+  function gaussPdf(x, y, g) {
+    const dx = x - g.mx, dy = y - g.my;
+    const ca = Math.cos(-g.angle), sa = Math.sin(-g.angle);
+    const rx = dx * ca - dy * sa, ry = dx * sa + dy * ca;
+    return Math.exp(-(rx*rx/(2*g.sx*g.sx) + ry*ry/(2*g.sy*g.sy)));
+  }
+
+  // Draw ellipses (1σ, 2σ, 3σ)
+  gaussians.forEach(g => {
+    ctx.save();
+    ctx.translate(g.mx, g.my);
+    ctx.rotate(g.angle);
+    [[3, 0.04], [2, 0.09], [1, 0.18]].forEach(([scale, alpha]) => {
+      ctx.beginPath();
+      ctx.ellipse(0, 0, g.sx * scale, g.sy * scale, 0, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${g.col.join(',')},${alpha})`;
+      ctx.strokeStyle = `rgba(${g.col.join(',')},${alpha * 2.5})`;
+      ctx.lineWidth = 1; ctx.fill(); ctx.stroke();
+    });
+    ctx.restore();
+  });
+
+  // Draw points with soft coloring
+  const nPtsPerG = Math.floor(200 / k);
+  gaussians.forEach((g, gi) => {
+    for (let i = 0; i < nPtsPerG; i++) {
+      let pt = sampleGaussian(g);
+      // Skip if out of canvas
+      if (pt.x < 10 || pt.x > W - 10 || pt.y < 10 || pt.y > H - 10) continue;
+      // Compute soft responsibilities
+      const resps = gaussians.map(h => gaussPdf(pt.x, pt.y, h));
+      const sum = resps.reduce((a, b) => a + b, 0) || 1;
+      const norm = resps.map(r => r / sum);
+      const r = gaussians.reduce((s, h, j) => s + h.col[0] * norm[j], 0);
+      const gr = gaussians.reduce((s, h, j) => s + h.col[1] * norm[j], 0);
+      const b = gaussians.reduce((s, h, j) => s + h.col[2] * norm[j], 0);
+      ctx.beginPath(); ctx.arc(pt.x, pt.y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(${Math.round(r)},${Math.round(gr)},${Math.round(b)},0.85)`;
+      ctx.fill();
+    }
+  });
+
+  // Draw centroids
+  gaussians.forEach((g, i) => {
+    // Star shape
+    ctx.save(); ctx.translate(g.mx, g.my);
+    ctx.beginPath();
+    for (let j = 0; j < 6; j++) {
+      const a = j * Math.PI / 3 - Math.PI / 6;
+      const r = j % 2 === 0 ? 10 : 5;
+      if (j === 0) ctx.moveTo(Math.cos(a) * r, Math.sin(a) * r);
+      else ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r);
+    }
+    ctx.closePath();
+    ctx.fillStyle = `rgb(${g.col.join(',')})`;
+    ctx.strokeStyle = '#fff'; ctx.lineWidth = 2;
+    ctx.fill(); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 9px sans-serif';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+    ctx.fillText('μ'+(i+1), 0, 0);
+    ctx.restore();
+  });
+}
+
+// Init all on load
+window.addEventListener('load', () => {
+  drawElbow();
+  setTimeout(() => {
+    drawDBSCAN();
+    drawGMM();
+    drawDendrogram();
+  }, 100);
+});
+
+// Redraw on resize
+window.addEventListener('resize', () => {
+  drawElbow();
+  if (document.getElementById('tab-dbscan').classList.contains('active')) drawDBSCAN();
+  if (document.getElementById('tab-gmm').classList.contains('active')) drawGMM();
+  if (document.getElementById('tab-hierarchical').classList.contains('active')) drawDendrogram();
+  drawKMeans();
+});
+</script>
+</body>
+</html>
