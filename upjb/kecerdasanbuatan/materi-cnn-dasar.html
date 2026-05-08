@@ -1,0 +1,2096 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CNN Dasar — Kecerdasan Buatan</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Sora:wght@300;400;500;600;700&display=swap');
+
+:root {
+  --bg:       #0e0f11;
+  --bg2:      #14161a;
+  --bg3:      #1c1f26;
+  --bg4:      #232730;
+  --line:     rgba(255,255,255,0.07);
+  --line2:    rgba(255,255,255,0.12);
+  --text:     #e8e6e0;
+  --text2:    #9a9890;
+  --text3:    #5a5856;
+  --accent:   #4f9cf9;
+  --accent2:  #7bc4ff;
+  --green:    #3ecf82;
+  --amber:    #f5a623;
+  --coral:    #f56565;
+  --purple:   #a78bfa;
+  --teal:     #2dd4bf;
+  --r:        10px;
+  --rsm:      6px;
+  --mono:     'IBM Plex Mono', monospace;
+  --sans:     'Sora', sans-serif;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--sans);
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.65;
+  min-height: 100vh;
+}
+
+/* ---- HEADER ---- */
+.header {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(14,15,17,0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line2);
+  padding: 0 28px;
+}
+.header-inner {
+  max-width: 1140px; margin: 0 auto;
+  height: 54px; display: flex; align-items: center; gap: 16px;
+}
+.hbadge {
+  font-family: var(--mono); font-size: 11px; font-weight: 600;
+  letter-spacing: 1px; color: var(--accent);
+  background: rgba(79,156,249,0.12); border: 1px solid rgba(79,156,249,0.25);
+  padding: 3px 10px; border-radius: 4px;
+  text-transform: uppercase;
+}
+.htitle { font-size: 13px; color: var(--text2); font-weight: 400; }
+.hdot { width: 4px; height: 4px; border-radius: 50%; background: var(--line2); }
+
+/* ---- NAV ---- */
+.nav-wrap {
+  position: sticky; top: 54px; z-index: 190;
+  background: rgba(14,15,17,0.92);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--line);
+  padding: 0 28px;
+}
+.nav {
+  max-width: 1140px; margin: 0 auto;
+  display: flex; gap: 0; overflow-x: auto;
+}
+.nav::-webkit-scrollbar { display: none; }
+.nav button {
+  font-family: var(--sans); font-size: 12.5px; font-weight: 400;
+  padding: 13px 16px; border: none; background: transparent;
+  color: var(--text3); cursor: pointer;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap; transition: all .2s;
+}
+.nav button:hover { color: var(--text2); }
+.nav button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 500; }
+
+/* ---- MAIN ---- */
+.main { max-width: 1140px; margin: 0 auto; padding: 36px 28px 100px; }
+.section { display: none; animation: fadeUp .3s ease; }
+.section.active { display: block; }
+@keyframes fadeUp { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+/* ---- CARDS ---- */
+.card {
+  background: var(--bg2); border: 1px solid var(--line);
+  border-radius: var(--r); padding: 22px 26px; margin-bottom: 16px;
+}
+.card-dark { background: var(--bg3); border-color: var(--line2); }
+
+/* ---- GRID ---- */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 16px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 16px; }
+.g4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 16px; }
+@media (max-width: 720px) { .g2,.g3,.g4 { grid-template-columns: 1fr; } }
+
+/* ---- TYPE ---- */
+.page-h { font-size: 28px; font-weight: 700; letter-spacing: -.5px; margin-bottom: 6px; }
+.page-sub { font-size: 14px; color: var(--text2); margin-bottom: 28px; }
+h2 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+h3 { font-size: 14px; font-weight: 600; margin-bottom: 8px; color: var(--text); }
+p  { font-size: 13.5px; color: var(--text2); line-height: 1.7; }
+ul { font-size: 13.5px; color: var(--text2); line-height: 1.9; padding-left: 18px; }
+strong { color: var(--text); font-weight: 600; }
+
+/* ---- BADGES ---- */
+.badge {
+  display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 600;
+  padding: 3px 9px; border-radius: 4px; margin-bottom: 10px;
+  letter-spacing: .5px; text-transform: uppercase;
+}
+.ba { background: rgba(79,156,249,.15); color: var(--accent2); border: 1px solid rgba(79,156,249,.2); }
+.bg { background: rgba(62,207,130,.12); color: var(--green); border: 1px solid rgba(62,207,130,.2); }
+.bam { background: rgba(245,166,35,.12); color: var(--amber); border: 1px solid rgba(245,166,35,.2); }
+.bc { background: rgba(245,101,101,.12); color: var(--coral); border: 1px solid rgba(245,101,101,.2); }
+.bp { background: rgba(167,139,250,.12); color: var(--purple); border: 1px solid rgba(167,139,250,.2); }
+.bt { background: rgba(45,212,191,.12); color: var(--teal); border: 1px solid rgba(45,212,191,.2); }
+
+/* ---- TAGS ---- */
+.tag { display: inline-block; font-size: 11px; padding: 2px 8px; border-radius: 4px; margin: 2px; }
+.ty { background: rgba(62,207,130,.12); color: var(--green); }
+.tn { background: rgba(245,101,101,.12); color: var(--coral); }
+
+/* ---- FORMULA ---- */
+.formula {
+  font-family: var(--mono); font-size: 12.5px;
+  background: var(--bg3); border-left: 3px solid var(--accent);
+  border-radius: 0 6px 6px 0; padding: 10px 16px;
+  color: var(--text); margin: 10px 0; line-height: 1.6;
+}
+
+/* ---- STEP ---- */
+.step { display: flex; gap: 12px; margin-bottom: 12px; align-items: flex-start; }
+.snum {
+  min-width: 26px; height: 26px; border-radius: 50%;
+  background: rgba(79,156,249,.15); color: var(--accent);
+  font-family: var(--mono); font-size: 12px; font-weight: 600;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+
+/* ---- CONTROLS ---- */
+.ctrl { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+.ctrl label { font-size: 12px; color: var(--text2); font-weight: 500; font-family: var(--mono); }
+.ctrl span  { font-size: 12px; color: var(--text); font-family: var(--mono); min-width: 24px; }
+.ctrl input[type=range] {
+  -webkit-appearance: none; appearance: none; width: 110px;
+  height: 3px; background: var(--line2); border-radius: 2px; outline: none; cursor: pointer;
+}
+.ctrl input[type=range]::-webkit-slider-thumb {
+  -webkit-appearance: none; width: 14px; height: 14px; border-radius: 50%;
+  background: var(--accent); cursor: pointer; border: 2px solid var(--bg);
+}
+.btn {
+  font-family: var(--sans); font-size: 12px; font-weight: 500;
+  padding: 7px 16px; border-radius: var(--rsm);
+  border: 1px solid var(--line2); background: var(--bg3);
+  color: var(--text); cursor: pointer; transition: all .15s;
+}
+.btn:hover { background: var(--bg4); border-color: var(--accent); color: var(--accent); }
+.btn-p { background: rgba(79,156,249,.15); color: var(--accent); border-color: rgba(79,156,249,.3); }
+.btn-p:hover { background: rgba(79,156,249,.25); }
+
+canvas { border-radius: 8px; display: block; }
+
+/* ---- CODE ---- */
+.code {
+  font-family: var(--mono); font-size: 12px; line-height: 1.8;
+  background: var(--bg3); border: 1px solid var(--line2);
+  border-radius: var(--r); padding: 16px 18px; overflow-x: auto;
+  color: var(--text); margin: 10px 0;
+}
+.kw  { color: #c792ea; }
+.fn  { color: var(--green); }
+.st  { color: var(--amber); }
+.cm  { color: var(--text3); }
+.nm  { color: var(--accent2); }
+
+/* ---- SOAL ---- */
+.soal {
+  border: 1px solid var(--line); border-radius: var(--r);
+  padding: 16px 20px; margin-bottom: 10px; cursor: pointer;
+  transition: border-color .2s, background .2s;
+}
+.soal:hover { border-color: var(--line2); background: var(--bg3); }
+.soal-head { display: flex; justify-content: space-between; gap: 12px; }
+.soal-q { font-size: 13.5px; font-weight: 500; }
+.soal-icon { color: var(--text3); font-size: 14px; flex-shrink: 0; transition: transform .2s; }
+.soal-icon.open { transform: rotate(180deg); }
+.soal-ans {
+  display: none; margin-top: 14px; padding-top: 14px;
+  border-top: 1px solid var(--line); font-size: 13px;
+  color: var(--text2); line-height: 1.75;
+}
+.soal-ans.show { display: block; }
+
+/* ---- METRICS ---- */
+.metric { background: var(--bg3); border-radius: var(--rsm); padding: 14px 18px; }
+.metric-l { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 4px; letter-spacing: .5px; text-transform: uppercase; }
+.metric-v { font-size: 22px; font-weight: 700; }
+.metric-s { font-size: 11px; color: var(--text3); margin-top: 2px; }
+
+/* ---- PIXEL GRID ---- */
+.pixel-grid { display: grid; gap: 2px; }
+.pixel-cell {
+  width: 100%; aspect-ratio: 1;
+  border-radius: 2px; display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-family: var(--mono); color: rgba(255,255,255,.6);
+  transition: all .2s; cursor: default;
+}
+
+/* ---- LAYER VIZ ---- */
+.arch-layer {
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
+  padding: 10px 8px; border-radius: 8px; min-width: 70px;
+}
+.arch-label { font-family: var(--mono); font-size: 9px; text-align: center; }
+
+/* ---- PROGRESS BAR ---- */
+.pbar { height: 5px; background: var(--line2); border-radius: 3px; overflow: hidden; margin-top: 4px; }
+.pfill { height: 100%; border-radius: 3px; transition: width .5s ease; }
+
+/* ---- DIVIDER ---- */
+.div { height: 1px; background: var(--line); margin: 20px 0; }
+
+/* ---- SECTION TITLE ---- */
+.stitle { display: flex; align-items: center; gap: 12px; margin-bottom: 24px; }
+.stbar { width: 3px; height: 32px; border-radius: 2px; }
+
+/* ---- TABLE ---- */
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+th { background: var(--bg3); color: var(--text2); font-weight: 500; padding: 9px 12px; text-align: left; font-size: 12px; font-family: var(--mono); }
+td { padding: 8px 12px; border-top: 1px solid var(--line); color: var(--text2); }
+td:first-child { color: var(--text); font-weight: 500; }
+
+/* ---- INFO BOX ---- */
+.info { background: rgba(79,156,249,.07); border: 1px solid rgba(79,156,249,.18); border-radius: var(--rsm); padding: 12px 16px; font-size: 13px; color: var(--accent2); margin: 10px 0; }
+.warn { background: rgba(245,166,35,.07); border: 1px solid rgba(245,166,35,.18); border-radius: var(--rsm); padding: 12px 16px; font-size: 13px; color: var(--amber); margin: 10px 0; }
+
+/* ---- FOOTER ---- */
+.footer { text-align: center; padding: 32px 0; font-size: 11px; color: var(--text3); border-top: 1px solid var(--line); margin-top: 48px; font-family: var(--mono); }
+
+/* ---- CONV DEMO ---- */
+.conv-wrap { display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap; }
+.conv-title { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 6px; letter-spacing: .5px; text-transform: uppercase; }
+.arrow-sym { font-size: 22px; color: var(--text3); display: flex; align-items: center; padding-top: 28px; }
+
+/* ---- TRAINING CHART ---- */
+#train-chart { width: 100%; }
+
+/* ---- FILTER GALLERY ---- */
+.filter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 10px; }
+.filter-card { background: var(--bg3); border-radius: 8px; padding: 10px; text-align: center; }
+.filter-name { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-top: 6px; }
+
+/* Toggle */
+.tog-wrap { display: flex; align-items: center; gap: 8px; }
+.tog { position: relative; width: 34px; height: 18px; }
+.tog input { opacity: 0; width: 100%; height: 100%; position: absolute; cursor: pointer; margin: 0; z-index: 2; }
+.tog-track { position: absolute; inset: 0; background: var(--line2); border-radius: 9px; transition: background .2s; }
+.tog input:checked ~ .tog-track { background: var(--accent); }
+.tog-thumb { position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: #fff; transition: transform .2s; pointer-events: none; }
+.tog input:checked ~ .tog-thumb { transform: translateX(16px); }
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="hbadge">Kecerdasan Buatan</div>
+    <div class="hdot"></div>
+    <div class="htitle">Materi 8 — Convolutional Neural Network (CNN) Dasar</div>
+    <div style="margin-left:auto;font-family:var(--mono);font-size:11px;color:var(--text3)">S1 Informatika · UPJB 2024</div>
+  </div>
+</header>
+
+<nav class="nav-wrap">
+  <div class="nav">
+    <button class="active" onclick="showTab('intro',this)">📖 Pengantar</button>
+    <button onclick="showTab('ann',this)">🧠 ANN Dasar</button>
+    <button onclick="showTab('conv',this)">🔲 Konvolusi</button>
+    <button onclick="showTab('arsitektur',this)">🏗️ Arsitektur CNN</button>
+    <button onclick="showTab('pooling',this)">⬇️ Pooling & Activation</button>
+    <button onclick="showTab('training',this)">⚡ Training CNN</button>
+    <button onclick="showTab('aplikasi',this)">🖼️ Demo Klasifikasi</button>
+    <button onclick="showTab('code',this)">💻 Kode Python</button>
+    <button onclick="showTab('latihan',this)">✏️ Latihan</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ==================== PENGANTAR ==================== -->
+<section id="tab-intro" class="section active">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--accent)"></div>
+    <div>
+      <div class="page-h">Convolutional Neural Network</div>
+      <div class="page-sub">Arsitektur deep learning yang merevolusi computer vision — dari gambar ke klasifikasi</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <span class="badge ba">Motivasi</span>
+    <h2>Mengapa CNN?</h2>
+    <p style="margin-top:8px">Neural network biasa (Fully Connected / Dense) memperlakukan gambar sebagai vektor 1D yang panjang. Gambar 224×224×3 = <strong>150.528 input neuron</strong> — sangat boros parameter dan tidak memanfaatkan struktur spasial gambar.</p>
+    <p style="margin-top:8px">CNN memecahkan ini dengan tiga ide kunci: <strong>local receptive field</strong>, <strong>parameter sharing</strong>, dan <strong>hierarchical feature learning</strong>.</p>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <h3 style="color:var(--accent)">Dense NN</h3>
+      <svg width="100%" viewBox="0 0 180 160" style="margin-top:8px">
+        <text x="25" y="14" font-size="9" fill="#5a5856" font-family="monospace">Input (16px²)</text>
+        <text x="130" y="14" font-size="9" fill="#5a5856" font-family="monospace">Output</text>
+        <!-- input nodes -->
+        <g fill="#4f9cf9" opacity=".6">
+          <circle cx="25" cy="25" r="4"/><circle cx="25" cy="40" r="4"/><circle cx="25" cy="55" r="4"/>
+          <circle cx="25" cy="70" r="4"/><circle cx="25" cy="85" r="4"/><circle cx="25" cy="100" r="4"/>
+          <circle cx="25" cy="115" r="4"/>
+        </g>
+        <text x="18" y="135" font-size="8" fill="#5a5856" font-family="monospace">... 256</text>
+        <!-- connections (messy) -->
+        <g stroke="#4f9cf9" stroke-width=".3" opacity=".2">
+          <line x1="29" y1="25" x2="91" y2="45"/><line x1="29" y1="25" x2="91" y2="75"/><line x1="29" y1="25" x2="91" y2="105"/>
+          <line x1="29" y1="55" x2="91" y2="45"/><line x1="29" y1="55" x2="91" y2="75"/><line x1="29" y1="55" x2="91" y2="105"/>
+          <line x1="29" y1="85" x2="91" y2="45"/><line x1="29" y1="85" x2="91" y2="75"/><line x1="29" y1="85" x2="91" y2="105"/>
+          <line x1="29" y1="115" x2="91" y2="45"/><line x1="29" y1="115" x2="91" y2="75"/>
+        </g>
+        <g fill="#a78bfa" opacity=".7">
+          <circle cx="95" cy="45" r="5"/><circle cx="95" cy="75" r="5"/><circle cx="95" cy="105" r="5"/>
+        </g>
+        <line x1="100" y1="45" x2="145" y2="70" stroke="#3ecf82" stroke-width=".5" opacity=".4"/>
+        <line x1="100" y1="75" x2="145" y2="70" stroke="#3ecf82" stroke-width=".5" opacity=".4"/>
+        <line x1="100" y1="105" x2="145" y2="70" stroke="#3ecf82" stroke-width=".5" opacity=".4"/>
+        <circle cx="150" cy="70" r="6" fill="#f5a623" opacity=".8"/>
+        <text x="155" y="85" font-size="8" fill="#f5a623" font-family="monospace">Cat</text>
+        <text x="40" y="155" font-size="9" fill="#f56565" font-family="monospace">Tiap neuron terhubung ke semua →</text>
+        <text x="40" y="165" font-size="9" fill="#f56565" font-family="monospace">parameter sangat banyak!</text>
+      </svg>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green)">CNN</h3>
+      <svg width="100%" viewBox="0 0 180 160" style="margin-top:8px">
+        <!-- input image -->
+        <rect x="5" y="15" width="40" height="40" fill="#4f9cf9" opacity=".15" stroke="#4f9cf9" stroke-width=".5"/>
+        <text x="8" y="65" font-size="8" fill="#5a5856" font-family="monospace">Input image</text>
+        <!-- filter -->
+        <rect x="20" y="20" width="16" height="16" fill="#4f9cf9" opacity=".5" stroke="#4f9cf9" stroke-width="1"/>
+        <text x="9" y="80" font-size="8" fill="#4f9cf9" font-family="monospace">local filter</text>
+        <!-- feature maps -->
+        <rect x="60" y="10" width="30" height="30" fill="#a78bfa" opacity=".3" stroke="#a78bfa" stroke-width=".5"/>
+        <rect x="64" y="14" width="30" height="30" fill="#a78bfa" opacity=".3" stroke="#a78bfa" stroke-width=".5"/>
+        <rect x="68" y="18" width="30" height="30" fill="#a78bfa" opacity=".3" stroke="#a78bfa" stroke-width=".5"/>
+        <text x="63" y="65" font-size="8" fill="#5a5856" font-family="monospace">feature maps</text>
+        <!-- pooling -->
+        <rect x="115" y="20" width="20" height="20" fill="#3ecf82" opacity=".4" stroke="#3ecf82" stroke-width=".5"/>
+        <rect x="118" y="23" width="20" height="20" fill="#3ecf82" opacity=".4" stroke="#3ecf82" stroke-width=".5"/>
+        <text x="110" y="60" font-size="8" fill="#5a5856" font-family="monospace">pooled</text>
+        <!-- output -->
+        <circle cx="162" cy="30" r="7" fill="#f5a623" opacity=".8"/>
+        <text x="155" y="50" font-size="8" fill="#f5a623" font-family="monospace">class</text>
+        <!-- arrows -->
+        <line x1="45" y1="35" x2="58" y2="30" stroke="#e8e6e0" stroke-width=".5" opacity=".3" marker-end="url(#arr)"/>
+        <line x1="100" y1="33" x2="113" y2="30" stroke="#e8e6e0" stroke-width=".5" opacity=".3"/>
+        <line x1="137" y1="30" x2="153" y2="30" stroke="#e8e6e0" stroke-width=".5" opacity=".3"/>
+        <text x="8" y="100" font-size="9" fill="#3ecf82" font-family="monospace">Parameter sharing →</text>
+        <text x="8" y="112" font-size="9" fill="#3ecf82" font-family="monospace">jauh lebih efisien!</text>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Perbandingan Parameter</h3>
+      <div style="margin-top:10px">
+        <div style="margin-bottom:12px">
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:4px">FC Layer (32×32 → 100)</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--coral)">102.400</div>
+          <div style="font-size:11px;color:var(--text3)">params</div>
+          <div class="pbar" style="margin-top:6px"><div class="pfill" style="width:100%;background:var(--coral)"></div></div>
+        </div>
+        <div>
+          <div style="font-family:var(--mono);font-size:11px;color:var(--text2);margin-bottom:4px">Conv Layer (3×3, 32 filter)</div>
+          <div style="font-family:var(--mono);font-size:18px;color:var(--green)">288</div>
+          <div style="font-size:11px;color:var(--text3)">params — 355× lebih sedikit!</div>
+          <div class="pbar" style="margin-top:6px"><div class="pfill" style="width:0.3%;background:var(--green)"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Sejarah Singkat CNN</h3>
+    <div style="display:flex;gap:0;overflow-x:auto;padding-bottom:8px;margin-top:12px">
+      <div style="min-width:120px;text-align:center;padding:0 8px">
+        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--accent)">1989</div>
+        <div style="font-size:12px;font-weight:600;margin:4px 0;color:var(--text)">LeNet</div>
+        <div style="font-size:11px;color:var(--text3)">LeCun — pengenalan tulisan tangan digit MNIST</div>
+      </div>
+      <div style="width:1px;background:var(--line);margin:0 4px;min-height:80px"></div>
+      <div style="min-width:120px;text-align:center;padding:0 8px">
+        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--purple)">2012</div>
+        <div style="font-size:12px;font-weight:600;margin:4px 0;color:var(--text)">AlexNet</div>
+        <div style="font-size:11px;color:var(--text3)">ImageNet top-5 error: 15.3% — revolusi GPU</div>
+      </div>
+      <div style="width:1px;background:var(--line);margin:0 4px;min-height:80px"></div>
+      <div style="min-width:120px;text-align:center;padding:0 8px">
+        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--teal)">2014</div>
+        <div style="font-size:12px;font-weight:600;margin:4px 0;color:var(--text)">VGGNet</div>
+        <div style="font-size:11px;color:var(--text3)">Filter 3×3 kecil tapi dalam (16-19 layer)</div>
+      </div>
+      <div style="width:1px;background:var(--line);margin:0 4px;min-height:80px"></div>
+      <div style="min-width:120px;text-align:center;padding:0 8px">
+        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--green)">2015</div>
+        <div style="font-size:12px;font-weight:600;margin:4px 0;color:var(--text)">ResNet</div>
+        <div style="font-size:11px;color:var(--text3)">Skip connections — 152 layers tanpa vanishing gradient</div>
+      </div>
+      <div style="width:1px;background:var(--line);margin:0 4px;min-height:80px"></div>
+      <div style="min-width:120px;text-align:center;padding:0 8px">
+        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--amber)">2017+</div>
+        <div style="font-size:12px;font-weight:600;margin:4px 0;color:var(--text)">EfficientNet</div>
+        <div style="font-size:11px;color:var(--text3)">Compound scaling — SOTA dengan efisiensi tinggi</div>
+      </div>
+      <div style="width:1px;background:var(--line);margin:0 4px;min-height:80px"></div>
+      <div style="min-width:120px;text-align:center;padding:0 8px">
+        <div style="font-family:var(--mono);font-size:18px;font-weight:700;color:var(--coral)">2021+</div>
+        <div style="font-size:12px;font-weight:600;margin:4px 0;color:var(--text)">ViT</div>
+        <div style="font-size:11px;color:var(--text3)">Vision Transformer — CNN + Attention</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g4">
+    <div class="metric"><div class="metric-l">Layer utama</div><div class="metric-v" style="color:var(--accent)">4</div><div class="metric-s">Conv, Pool, Flatten, Dense</div></div>
+    <div class="metric"><div class="metric-l">Input tipikal</div><div class="metric-v" style="color:var(--green)">H×W×C</div><div class="metric-s">Tinggi × Lebar × Channel</div></div>
+    <div class="metric"><div class="metric-l">Tugas utama</div><div class="metric-v" style="color:var(--purple)">Vision</div><div class="metric-s">Klasifikasi, Deteksi, Segmentasi</div></div>
+    <div class="metric"><div class="metric-l">Framework</div><div class="metric-v" style="color:var(--amber)">Keras</div><div class="metric-s">TensorFlow / PyTorch</div></div>
+  </div>
+</section>
+
+<!-- ==================== ANN DASAR ==================== -->
+<section id="tab-ann" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--purple)"></div>
+    <div>
+      <div class="page-h">Artificial Neural Network</div>
+      <div class="page-sub">Fondasi CNN — memahami neuron, layer, dan forward pass</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bp">Neuron Biologis → Artifisial</span>
+      <h2>Perceptron</h2>
+      <p style="margin-top:8px">Satu neuron menerima beberapa input, mengalikan dengan bobot (weight), menjumlahkan, menambah bias, lalu melewati fungsi aktivasi.</p>
+      <div class="formula">y = f( Σ wᵢ·xᵢ + b )</div>
+      <p>w = weights, x = inputs, b = bias, f = activation function</p>
+      <svg width="100%" viewBox="0 0 340 160" style="margin-top:14px">
+        <!-- inputs -->
+        <circle cx="30" cy="40" r="14" fill="var(--bg3)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="30" y="44" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="monospace">x₁</text>
+        <circle cx="30" cy="80" r="14" fill="var(--bg3)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="30" y="84" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="monospace">x₂</text>
+        <circle cx="30" cy="120" r="14" fill="var(--bg3)" stroke="var(--accent)" stroke-width="1"/>
+        <text x="30" y="124" text-anchor="middle" font-size="11" fill="var(--accent)" font-family="monospace">x₃</text>
+        <!-- weights -->
+        <line x1="44" y1="40" x2="145" y2="75" stroke="var(--amber)" stroke-width="1.5" opacity=".7"/>
+        <line x1="44" y1="80" x2="145" y2="80" stroke="var(--purple)" stroke-width="1.5" opacity=".7"/>
+        <line x1="44" y1="120" x2="145" y2="85" stroke="var(--teal)" stroke-width="1.5" opacity=".7"/>
+        <text x="80" y="60" font-size="10" fill="var(--amber)" font-family="monospace">w₁</text>
+        <text x="85" y="77" font-size="10" fill="var(--purple)" font-family="monospace">w₂</text>
+        <text x="80" y="108" font-size="10" fill="var(--teal)" font-family="monospace">w₃</text>
+        <!-- neuron body -->
+        <circle cx="165" cy="80" r="28" fill="var(--bg3)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="165" y="76" text-anchor="middle" font-size="9" fill="var(--text2)" font-family="monospace">Σ+b</text>
+        <text x="165" y="89" text-anchor="middle" font-size="9" fill="var(--green)" font-family="monospace">f(z)</text>
+        <!-- bias -->
+        <circle cx="165" cy="20" r="10" fill="var(--bg3)" stroke="var(--text3)" stroke-width="1" stroke-dasharray="3 2"/>
+        <text x="165" y="24" text-anchor="middle" font-size="10" fill="var(--text3)" font-family="monospace">b</text>
+        <line x1="165" y1="30" x2="165" y2="52" stroke="var(--text3)" stroke-width="1" opacity=".4" stroke-dasharray="3 2"/>
+        <!-- output -->
+        <line x1="193" y1="80" x2="238" y2="80" stroke="var(--green)" stroke-width="1.5"/>
+        <circle cx="255" cy="80" r="14" fill="var(--bg3)" stroke="var(--green)" stroke-width="1.5"/>
+        <text x="255" y="84" text-anchor="middle" font-size="11" fill="var(--green)" font-family="monospace">y</text>
+        <!-- arrow -->
+        <polygon points="238,76 248,80 238,84" fill="var(--green)" opacity=".7"/>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Fungsi Aktivasi Umum</h3>
+      <canvas id="act-canvas" width="400" height="200" style="width:100%;margin-top:8px"></canvas>
+      <div style="display:flex;gap:14px;margin-top:8px;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:3px;background:#4f9cf9;border-radius:2px"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">ReLU</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:3px;background:#a78bfa;border-radius:2px"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Sigmoid</span></div>
+        <div style="display:flex;align-items:center;gap:5px"><div style="width:12px;height:3px;background:#3ecf82;border-radius:2px"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Tanh</span></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Multi-Layer Perceptron (MLP) — Simulasi Interaktif</h3>
+    <div class="ctrl">
+      <label>Hidden layers:</label>
+      <input type="range" min="1" max="4" value="2" id="mlp-layers" oninput="document.getElementById('mlp-lv').textContent=this.value;drawMLP()">
+      <span id="mlp-lv">2</span>
+      <label>Neurons per layer:</label>
+      <input type="range" min="2" max="8" value="4" id="mlp-neurons" oninput="document.getElementById('mlp-nv').textContent=this.value;drawMLP()">
+      <span id="mlp-nv">4</span>
+      <button class="btn btn-p" onclick="animateMLP()">▶ Forward Pass</button>
+    </div>
+    <canvas id="mlp-canvas" width="900" height="280" style="width:100%;border:1px solid var(--line);border-radius:8px"></canvas>
+    <div id="mlp-params" style="font-family:var(--mono);font-size:12px;color:var(--text2);margin-top:8px"></div>
+  </div>
+</section>
+
+<!-- ==================== KONVOLUSI ==================== -->
+<section id="tab-conv" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--teal)"></div>
+    <div>
+      <div class="page-h">Operasi Konvolusi</div>
+      <div class="page-sub">Inti dari CNN — bagaimana filter mendeteksi fitur dalam gambar</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bt">Definisi Matematis</span>
+      <h2>Konvolusi 2D</h2>
+      <p style="margin-top:8px">Operasi konvolusi menggeser sebuah <strong>filter/kernel</strong> kecil di atas input, mengalikan elemen-per-elemen, dan menjumlahkan hasilnya menjadi satu nilai dalam feature map.</p>
+      <div class="formula">S(i,j) = (I * K)(i,j) = Σₘ Σₙ I(i+m, j+n) · K(m,n)</div>
+      <p>I = input image, K = kernel/filter, S = feature map</p>
+      <div class="info" style="margin-top:12px">
+        💡 Satu filter mendeteksi <strong>satu jenis fitur</strong> (misalnya tepi vertikal). CNN punya banyak filter, tiap filter belajar fitur yang berbeda.
+      </div>
+    </div>
+    <div class="card">
+      <h3>Ukuran Output Feature Map</h3>
+      <div class="formula">Output = ⌊(N + 2P - F) / S⌋ + 1</div>
+      <p style="margin-bottom:12px">N = ukuran input, F = ukuran filter, P = padding, S = stride</p>
+      <div class="ctrl">
+        <label>N (input):</label>
+        <input type="range" min="5" max="12" value="7" id="co-n" oninput="updateConvOutput()">
+        <span id="co-nv">7</span>
+        <label>F (filter):</label>
+        <input type="range" min="1" max="5" value="3" id="co-f" oninput="updateConvOutput()">
+        <span id="co-fv">3</span>
+      </div>
+      <div class="ctrl">
+        <label>P (pad):</label>
+        <input type="range" min="0" max="3" value="0" id="co-p" oninput="updateConvOutput()">
+        <span id="co-pv">0</span>
+        <label>S (stride):</label>
+        <input type="range" min="1" max="3" value="1" id="co-s" oninput="updateConvOutput()">
+        <span id="co-sv">1</span>
+      </div>
+      <div id="co-result" style="font-family:var(--mono);font-size:20px;color:var(--green);margin-top:8px"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🎛️ Demo Konvolusi Interaktif</h3>
+    <p style="margin-bottom:12px">Pilih filter dan lihat operasi konvolusi secara visual. Filter bergerak di atas input image.</p>
+    <div class="ctrl">
+      <label>Filter:</label>
+      <select id="filter-sel" onchange="updateFilter()" style="font-family:var(--mono);font-size:12px;padding:5px 10px;background:var(--bg3);color:var(--text);border:1px solid var(--line2);border-radius:4px">
+        <option value="edge-v">Edge Vertikal</option>
+        <option value="edge-h">Edge Horizontal</option>
+        <option value="sharpen">Sharpen</option>
+        <option value="blur">Blur (Gaussian)</option>
+        <option value="emboss">Emboss</option>
+      </select>
+      <button class="btn btn-p" id="conv-btn" onclick="animateConv()">▶ Animasi Konvolusi</button>
+    </div>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;margin-top:8px">
+      <div>
+        <div class="conv-title">Input (8×8)</div>
+        <canvas id="input-canvas" width="200" height="200" style="border:1px solid var(--line)"></canvas>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:40px;gap:8px">
+        <div style="font-family:var(--mono);font-size:10px;color:var(--text3)">*</div>
+        <div class="conv-title" style="text-align:center">Kernel</div>
+        <canvas id="kernel-canvas" width="90" height="90" style="border:1px solid var(--line)"></canvas>
+        <div id="kernel-values" style="font-family:var(--mono);font-size:9px;color:var(--text3);text-align:center"></div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding-top:40px">
+        <div style="font-family:var(--mono);font-size:18px;color:var(--text3)">→</div>
+      </div>
+      <div>
+        <div class="conv-title">Output Feature Map (6×6)</div>
+        <canvas id="output-canvas" width="200" height="200" style="border:1px solid var(--line)"></canvas>
+      </div>
+      <div style="padding-top:32px">
+        <div class="conv-title">Highlight Kalkulasi</div>
+        <div id="calc-box" style="font-family:var(--mono);font-size:11px;color:var(--text2);max-width:180px;line-height:1.8;background:var(--bg3);border-radius:6px;padding:10px;border:1px solid var(--line)">
+          Klik ▶ untuk lihat konvolusi bergerak
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Hyperparameter Konvolusi</h3>
+    <table style="margin-top:10px">
+      <thead><tr><th>Parameter</th><th>Deskripsi</th><th>Nilai Umum</th><th>Efek</th></tr></thead>
+      <tbody>
+        <tr><td>Kernel Size</td><td>Ukuran filter (F×F)</td><td>3×3, 5×5, 7×7</td><td>Kecil = fitur lokal; Besar = fitur global</td></tr>
+        <tr><td>Stride</td><td>Langkah geser filter</td><td>1, 2</td><td>Besar = output lebih kecil (downsampling)</td></tr>
+        <tr><td>Padding</td><td>Tambah piksel di tepi</td><td>same / valid</td><td>Same = output ukuran sama; Valid = tanpa padding</td></tr>
+        <tr><td>Num Filters</td><td>Jumlah filter berbeda</td><td>32, 64, 128, 256</td><td>Lebih banyak = lebih banyak fitur dipelajari</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== ARSITEKTUR CNN ==================== -->
+<section id="tab-arsitektur" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--amber)"></div>
+    <div>
+      <div class="page-h">Arsitektur CNN</div>
+      <div class="page-sub">Susunan layer dari input gambar hingga prediksi kelas</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3>Visualisasi Arsitektur CNN Lengkap</h3>
+    <canvas id="arch-canvas" width="900" height="280" style="width:100%;border:1px solid var(--line);border-radius:8px;margin-top:10px"></canvas>
+    <div style="display:flex;gap:16px;margin-top:10px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;background:rgba(79,156,249,.4);border-radius:2px;border:1px solid var(--accent)"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Conv Layer</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;background:rgba(245,166,35,.4);border-radius:2px;border:1px solid var(--amber)"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Pool Layer</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;background:rgba(167,139,250,.4);border-radius:2px;border:1px solid var(--purple)"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Flatten</span></div>
+      <div style="display:flex;align-items:center;gap:6px"><div style="width:14px;height:14px;background:rgba(62,207,130,.4);border-radius:2px;border:1px solid var(--green)"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Dense / FC</span></div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Bagian Feature Extraction</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:12px">
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Conv Layer</div>
+          <p>Mengaplikasikan N filter untuk menghasilkan N feature map. Mendeteksi pola lokal: tepi, sudut, tekstur, warna.</p>
+        </div>
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Batch Norm (opsional)</div>
+          <p>Normalisasi output setiap layer → training lebih stabil dan cepat.</p>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Activation (ReLU)</div>
+          <p>Menambah non-linearitas: f(x) = max(0, x). Mengatasi vanishing gradient.</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Pooling Layer</div>
+          <p>Mengurangi ukuran spasial (downsampling) → lebih sedikit parameter, translasi invariant.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Bagian Classification</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:12px">
+        <div style="border-left:3px solid var(--teal);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Flatten</div>
+          <p>Mengubah tensor 3D (H×W×C) menjadi vektor 1D. Jembatan antara konvolusi dan dense layer.</p>
+        </div>
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Dense / FC Layer</div>
+          <p>Fully connected — setiap neuron terhubung ke semua input. Belajar kombinasi fitur tingkat tinggi.</p>
+        </div>
+        <div style="border-left:3px solid var(--coral);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Dropout (regularisasi)</div>
+          <p>Menonaktifkan sebagian neuron secara acak saat training → mencegah overfitting.</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:3px">Softmax (output)</div>
+          <p>Mengubah logit menjadi probabilitas — jumlah semua kelas = 1.</p>
+          <div class="formula" style="font-size:11px;margin-top:4px">σ(z)ᵢ = eᶻⁱ / Σⱼ eᶻʲ</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Hierarki Fitur yang Dipelajari CNN</h3>
+    <svg width="100%" viewBox="0 0 900 120">
+      <!-- Layer labels -->
+      <text x="80" y="18" text-anchor="middle" font-size="11" fill="var(--text2)" font-family="monospace">Layer 1</text>
+      <text x="260" y="18" text-anchor="middle" font-size="11" fill="var(--text2)" font-family="monospace">Layer 2</text>
+      <text x="440" y="18" text-anchor="middle" font-size="11" fill="var(--text2)" font-family="monospace">Layer 3</text>
+      <text x="650" y="18" text-anchor="middle" font-size="11" fill="var(--text2)" font-family="monospace">Layer Akhir</text>
+      <!-- Feature descriptions -->
+      <rect x="20" y="28" width="120" height="44" rx="6" fill="rgba(79,156,249,.12)" stroke="rgba(79,156,249,.3)" stroke-width="1"/>
+      <text x="80" y="48" text-anchor="middle" font-size="11" fill="var(--accent)">Tepi, Gradien</text>
+      <text x="80" y="63" text-anchor="middle" font-size="10" fill="var(--text3)">edges, colors</text>
+      <rect x="200" y="28" width="120" height="44" rx="6" fill="rgba(167,139,250,.12)" stroke="rgba(167,139,250,.3)" stroke-width="1"/>
+      <text x="260" y="48" text-anchor="middle" font-size="11" fill="var(--purple)">Tekstur, Sudut</text>
+      <text x="260" y="63" text-anchor="middle" font-size="10" fill="var(--text3)">corners, curves</text>
+      <rect x="380" y="28" width="120" height="44" rx="6" fill="rgba(62,207,130,.12)" stroke="rgba(62,207,130,.3)" stroke-width="1"/>
+      <text x="440" y="48" text-anchor="middle" font-size="11" fill="var(--green)">Bagian Objek</text>
+      <text x="440" y="63" text-anchor="middle" font-size="10" fill="var(--text3)">ears, wheels, etc</text>
+      <rect x="560" y="28" width="160" height="44" rx="6" fill="rgba(245,166,35,.12)" stroke="rgba(245,166,35,.3)" stroke-width="1"/>
+      <text x="640" y="48" text-anchor="middle" font-size="11" fill="var(--amber)">Objek Lengkap</text>
+      <text x="640" y="63" text-anchor="middle" font-size="10" fill="var(--text3)">kucing, mobil, dll</text>
+      <!-- arrows -->
+      <line x1="140" y1="50" x2="198" y2="50" stroke="var(--line2)" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="320" y1="50" x2="378" y2="50" stroke="var(--line2)" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <line x1="500" y1="50" x2="558" y2="50" stroke="var(--line2)" stroke-width="1.5" marker-end="url(#arr2)"/>
+      <!-- Complexity bar -->
+      <text x="10" y="105" font-size="10" fill="var(--text3)" font-family="monospace">abstraksi rendah</text>
+      <line x1="100" y1="100" x2="790" y2="100" stroke="var(--line2)" stroke-width="1"/>
+      <polygon points="790,96 800,100 790,104" fill="var(--text3)" opacity=".5"/>
+      <text x="700" y="105" font-size="10" fill="var(--text3)" font-family="monospace">abstraksi tinggi</text>
+      <defs>
+        <marker id="arr2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="var(--line2)" stroke-width="1.5"/>
+        </marker>
+      </defs>
+    </svg>
+  </div>
+</section>
+
+<!-- ==================== POOLING & ACTIVATION ==================== -->
+<section id="tab-pooling" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--green)"></div>
+    <div>
+      <div class="page-h">Pooling & Fungsi Aktivasi</div>
+      <div class="page-sub">Downsampling dan non-linearitas — dua komponen krusial CNN</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bg">Pooling Layer</span>
+      <h2>Jenis Pooling</h2>
+      <p style="margin-top:8px">Pooling mengurangi ukuran spasial feature map, mengurangi jumlah parameter, dan membuat representasi lebih robust terhadap translasi kecil.</p>
+      <div style="margin-top:14px;display:flex;flex-direction:column;gap:12px">
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px">Max Pooling ⭐ (paling umum)</div>
+          <p>Ambil nilai MAXIMUM dari setiap window. Menangkap fitur yang paling menonjol.</p>
+          <div class="formula" style="font-size:11px;margin-top:6px">Output = max(window)</div>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px">Average Pooling</div>
+          <p>Rata-rata nilai dalam window. Lebih halus, sering dipakai di layer akhir.</p>
+        </div>
+        <div style="border-left:3px solid var(--teal);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text);margin-bottom:2px">Global Average Pooling (GAP)</div>
+          <p>Rata-rata seluruh feature map → satu nilai per channel. Menggantikan Flatten di arsitektur modern.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Demo Max Pooling vs Average Pooling</h3>
+      <div class="ctrl" style="margin-top:8px">
+        <label>Window size:</label>
+        <input type="range" min="2" max="4" value="2" id="pool-w" oninput="document.getElementById('pool-wv').textContent=this.value+'×'+this.value;drawPooling()">
+        <span id="pool-wv">2×2</span>
+      </div>
+      <canvas id="pool-canvas" width="420" height="240" style="width:100%;border:1px solid var(--line);border-radius:8px;margin-top:4px"></canvas>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Fungsi Aktivasi — Detail</h3>
+    <div class="g4" style="margin-top:10px;margin-bottom:0">
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;font-size:13px;color:var(--accent);margin-bottom:4px">ReLU</div>
+        <div class="formula" style="font-size:11px;margin:6px 0">f(x) = max(0, x)</div>
+        <p style="font-size:12px">Default untuk hidden layer CNN. Cepat, tidak vanishing gradient (untuk x>0).</p>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
+          <span class="tag ty">Cepat</span><span class="tag ty">Standar</span>
+          <span class="tag tn">Dying ReLU</span>
+        </div>
+      </div>
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;font-size:13px;color:var(--purple);margin-bottom:4px">Leaky ReLU</div>
+        <div class="formula" style="font-size:11px;margin:6px 0">f(x) = max(αx, x), α=0.01</div>
+        <p style="font-size:12px">Perbaikan ReLU — neuron tetap aktif untuk x negatif.</p>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
+          <span class="tag ty">No dying</span><span class="tag ty">Lebih stabil</span>
+        </div>
+      </div>
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;font-size:13px;color:var(--amber);margin-bottom:4px">Sigmoid</div>
+        <div class="formula" style="font-size:11px;margin:6px 0">σ(x) = 1 / (1 + e⁻ˣ)</div>
+        <p style="font-size:12px">Output [0,1]. Cocok untuk output layer binary classification.</p>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
+          <span class="tag ty">Probabilistik</span>
+          <span class="tag tn">Vanishing gradient</span>
+        </div>
+      </div>
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;font-size:13px;color:var(--green);margin-bottom:4px">Softmax</div>
+        <div class="formula" style="font-size:11px;margin:6px 0">σ(z)ᵢ = eᶻⁱ / Σeᶻʲ</div>
+        <p style="font-size:12px">Multi-class output. Probabilitas semua kelas = 1.</p>
+        <div style="display:flex;gap:4px;margin-top:6px;flex-wrap:wrap">
+          <span class="tag ty">Multi-class</span><span class="tag ty">Probabilitas</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== TRAINING CNN ==================== -->
+<section id="tab-training" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--coral)"></div>
+    <div>
+      <div class="page-h">Training CNN</div>
+      <div class="page-sub">Loss function, backpropagation, optimizer, dan teknik regularisasi</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bc">Loss Function</span>
+      <h2>Mengukur Kesalahan</h2>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text)">Categorical Cross-Entropy (multi-class)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">L = -Σᵢ yᵢ · log(ŷᵢ)</div>
+          <p style="font-size:12px">Standar untuk klasifikasi multi-kelas dengan Softmax output</p>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text)">Binary Cross-Entropy (2 kelas)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">L = -(y·log(ŷ) + (1-y)·log(1-ŷ))</div>
+        </div>
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;color:var(--text)">Mean Squared Error (regresi)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">L = (1/n) · Σ(y - ŷ)²</div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <span class="badge bc">Backpropagation</span>
+      <h2>Cara CNN Belajar</h2>
+      <div style="margin-top:8px">
+        <div class="step"><div class="snum">1</div><p><strong>Forward pass</strong> — hitung prediksi dari input ke output</p></div>
+        <div class="step"><div class="snum">2</div><p><strong>Hitung loss</strong> — bandingkan prediksi dengan label sebenarnya</p></div>
+        <div class="step"><div class="snum">3</div><p><strong>Backward pass</strong> — hitung gradien loss terhadap tiap weight (chain rule)</p></div>
+        <div class="step"><div class="snum">4</div><p><strong>Update weights</strong> — geser weight berlawanan arah gradien</p></div>
+        <div class="formula" style="margin-top:8px">w ← w - η · ∂L/∂w</div>
+        <p style="font-size:12px">η = learning rate</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🚂 Simulasi Training Curve</h3>
+    <div class="ctrl">
+      <label>Learning rate:</label>
+      <input type="range" min="1" max="5" value="3" id="lr-val" oninput="document.getElementById('lr-show').textContent=['0.0001','0.001','0.01','0.1','1.0'][this.value-1];runTraining()">
+      <span id="lr-show">0.01</span>
+      <label>Optimizer:</label>
+      <select id="opt-sel" onchange="runTraining()" style="font-family:var(--mono);font-size:12px;padding:5px 10px;background:var(--bg3);color:var(--text);border:1px solid var(--line2);border-radius:4px">
+        <option value="sgd">SGD</option>
+        <option value="adam" selected>Adam</option>
+        <option value="rmsprop">RMSProp</option>
+      </select>
+      <button class="btn btn-p" onclick="runTraining()">↺ Simulate</button>
+    </div>
+    <canvas id="train-canvas" width="900" height="240" style="width:100%;border:1px solid var(--line);border-radius:8px"></canvas>
+    <div style="display:flex;gap:16px;margin-top:8px">
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:16px;height:2px;background:var(--accent)"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Training Loss</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:16px;height:2px;background:var(--coral);border-style:dashed"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Val Loss</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:16px;height:2px;background:var(--green)"></div><span style="font-size:11px;font-family:var(--mono);color:var(--text2)">Train Acc</span></div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <h3 style="color:var(--accent)">Optimizer</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <div><div style="font-size:12px;font-weight:600;color:var(--text)">SGD</div><p style="font-size:12px">Sederhana, stable, perlu tuning LR. Momentum membantu.</p></div>
+        <div><div style="font-size:12px;font-weight:600;color:var(--text)">Adam ⭐</div><p style="font-size:12px">Adaptive learning rate. Default untuk sebagian besar CNN.</p></div>
+        <div><div style="font-size:12px;font-weight:600;color:var(--text)">RMSProp</div><p style="font-size:12px">Cocok untuk RNN & data non-stationary.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--green)">Regularisasi</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:8px">
+        <div><div style="font-size:12px;font-weight:600;color:var(--text)">Dropout</div><p style="font-size:12px">Matikan p% neuron secara random saat training.</p></div>
+        <div><div style="font-size:12px;font-weight:600;color:var(--text)">L1/L2 (weight decay)</div><p style="font-size:12px">Penalti pada bobot besar → model lebih simpel.</p></div>
+        <div><div style="font-size:12px;font-weight:600;color:var(--text)">Data Augmentation</div><p style="font-size:12px">Flip, rotate, crop, zoom → data training lebih beragam.</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <h3 style="color:var(--amber)">Overfitting vs Underfitting</h3>
+      <canvas id="fit-canvas" width="280" height="160" style="width:100%;margin-top:8px"></canvas>
+    </div>
+  </div>
+</section>
+
+<!-- ==================== DEMO KLASIFIKASI ==================== -->
+<section id="tab-aplikasi" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--purple)"></div>
+    <div>
+      <div class="page-h">Demo Klasifikasi</div>
+      <div class="page-sub">Simulasi CNN mengenali gambar — Digit Recognition</div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:16px">
+    <h3>🖊️ Gambar Digit → CNN Klasifikasi</h3>
+    <p style="margin-bottom:14px">Gambar angka di canvas, lalu tekan "Klasifikasi" untuk melihat CNN memprediksi digitnya.</p>
+    <div style="display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div>
+        <div class="conv-title">Gambar di sini (28×28)</div>
+        <canvas id="draw-canvas" width="224" height="224" style="border:2px solid var(--line2);border-radius:8px;cursor:crosshair;background:#000;touch-action:none"></canvas>
+        <div style="display:flex;gap:8px;margin-top:8px">
+          <button class="btn btn-p" onclick="classifyDigit()">▶ Klasifikasi</button>
+          <button class="btn" onclick="clearCanvas()">✕ Hapus</button>
+        </div>
+      </div>
+      <div style="flex:1;min-width:220px">
+        <div class="conv-title">Hasil Prediksi CNN</div>
+        <div id="pred-result" style="font-family:var(--mono);font-size:48px;color:var(--green);font-weight:700;margin-bottom:12px">?</div>
+        <div class="conv-title" style="margin-bottom:8px">Probabilitas per kelas</div>
+        <div id="prob-bars"></div>
+      </div>
+      <div style="flex:1;min-width:200px">
+        <div class="conv-title">Feature Map Layer 1 (simulasi)</div>
+        <canvas id="feat-canvas" width="200" height="200" style="border:1px solid var(--line);border-radius:6px"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Transfer Learning — Gunakan CNN Pre-trained</h3>
+    <p style="margin-top:6px;margin-bottom:12px">Untuk dataset kecil, lebih efisien menggunakan model yang sudah dilatih di ImageNet (jutaan gambar) dan fine-tune untuk tugas kita.</p>
+    <div class="g3" style="margin-bottom:0">
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;color:var(--accent);margin-bottom:4px">Feature Extraction</div>
+        <p style="font-size:12px">Bekukan semua layer conv (freeze), hanya train classifier baru di atas.</p>
+        <div class="formula" style="font-size:11px;margin:6px 0">Base model → Freeze → New Dense Head</div>
+        <p style="font-size:12px;color:var(--green)">Cocok: dataset kecil, mirip domain ImageNet</p>
+      </div>
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;color:var(--purple);margin-bottom:4px">Fine-Tuning</div>
+        <p style="font-size:12px">Unfreeze beberapa layer terakhir, train dengan LR sangat kecil.</p>
+        <div class="formula" style="font-size:11px;margin:6px 0">Unfreeze top layers → LR=1e-5</div>
+        <p style="font-size:12px;color:var(--green)">Cocok: dataset sedang, domain agak berbeda</p>
+      </div>
+      <div class="card-dark" style="padding:14px">
+        <div style="font-weight:600;color:var(--amber);margin-bottom:4px">Train from Scratch</div>
+        <p style="font-size:12px">Train seluruh network dari awal. Butuh data dan GPU banyak.</p>
+        <div class="formula" style="font-size:11px;margin:6px 0">Random init → Full training</div>
+        <p style="font-size:12px;color:var(--coral)">Butuh: 1M+ data, beberapa GPU</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Model Populer untuk Transfer Learning</h3>
+    <table style="margin-top:10px">
+      <thead><tr><th>Model</th><th>Tahun</th><th>Params</th><th>Top-1 Acc</th><th>Kecepatan</th><th>Rekomendasi</th></tr></thead>
+      <tbody>
+        <tr><td>MobileNetV2</td><td>2018</td><td>3.4M</td><td>71.8%</td><td style="color:var(--green)">⚡ Sangat cepat</td><td>Mobile / edge device</td></tr>
+        <tr><td>VGG16</td><td>2014</td><td>138M</td><td>71.5%</td><td style="color:var(--coral)">🐢 Lambat</td><td>Benchmark, belajar konsep</td></tr>
+        <tr><td>ResNet50</td><td>2015</td><td>25M</td><td>74.9%</td><td>🚗 Sedang</td><td>Pilihan umum & seimbang</td></tr>
+        <tr><td>EfficientNetB0</td><td>2019</td><td>5.3M</td><td>77.1%</td><td style="color:var(--green)">⚡ Cepat</td><td>Akurasi terbaik/param ⭐</td></tr>
+        <tr><td>InceptionV3</td><td>2015</td><td>23M</td><td>77.9%</td><td>🚗 Sedang</td><td>Fitur multi-scale</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ==================== KODE PYTHON ==================== -->
+<section id="tab-code" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--green)"></div>
+    <div>
+      <div class="page-h">Implementasi Python</div>
+      <div class="page-sub">CNN dengan TensorFlow/Keras — siap dijalankan di Google Colab</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Setup & Import</h3>
+    <div class="code">
+<span class="cm"># Install (jika belum): pip install tensorflow matplotlib numpy</span>
+<span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow <span class="kw">import</span> keras
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> layers, models
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"TensorFlow version: {tf.__version__}"</span>)
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"GPU available: {len(tf.config.list_physical_devices('GPU')) > 0}"</span>)
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Load & Preprocessing Dataset CIFAR-10</h3>
+    <div class="code">
+<span class="cm"># ---- Load CIFAR-10 (10 kelas: pesawat, mobil, burung, kucing, dll) ----</span>
+(X_train, y_train), (X_test, y_test) = keras.datasets.cifar10.<span class="fn">load_data</span>()
+
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"Train: {X_train.shape}"</span>)  <span class="cm"># (50000, 32, 32, 3)</span>
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"Test : {X_test.shape}"</span>)   <span class="cm"># (10000, 32, 32, 3)</span>
+
+<span class="cm"># ---- Normalisasi pixel ke [0, 1] ----</span>
+X_train = X_train.astype(<span class="st">'float32'</span>) / <span class="nm">255.0</span>
+X_test  = X_test.astype(<span class="st">'float32'</span>) / <span class="nm">255.0</span>
+
+<span class="cm"># ---- One-hot encoding label ----</span>
+y_train_oh = keras.utils.<span class="fn">to_categorical</span>(y_train, <span class="nm">10</span>)
+y_test_oh  = keras.utils.<span class="fn">to_categorical</span>(y_test, <span class="nm">10</span>)
+
+CLASS_NAMES = [<span class="st">'airplane'</span>,<span class="st">'automobile'</span>,<span class="st">'bird'</span>,<span class="st">'cat'</span>,<span class="st">'deer'</span>,
+               <span class="st">'dog'</span>,<span class="st">'frog'</span>,<span class="st">'horse'</span>,<span class="st">'ship'</span>,<span class="st">'truck'</span>]
+
+<span class="cm"># ---- Data Augmentation ----</span>
+data_augmentation = keras.Sequential([
+    layers.<span class="fn">RandomFlip</span>(<span class="st">'horizontal'</span>),
+    layers.<span class="fn">RandomRotation</span>(<span class="nm">0.1</span>),
+    layers.<span class="fn">RandomZoom</span>(<span class="nm">0.1</span>),
+])
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Bangun Model CNN</h3>
+      <div class="code">
+<span class="kw">def</span> <span class="fn">build_cnn</span>(input_shape=(<span class="nm">32</span>,<span class="nm">32</span>,<span class="nm">3</span>), num_classes=<span class="nm">10</span>):
+    model = models.<span class="fn">Sequential</span>([
+        <span class="cm"># ==== Block 1 ====</span>
+        layers.<span class="fn">Conv2D</span>(<span class="nm">32</span>, (<span class="nm">3</span>,<span class="nm">3</span>), padding=<span class="st">'same'</span>,
+                       input_shape=input_shape),
+        layers.<span class="fn">BatchNormalization</span>(),
+        layers.<span class="fn">Activation</span>(<span class="st">'relu'</span>),
+        layers.<span class="fn">Conv2D</span>(<span class="nm">32</span>, (<span class="nm">3</span>,<span class="nm">3</span>), padding=<span class="st">'same'</span>),
+        layers.<span class="fn">BatchNormalization</span>(),
+        layers.<span class="fn">Activation</span>(<span class="st">'relu'</span>),
+        layers.<span class="fn">MaxPooling2D</span>((<span class="nm">2</span>,<span class="nm">2</span>)),
+        layers.<span class="fn">Dropout</span>(<span class="nm">0.25</span>),
+
+        <span class="cm"># ==== Block 2 ====</span>
+        layers.<span class="fn">Conv2D</span>(<span class="nm">64</span>, (<span class="nm">3</span>,<span class="nm">3</span>), padding=<span class="st">'same'</span>),
+        layers.<span class="fn">BatchNormalization</span>(),
+        layers.<span class="fn">Activation</span>(<span class="st">'relu'</span>),
+        layers.<span class="fn">Conv2D</span>(<span class="nm">64</span>, (<span class="nm">3</span>,<span class="nm">3</span>), padding=<span class="st">'same'</span>),
+        layers.<span class="fn">BatchNormalization</span>(),
+        layers.<span class="fn">Activation</span>(<span class="st">'relu'</span>),
+        layers.<span class="fn">MaxPooling2D</span>((<span class="nm">2</span>,<span class="nm">2</span>)),
+        layers.<span class="fn">Dropout</span>(<span class="nm">0.25</span>),
+
+        <span class="cm"># ==== Classifier ====</span>
+        layers.<span class="fn">Flatten</span>(),
+        layers.<span class="fn">Dense</span>(<span class="nm">512</span>, activation=<span class="st">'relu'</span>),
+        layers.<span class="fn">BatchNormalization</span>(),
+        layers.<span class="fn">Dropout</span>(<span class="nm">0.5</span>),
+        layers.<span class="fn">Dense</span>(num_classes, activation=<span class="st">'softmax'</span>),
+    ])
+    <span class="kw">return</span> model
+
+model = <span class="fn">build_cnn</span>()
+model.<span class="fn">summary</span>()
+      </div>
+    </div>
+    <div class="card">
+      <h3>Compile, Train & Evaluate</h3>
+      <div class="code">
+<span class="cm"># ---- Compile ----</span>
+model.<span class="fn">compile</span>(
+    optimizer=keras.optimizers.<span class="fn">Adam</span>(learning_rate=<span class="nm">0.001</span>),
+    loss=<span class="st">'categorical_crossentropy'</span>,
+    metrics=[<span class="st">'accuracy'</span>]
+)
+
+<span class="cm"># ---- Callbacks ----</span>
+callbacks = [
+    keras.callbacks.<span class="fn">EarlyStopping</span>(
+        patience=<span class="nm">10</span>, restore_best_weights=<span class="nm">True</span>
+    ),
+    keras.callbacks.<span class="fn">ReduceLROnPlateau</span>(
+        factor=<span class="nm">0.5</span>, patience=<span class="nm">5</span>, min_lr=<span class="nm">1e-6</span>
+    ),
+    keras.callbacks.<span class="fn">ModelCheckpoint</span>(
+        <span class="st">'best_model.h5'</span>, save_best_only=<span class="nm">True</span>
+    )
+]
+
+<span class="cm"># ---- Train ----</span>
+history = model.<span class="fn">fit</span>(
+    X_train, y_train_oh,
+    batch_size=<span class="nm">64</span>,
+    epochs=<span class="nm">50</span>,
+    validation_split=<span class="nm">0.2</span>,
+    callbacks=callbacks,
+    verbose=<span class="nm">1</span>
+)
+
+<span class="cm"># ---- Evaluate ----</span>
+test_loss, test_acc = model.<span class="fn">evaluate</span>(X_test, y_test_oh)
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"\nTest accuracy: {test_acc:.4f}"</span>)
+
+<span class="cm"># ---- Predict ----</span>
+predictions = model.<span class="fn">predict</span>(X_test[:<span class="nm">10</span>])
+pred_classes = np.<span class="fn">argmax</span>(predictions, axis=<span class="nm">1</span>)
+<span class="fn">print</span>([CLASS_NAMES[i] <span class="kw">for</span> i <span class="kw">in</span> pred_classes])
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Transfer Learning dengan MobileNetV2</h3>
+    <div class="code">
+<span class="cm"># ---- Load pre-trained base ----</span>
+base_model = keras.applications.<span class="fn">MobileNetV2</span>(
+    input_shape=(<span class="nm">224</span>, <span class="nm">224</span>, <span class="nm">3</span>),
+    include_top=<span class="nm">False</span>,       <span class="cm"># tanpa classifier asli</span>
+    weights=<span class="st">'imagenet'</span>       <span class="cm"># pre-trained weights</span>
+)
+base_model.trainable = <span class="nm">False</span>  <span class="cm"># freeze semua layer</span>
+
+<span class="cm"># ---- Tambah classifier baru ----</span>
+inputs = keras.<span class="fn">Input</span>(shape=(<span class="nm">224</span>, <span class="nm">224</span>, <span class="nm">3</span>))
+x = base_model(inputs, training=<span class="nm">False</span>)
+x = layers.<span class="fn">GlobalAveragePooling2D</span>()(x)
+x = layers.<span class="fn">Dropout</span>(<span class="nm">0.3</span>)(x)
+outputs = layers.<span class="fn">Dense</span>(<span class="nm">5</span>, activation=<span class="st">'softmax'</span>)(x)  <span class="cm"># 5 kelas baru</span>
+model_tl = keras.<span class="fn">Model</span>(inputs, outputs)
+
+<span class="cm"># ---- Train hanya classifier ----</span>
+model_tl.<span class="fn">compile</span>(
+    optimizer=keras.optimizers.<span class="fn">Adam</span>(<span class="nm">0.001</span>),
+    loss=<span class="st">'categorical_crossentropy'</span>,
+    metrics=[<span class="st">'accuracy'</span>]
+)
+
+<span class="cm"># ---- (Opsional) Fine-tuning: unfreeze layer akhir ----</span>
+base_model.trainable = <span class="nm">True</span>
+fine_tune_at = <span class="nm">100</span>  <span class="cm"># unfreeze dari layer ke-100 dst</span>
+<span class="kw">for</span> layer <span class="kw">in</span> base_model.layers[:fine_tune_at]:
+    layer.trainable = <span class="nm">False</span>
+
+model_tl.<span class="fn">compile</span>(
+    optimizer=keras.optimizers.<span class="fn">Adam</span>(<span class="nm">1e-5</span>),  <span class="cm"># LR sangat kecil!</span>
+    loss=<span class="st">'categorical_crossentropy'</span>,
+    metrics=[<span class="st">'accuracy'</span>]
+)
+    </div>
+  </div>
+</section>
+
+<!-- ==================== LATIHAN ==================== -->
+<section id="tab-latihan" class="section">
+  <div class="stitle">
+    <div class="stbar" style="background:var(--amber)"></div>
+    <div>
+      <div class="page-h">Latihan & Diskusi</div>
+      <div class="page-sub">Klik soal untuk lihat jawaban — 7 soal dari konseptual hingga coding</div>
+    </div>
+  </div>
+
+  <div id="soal-list">
+
+    <div class="soal" onclick="toggleSoal('q1')">
+      <div class="soal-head">
+        <div><span class="badge ba" style="margin-bottom:6px">Konseptual</span>
+        <div class="soal-q">1. Jelaskan 3 keunggulan CNN dibanding fully-connected network untuk data gambar. Apa yang dimaksud dengan "parameter sharing" dan "translation invariance"?</div></div>
+        <div class="soal-icon" id="q1-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q1-a">
+        <strong>3 Keunggulan CNN:</strong><br>
+        1. <strong>Parameter Sharing:</strong> Satu filter (misal 3×3 = 9 parameter) digunakan di seluruh gambar. FC network butuh satu weight per koneksi — untuk gambar 32×32×3, layer pertama butuh hingga ratusan ribu weight. CNN butuh hanya ribuan.<br><br>
+        2. <strong>Sparse Connectivity (Local Receptive Field):</strong> Setiap neuron di feature map hanya "melihat" area kecil input (misal 3×3 piksel), bukan seluruh gambar. Ini mencerminkan cara kita memproses gambar: fitur lokal seperti tepi ada di area kecil.<br><br>
+        3. <strong>Translation Invariance:</strong> Karena parameter sharing, filter yang mendeteksi "tepi vertikal" akan bekerja sama baik di posisi gambar mana pun. Kucing di sudut kiri atas dan sudut kanan bawah akan sama-sama terdeteksi.
+      </div>
+    </div>
+
+    <div class="soal" onclick="toggleSoal('q2')">
+      <div class="soal-head">
+        <div><span class="badge bt">Hitung Manual</span>
+        <div class="soal-q">2. Input gambar 6×6, filter 3×3, stride=1, padding=0. Berapa ukuran output feature map? Berapa jumlah operasi multiply-add yang dilakukan?</div></div>
+        <div class="soal-icon" id="q2-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q2-a">
+        <strong>Ukuran output:</strong><br>
+        Output = ⌊(N + 2P - F) / S⌋ + 1 = ⌊(6 + 0 - 3) / 1⌋ + 1 = 3 + 1 = <strong>4×4 = 16 elemen</strong><br><br>
+        <strong>Jumlah operasi multiply-add:</strong><br>
+        Setiap posisi filter → 3×3 = 9 multiply-add<br>
+        Jumlah posisi = 4×4 = 16<br>
+        Total = 16 × 9 = <strong>144 operasi</strong><br><br>
+        Jika ada 32 filter: 144 × 32 = <strong>4.608 operasi</strong> (masih sangat efisien!)
+      </div>
+    </div>
+
+    <div class="soal" onclick="toggleSoal('q3')">
+      <div class="soal-head">
+        <div><span class="badge bg">Pooling</span>
+        <div class="soal-q">3. Diberikan feature map 4×4 berikut. Hitung hasil Max Pooling dan Average Pooling dengan window 2×2, stride=2:<br><br>
+        [ 1  3  2  4 ]<br>[ 5  6  1  2 ]<br>[ 3  2  7  8 ]<br>[ 1  4  3  6 ]</div></div>
+        <div class="soal-icon" id="q3-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q3-a">
+        Output berukuran 2×2 (window 2×2, stride 2)<br><br>
+        <strong>Max Pooling:</strong><br>
+        Kuadran kiri-atas [1,3,5,6] → max = <strong>6</strong><br>
+        Kuadran kanan-atas [2,4,1,2] → max = <strong>4</strong><br>
+        Kuadran kiri-bawah [3,2,1,4] → max = <strong>4</strong><br>
+        Kuadran kanan-bawah [7,8,3,6] → max = <strong>8</strong><br>
+        Hasil: [[6, 4], [4, 8]]<br><br>
+        <strong>Average Pooling:</strong><br>
+        Kuadran kiri-atas → avg(1+3+5+6)/4 = <strong>3.75</strong><br>
+        Kuadran kanan-atas → avg(2+4+1+2)/4 = <strong>2.25</strong><br>
+        Kuadran kiri-bawah → avg(3+2+1+4)/4 = <strong>2.5</strong><br>
+        Kuadran kanan-bawah → avg(7+8+3+6)/4 = <strong>6.0</strong><br>
+        Hasil: [[3.75, 2.25], [2.5, 6.0]]
+      </div>
+    </div>
+
+    <div class="soal" onclick="toggleSoal('q4')">
+      <div class="soal-head">
+        <div><span class="badge bc">Training</span>
+        <div class="soal-q">4. Apa itu vanishing gradient problem dan mengapa ReLU lebih baik dari Sigmoid untuk layer dalam CNN? Jelaskan dengan persamaan turunan masing-masing.</div></div>
+        <div class="soal-icon" id="q4-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q4-a">
+        <strong>Vanishing Gradient:</strong> Selama backpropagation, gradien dikalikan di setiap layer (chain rule). Jika gradien kecil (&lt;1), perkalian berulang → gradien hampir nol di layer awal → layer awal tidak belajar.<br><br>
+        <strong>Sigmoid:</strong> σ'(x) = σ(x)(1-σ(x)) — maksimum hanya 0.25 (saat x=0). Untuk 10 layer: 0.25¹⁰ ≈ 0.000001 → vanishing!<br><br>
+        <strong>ReLU:</strong> f'(x) = 1 jika x > 0, 0 jika x ≤ 0. Untuk x positif, gradiennya tetap 1 → tidak "mengecil" saat dilalui. Namun ada masalah "dying ReLU" — neuron yang outputnya selalu 0 tidak pernah update. Solusi: Leaky ReLU.
+      </div>
+    </div>
+
+    <div class="soal" onclick="toggleSoal('q5')">
+      <div class="soal-head">
+        <div><span class="badge bp">Arsitektur</span>
+        <div class="soal-q">5. Untuk klasifikasi citra sampah organik vs anorganik (2 kelas, dataset kecil ~500 gambar), apakah lebih baik train dari scratch atau transfer learning? Pilih base model, jelaskan alasannya.</div></div>
+        <div class="soal-icon" id="q5-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q5-a">
+        <strong>Rekomendasi: Transfer Learning dengan MobileNetV2</strong><br><br>
+        <strong>Alasan:</strong><br>
+        1. Dataset 500 gambar sangat kecil untuk training dari scratch — pasti overfitting<br>
+        2. Gambar sampah masih termasuk objek visual alami yang mirip ImageNet<br>
+        3. MobileNetV2 dipilih karena: ringan (3.4M params), cepat, dan akurasi cukup baik<br><br>
+        <strong>Langkah:</strong><br>
+        1. Load MobileNetV2 (include_top=False, weights='imagenet')<br>
+        2. Freeze semua layer base<br>
+        3. Tambah: GlobalAveragePooling → Dropout(0.3) → Dense(1, activation='sigmoid')<br>
+        4. Compile dengan binary_crossentropy + Adam(0.001)<br>
+        5. Augmentasi: flip, rotate, zoom untuk perbanyak data<br>
+        6. Train 20-30 epoch, monitor val_accuracy<br>
+        7. Ekspektasi akurasi: 85-92% meski dataset kecil
+      </div>
+    </div>
+
+    <div class="soal" onclick="toggleSoal('q6')">
+      <div class="soal-head">
+        <div><span class="badge bam">Analisis</span>
+        <div class="soal-q">6. Training CNN menunjukkan train_acc=95% tapi val_acc=60%. Apa masalahnya? Sebutkan minimal 4 solusi teknis yang bisa diterapkan.</div></div>
+        <div class="soal-icon" id="q6-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q6-a">
+        <strong>Masalah: OVERFITTING</strong> — model hafal data training tapi gagal generalisasi.<br><br>
+        <strong>Solusi:</strong><br>
+        1. <strong>Data Augmentation:</strong> flip, rotate, crop, color jitter → model melihat lebih banyak variasi<br>
+        2. <strong>Dropout:</strong> tambah Dropout(0.4-0.5) setelah Dense layer — paksa model tidak bergantung pada neuron tertentu<br>
+        3. <strong>L2 Regularization:</strong> tambah kernel_regularizer=l2(0.001) pada layer Conv/Dense<br>
+        4. <strong>Early Stopping:</strong> hentikan training saat val_loss tidak membaik (patience=10)<br>
+        5. <strong>Kurangi kapasitas model:</strong> kurangi jumlah filter atau layer — model terlalu kompleks untuk data<br>
+        6. <strong>Perbanyak data:</strong> kumpulkan lebih banyak gambar training
+      </div>
+    </div>
+
+    <div class="soal" onclick="toggleSoal('q7')">
+      <div class="soal-head">
+        <div><span class="badge bg">Coding</span>
+        <div class="soal-q">7. Tulis kode Python lengkap: bangun CNN sederhana untuk MNIST (angka 0-9, grayscale 28×28), compile, train 5 epoch, dan tampilkan confusion matrix.</div></div>
+        <div class="soal-icon" id="q7-i">▾</div>
+      </div>
+      <div class="soal-ans" id="q7-a">
+        <div class="code" style="font-size:11px">
+<span class="kw">import</span> tensorflow <span class="kw">as</span> tf
+<span class="kw">from</span> tensorflow.keras <span class="kw">import</span> layers, models
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> confusion_matrix
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+
+<span class="cm"># Load MNIST</span>
+(X_train, y_train), (X_test, y_test) = tf.keras.datasets.mnist.<span class="fn">load_data</span>()
+X_train = X_train[..., np.newaxis] / <span class="nm">255.0</span>  <span class="cm"># (60000,28,28,1)</span>
+X_test  = X_test[..., np.newaxis] / <span class="nm">255.0</span>
+
+<span class="cm"># Bangun model</span>
+model = models.<span class="fn">Sequential</span>([
+    layers.<span class="fn">Conv2D</span>(<span class="nm">32</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">'relu'</span>, input_shape=(<span class="nm">28</span>,<span class="nm">28</span>,<span class="nm">1</span>)),
+    layers.<span class="fn">MaxPooling2D</span>((<span class="nm">2</span>,<span class="nm">2</span>)),
+    layers.<span class="fn">Conv2D</span>(<span class="nm">64</span>, (<span class="nm">3</span>,<span class="nm">3</span>), activation=<span class="st">'relu'</span>),
+    layers.<span class="fn">MaxPooling2D</span>((<span class="nm">2</span>,<span class="nm">2</span>)),
+    layers.<span class="fn">Flatten</span>(),
+    layers.<span class="fn">Dense</span>(<span class="nm">64</span>, activation=<span class="st">'relu'</span>),
+    layers.<span class="fn">Dropout</span>(<span class="nm">0.5</span>),
+    layers.<span class="fn">Dense</span>(<span class="nm">10</span>, activation=<span class="st">'softmax'</span>),
+])
+
+model.<span class="fn">compile</span>(optimizer=<span class="st">'adam'</span>, loss=<span class="st">'sparse_categorical_crossentropy'</span>, metrics=[<span class="st">'accuracy'</span>])
+history = model.<span class="fn">fit</span>(X_train, y_train, epochs=<span class="nm">5</span>, validation_split=<span class="nm">0.1</span>, batch_size=<span class="nm">64</span>)
+
+<span class="cm"># Evaluasi</span>
+test_loss, test_acc = model.<span class="fn">evaluate</span>(X_test, y_test)
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"\nTest accuracy: {test_acc:.4f}"</span>)  <span class="cm"># ekspektasi ~99%</span>
+
+<span class="cm"># Confusion Matrix</span>
+y_pred = np.<span class="fn">argmax</span>(model.<span class="fn">predict</span>(X_test), axis=<span class="nm">1</span>)
+cm = <span class="fn">confusion_matrix</span>(y_test, y_pred)
+plt.<span class="fn">figure</span>(figsize=(<span class="nm">10</span>,<span class="nm">8</span>))
+sns.<span class="fn">heatmap</span>(cm, annot=<span class="nm">True</span>, fmt=<span class="st">'d'</span>, cmap=<span class="st">'Blues'</span>)
+plt.<span class="fn">title</span>(<span class="st">'Confusion Matrix MNIST CNN'</span>)
+plt.<span class="fn">xlabel</span>(<span class="st">'Predicted'</span>); plt.<span class="fn">ylabel</span>(<span class="st">'Actual'</span>)
+plt.<span class="fn">show</span>()
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  Kecerdasan Buatan · Materi 8 — CNN Dasar &nbsp;·&nbsp; S1 Informatika UPJB 2024
+</footer>
+
+<!-- ==================== JAVASCRIPT ==================== -->
+<script>
+// ============================================================
+// NAVIGATION
+// ============================================================
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  const inits = {
+    ann: () => { drawActivations(); drawMLP(); },
+    conv: () => { initConv(); updateConvOutput(); },
+    arsitektur: () => { drawArch(); },
+    pooling: () => { drawPooling(); },
+    training: () => { runTraining(); drawFitness(); },
+    aplikasi: () => { initDrawCanvas(); },
+  };
+  if (inits[id]) setTimeout(inits[id], 60);
+}
+
+// ============================================================
+// SOAL TOGGLE
+// ============================================================
+function toggleSoal(id) {
+  const ans = document.getElementById(id+'-a');
+  const ico = document.getElementById(id+'-i');
+  ans.classList.toggle('show');
+  ico.classList.toggle('open');
+  ico.textContent = ans.classList.contains('show') ? '▴' : '▾';
+}
+
+// ============================================================
+// ACTIVATION FUNCTIONS CHART
+// ============================================================
+function drawActivations() {
+  const c = document.getElementById('act-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#14161a'; ctx.fillRect(0, 0, W, H);
+
+  const pad = { l: 30, r: 10, t: 15, b: 25 };
+  const pw = W - pad.l - pad.r, ph = H - pad.t - pad.b;
+  function xOf(v) { return pad.l + (v + 4) / 8 * pw; }
+  function yOf(v) { return pad.t + ph - (v + 1.5) / 3 * ph; }
+
+  // Grid
+  ctx.strokeStyle = 'rgba(255,255,255,0.05)'; ctx.lineWidth = 0.5;
+  for (let i = -4; i <= 4; i++) {
+    ctx.beginPath(); ctx.moveTo(xOf(i), pad.t); ctx.lineTo(xOf(i), pad.t + ph); ctx.stroke();
+  }
+  for (let i = -1; i <= 1.5; i += 0.5) {
+    ctx.beginPath(); ctx.moveTo(pad.l, yOf(i)); ctx.lineTo(pad.l + pw, yOf(i)); ctx.stroke();
+  }
+  // Axes
+  ctx.strokeStyle = 'rgba(255,255,255,0.2)'; ctx.lineWidth = 1;
+  ctx.beginPath(); ctx.moveTo(pad.l, yOf(0)); ctx.lineTo(pad.l + pw, yOf(0)); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(xOf(0), pad.t); ctx.lineTo(xOf(0), pad.t + ph); ctx.stroke();
+
+  const xs = [];
+  for (let x = -4; x <= 4; x += 0.08) xs.push(x);
+
+  function drawCurve(fn, color) {
+    ctx.beginPath(); ctx.strokeStyle = color; ctx.lineWidth = 2;
+    xs.forEach((x, i) => {
+      const y = fn(x);
+      const px = xOf(x), py = yOf(y);
+      if (py < pad.t || py > pad.t + ph) { ctx.stroke(); ctx.beginPath(); return; }
+      i === 0 ? ctx.moveTo(px, py) : ctx.lineTo(px, py);
+    });
+    ctx.stroke();
+  }
+
+  drawCurve(x => Math.max(0, x), '#4f9cf9');
+  drawCurve(x => 1 / (1 + Math.exp(-x)), '#a78bfa');
+  drawCurve(x => Math.tanh(x), '#3ecf82');
+
+  ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = '9px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('0', xOf(0), pad.t + ph + 14);
+  ctx.fillText('−4', xOf(-4), pad.t + ph + 14);
+  ctx.fillText('+4', xOf(4), pad.t + ph + 14);
+}
+
+// ============================================================
+// MLP VISUALIZATION
+// ============================================================
+let mlpAnim = null;
+function drawMLP(highlight = null) {
+  const c = document.getElementById('mlp-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0, 0, W, H);
+  ctx.fillStyle = '#0e0f11'; ctx.fillRect(0, 0, W, H);
+
+  const layers_n = parseInt(document.getElementById('mlp-layers').value);
+  const nPerLayer = parseInt(document.getElementById('mlp-neurons').value);
+  const inputN = 4, outputN = 3;
+
+  const allLayers = [inputN, ...Array(layers_n).fill(nPerLayer), outputN];
+  const totalLayers = allLayers.length;
+  const xStep = W / (totalLayers + 1);
+
+  const positions = allLayers.map((n, li) => {
+    const x = xStep * (li + 1);
+    return Array.from({length: n}, (_, ni) => ({
+      x, y: H / 2 + (ni - (n - 1) / 2) * Math.min(45, H / (n + 1))
+    }));
+  });
+
+  // Draw connections
+  positions.forEach((layer, li) => {
+    if (li === positions.length - 1) return;
+    layer.forEach(n1 => {
+      positions[li + 1].forEach(n2 => {
+        const active = highlight !== null && highlight === li;
+        ctx.beginPath();
+        ctx.strokeStyle = active ? `rgba(79,156,249,0.6)` : 'rgba(255,255,255,0.05)';
+        ctx.lineWidth = active ? 1.5 : 0.5;
+        ctx.moveTo(n1.x, n1.y); ctx.lineTo(n2.x, n2.y); ctx.stroke();
+      });
+    });
+  });
+
+  // Draw neurons
+  const layerColors = ['#4f9cf9', ...Array(layers_n).fill('#a78bfa'), '#3ecf82'];
+  positions.forEach((layer, li) => {
+    layer.forEach(n => {
+      const active = highlight !== null && highlight >= li;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, 10, 0, Math.PI * 2);
+      ctx.fillStyle = active ? layerColors[li] : layerColors[li] + '33';
+      ctx.fill();
+      ctx.strokeStyle = layerColors[li];
+      ctx.lineWidth = 1.5; ctx.stroke();
+    });
+  });
+
+  // Labels
+  const lbls = ['Input', ...Array(layers_n).fill(0).map((_,i) => `Hidden ${i+1}`), 'Output'];
+  ctx.font = '10px monospace'; ctx.textAlign = 'center'; ctx.fillStyle = 'rgba(255,255,255,0.3)';
+  positions.forEach((layer, li) => {
+    ctx.fillText(lbls[li], layer[0].x, H - 10);
+  });
+
+  // Params
+  let params = 0;
+  for (let i = 0; i < allLayers.length - 1; i++) {
+    params += allLayers[i] * allLayers[i+1] + allLayers[i+1];
+  }
+  document.getElementById('mlp-params').textContent = `Total parameters: ${params.toLocaleString()} | Architecture: [${allLayers.join(' → ')}]`;
+}
+
+function animateMLP() {
+  if (mlpAnim) clearInterval(mlpAnim);
+  const layers_n = parseInt(document.getElementById('mlp-layers').value);
+  let step = 0, total = layers_n + 2;
+  mlpAnim = setInterval(() => {
+    drawMLP(step < total ? step : null);
+    step++; if (step > total + 1) { clearInterval(mlpAnim); drawMLP(); }
+  }, 300);
+}
+
+drawMLP();
+drawActivations();
+
+// ============================================================
+// CONV OUTPUT CALCULATOR
+// ============================================================
+function updateConvOutput() {
+  const N = +document.getElementById('co-n').value;
+  const F = +document.getElementById('co-f').value;
+  const P = +document.getElementById('co-p').value;
+  const S = +document.getElementById('co-s').value;
+  document.getElementById('co-nv').textContent = N;
+  document.getElementById('co-fv').textContent = F;
+  document.getElementById('co-pv').textContent = P;
+  document.getElementById('co-sv').textContent = S;
+  const out = Math.floor((N + 2*P - F) / S) + 1;
+  const valid = out > 0;
+  document.getElementById('co-result').innerHTML = valid
+    ? `Output: <span style="color:var(--green)">${out} × ${out}</span> &nbsp; <span style="font-size:13px;color:var(--text2)">(${out*out} total elements)</span>`
+    : `<span style="color:var(--coral)">Invalid configuration (output ≤ 0)</span>`;
+}
+updateConvOutput();
+
+// ============================================================
+// CONV DEMO
+// ============================================================
+const FILTERS = {
+  'edge-v':  [[-1,0,1],[-2,0,2],[-1,0,1]],
+  'edge-h':  [[-1,-2,-1],[0,0,0],[1,2,1]],
+  'sharpen': [[0,-1,0],[-1,5,-1],[0,-1,0]],
+  'blur':    [[1,1,1],[1,1,1],[1,1,1]],
+  'emboss':  [[-2,-1,0],[-1,1,1],[0,1,2]],
+};
+
+const inputData = [
+  [120,130,80,90,200,210,180,160],
+  [110,125,75,85,190,220,175,155],
+  [100,115,70,80,180,200,170,150],
+  [95, 110,65,75,170,190,165,145],
+  [90, 105,60,70,160,180,160,140],
+  [85, 100,55,65,150,170,155,135],
+  [80, 95, 50,60,140,160,150,130],
+  [75, 90, 45,55,130,150,145,125],
+];
+
+let convAnimInterval = null;
+let curFilter = FILTERS['edge-v'];
+
+function updateFilter() {
+  const k = document.getElementById('filter-sel').value;
+  curFilter = FILTERS[k];
+  if (convAnimInterval) { clearInterval(convAnimInterval); convAnimInterval = null; document.getElementById('conv-btn').textContent = '▶ Animasi Konvolusi'; }
+  drawInputCanvas();
+  drawKernelCanvas();
+  drawOutputCanvas(null, null);
+  document.getElementById('calc-box').textContent = 'Klik ▶ untuk lihat konvolusi bergerak';
+}
+
+function drawInputCanvas(hi=-1, hj=-1) {
+  const c = document.getElementById('input-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const sz = c.width / 8;
+  ctx.clearRect(0,0,c.width,c.height);
+  for (let i=0; i<8; i++) for (let j=0; j<8; j++) {
+    const v = inputData[i][j];
+    ctx.fillStyle = `rgb(${v},${v},${v})`;
+    ctx.fillRect(j*sz, i*sz, sz-1, sz-1);
+    if (i >= hi && i < hi+3 && j >= hj && j < hj+3) {
+      ctx.strokeStyle = '#4f9cf9'; ctx.lineWidth = 2;
+      ctx.strokeRect(j*sz+1, i*sz+1, sz-3, sz-3);
+    }
+    ctx.fillStyle = 'rgba(255,255,255,0.4)'; ctx.font = `${sz*0.35}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(v, j*sz+sz/2, i*sz+sz*0.62);
+  }
+  if (hi >= 0) {
+    ctx.strokeStyle = '#4f9cf9'; ctx.lineWidth = 2.5;
+    ctx.strokeRect(hj*sz, hi*sz, sz*3, sz*3);
+  }
+}
+
+function drawKernelCanvas() {
+  const c = document.getElementById('kernel-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const sz = c.width / 3;
+  ctx.clearRect(0,0,c.width,c.height);
+  const maxV = Math.max(...curFilter.flat().map(Math.abs)) || 1;
+  for (let i=0; i<3; i++) for (let j=0; j<3; j++) {
+    const v = curFilter[i][j];
+    const norm = v / maxV;
+    const r = norm > 0 ? Math.round(norm*80) : 0;
+    const b = norm < 0 ? Math.round(-norm*120) : 0;
+    ctx.fillStyle = `rgb(${20+r},${20},${20+b})`;
+    ctx.fillRect(j*sz+1, i*sz+1, sz-2, sz-2);
+    ctx.fillStyle = '#e8e6e0'; ctx.font = `${sz*0.32}px monospace`;
+    ctx.textAlign = 'center';
+    ctx.fillText(v, j*sz+sz/2, i*sz+sz*0.65);
+  }
+}
+
+function applyConv() {
+  const out = [];
+  for (let i=0; i<6; i++) {
+    out.push([]);
+    for (let j=0; j<6; j++) {
+      let sum = 0;
+      for (let ki=0; ki<3; ki++) for (let kj=0; kj<3; kj++) {
+        sum += inputData[i+ki][j+kj] * curFilter[ki][kj];
+      }
+      out[i].push(sum);
+    }
+  }
+  return out;
+}
+
+function drawOutputCanvas(outData, hi, hj) {
+  const c = document.getElementById('output-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const sz = c.width / 6;
+  ctx.clearRect(0,0,c.width,c.height);
+  if (!outData) { ctx.fillStyle='#1c1f26'; ctx.fillRect(0,0,c.width,c.height); return; }
+  const flat = outData.flat();
+  const mx = Math.max(...flat.map(Math.abs)) || 1;
+  for (let i=0; i<6; i++) for (let j=0; j<6; j++) {
+    const v = outData[i][j];
+    const norm = v / mx;
+    const r = norm > 0 ? Math.round(norm*220) : 0;
+    const b = norm < 0 ? Math.round(-norm*220) : 0;
+    ctx.fillStyle = `rgb(${r},${20},${b})`;
+    ctx.fillRect(j*sz+1, i*sz+1, sz-2, sz-2);
+    if (i===hi && j===hj) {
+      ctx.strokeStyle = '#4f9cf9'; ctx.lineWidth = 2.5;
+      ctx.strokeRect(j*sz+1, i*sz+1, sz-2, sz-2);
+    }
+    const showV = Math.round(v);
+    ctx.fillStyle = Math.abs(v) > mx*0.3 ? '#e8e6e0' : 'rgba(255,255,255,0.4)';
+    ctx.font = `${Math.max(8,sz*0.3)}px monospace`; ctx.textAlign = 'center';
+    ctx.fillText(showV, j*sz+sz/2, i*sz+sz*0.62);
+  }
+}
+
+function animateConv() {
+  if (convAnimInterval) {
+    clearInterval(convAnimInterval); convAnimInterval = null;
+    document.getElementById('conv-btn').textContent = '▶ Animasi Konvolusi';
+    drawInputCanvas(); drawOutputCanvas(null);
+    document.getElementById('calc-box').textContent = 'Animasi selesai';
+    return;
+  }
+  document.getElementById('conv-btn').textContent = '⏹ Stop';
+  const outData = applyConv();
+  let i=0, j=0;
+  convAnimInterval = setInterval(() => {
+    drawInputCanvas(i, j);
+    drawOutputCanvas(outData, i, j);
+    // Calc box
+    let calc = `Pos (${i},${j})\n\nΣ = `;
+    let vals = [];
+    for (let ki=0; ki<3; ki++) for (let kj=0; kj<3; kj++) {
+      vals.push(`${inputData[i+ki][j+kj]}×${curFilter[ki][kj]}`);
+    }
+    calc = `Pos (${i},${j})\n${vals.slice(0,4).join(' + ')}\n+ ${vals.slice(4).join(' + ')}\n= ${Math.round(outData[i][j])}`;
+    document.getElementById('calc-box').textContent = calc;
+    j++;
+    if (j >= 6) { j = 0; i++; }
+    if (i >= 6) {
+      clearInterval(convAnimInterval); convAnimInterval = null;
+      document.getElementById('conv-btn').textContent = '▶ Animasi Konvolusi';
+    }
+  }, 160);
+}
+
+function initConv() {
+  drawInputCanvas();
+  drawKernelCanvas();
+  drawOutputCanvas(null);
+}
+initConv();
+
+// ============================================================
+// ARCHITECTURE DIAGRAM
+// ============================================================
+function drawArch() {
+  const c = document.getElementById('arch-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0e0f11'; ctx.fillRect(0,0,W,H);
+
+  const layers = [
+    {label:'Input\n32×32×3',w:52,h:52,d:52,col:'#5a5856',x:40},
+    {label:'Conv1\n32×3×3',w:42,h:48,d:42,col:'#4f9cf9',x:135},
+    {label:'Pool1\n16×16×32',w:28,h:48,d:28,col:'#f5a623',x:220},
+    {label:'Conv2\n64×3×3',w:20,h:44,d:36,col:'#4f9cf9',x:295},
+    {label:'Pool2\n8×8×64',w:14,h:44,d:24,col:'#f5a623',x:358},
+    {label:'Conv3\n128×3×3',w:10,h:40,d:28,col:'#4f9cf9',x:415},
+    {label:'Pool3\n4×4×128',w:7,h:40,d:20,col:'#f5a623',x:465},
+    {label:'Flatten\n2048',w:8,h:36,d:8,col:'#a78bfa',x:520},
+    {label:'Dense\n512',w:8,h:30,d:8,col:'#3ecf82',x:580},
+    {label:'Dropout\n0.5',w:8,h:24,d:8,col:'#f56565',x:628},
+    {label:'Output\n10',w:8,h:18,d:8,col:'#3ecf82',x:678},
+  ];
+
+  const cy = H / 2;
+
+  layers.forEach((l, i) => {
+    const x = l.x; const d = 10;
+    // 3D box
+    ctx.fillStyle = l.col + '33';
+    ctx.strokeStyle = l.col + 'aa';
+    ctx.lineWidth = 1;
+    // front face
+    ctx.fillRect(x, cy-l.h/2, l.w, l.h);
+    ctx.strokeRect(x, cy-l.h/2, l.w, l.h);
+    // top face
+    ctx.beginPath();
+    ctx.moveTo(x, cy-l.h/2);
+    ctx.lineTo(x+d, cy-l.h/2-d);
+    ctx.lineTo(x+l.w+d, cy-l.h/2-d);
+    ctx.lineTo(x+l.w, cy-l.h/2);
+    ctx.fillStyle = l.col + '55'; ctx.fill();
+    ctx.strokeStyle = l.col + 'aa'; ctx.stroke();
+    // right face
+    ctx.beginPath();
+    ctx.moveTo(x+l.w, cy-l.h/2);
+    ctx.lineTo(x+l.w+d, cy-l.h/2-d);
+    ctx.lineTo(x+l.w+d, cy+l.h/2-d);
+    ctx.lineTo(x+l.w, cy+l.h/2);
+    ctx.fillStyle = l.col + '22'; ctx.fill();
+    ctx.stroke();
+    // Arrow to next
+    if (i < layers.length-1) {
+      const nx = layers[i+1].x;
+      ctx.beginPath();
+      ctx.moveTo(x+l.w+d+2, cy-d/2);
+      ctx.lineTo(nx-2, cy-d/2);
+      ctx.strokeStyle = 'rgba(255,255,255,0.15)'; ctx.lineWidth = 1;
+      ctx.stroke();
+    }
+    // Label
+    const lx = x + l.w/2 + d/2;
+    ctx.fillStyle = l.col; ctx.font = '9px monospace'; ctx.textAlign = 'center';
+    const parts = l.label.split('\n');
+    ctx.fillText(parts[0], lx, cy + l.h/2 + 15);
+    ctx.fillStyle = 'rgba(255,255,255,0.3)';
+    ctx.fillText(parts[1] || '', lx, cy + l.h/2 + 27);
+  });
+}
+setTimeout(drawArch, 100);
+
+// ============================================================
+// POOLING
+// ============================================================
+function drawPooling() {
+  const c = document.getElementById('pool-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle = '#0e0f11'; ctx.fillRect(0,0,W,H);
+
+  const win = parseInt(document.getElementById('pool-w').value);
+  const data = [[2,8,5,1,4,7,3,6],[9,3,1,6,2,8,5,4],[7,4,6,3,8,1,9,2],[1,5,2,7,3,6,4,8],[6,2,8,4,7,3,1,5],[3,7,4,8,1,9,6,2],[5,1,7,2,6,4,8,3],[4,6,3,5,9,2,7,1]];
+  const n = 8, step = W < 450 ? 22 : 24;
+  const startX = 20, startY = 20;
+
+  // Draw input
+  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '9px monospace'; ctx.textAlign = 'center';
+  ctx.fillText('Input (8×8)', startX + n*step/2, 12);
+  for (let i=0; i<n; i++) for (let j=0; j<n; j++) {
+    const v = data[i][j];
+    const norm = v / 9;
+    ctx.fillStyle = `rgba(79,156,249,${norm*0.7+0.1})`;
+    ctx.fillRect(startX+j*step+1, startY+i*step+1, step-2, step-2);
+    ctx.fillStyle = '#e8e6e0'; ctx.font = '9px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(v, startX+j*step+step/2, startY+i*step+step*0.67);
+  }
+
+  // Overlay win
+  ctx.strokeStyle = '#f5a623'; ctx.lineWidth = 2;
+  ctx.strokeRect(startX, startY, win*step, win*step);
+
+  const outN = Math.floor(n/win);
+  const ox1 = startX + n*step + 30;
+  const ox2 = ox1 + outN*step*1.6 + 24;
+  const ostep = step * 1.6;
+
+  ['Max Pooling', 'Average Pooling'].forEach((label, li) => {
+    const ox = li === 0 ? ox1 : ox2;
+    ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = '9px monospace'; ctx.textAlign = 'center';
+    ctx.fillText(label, ox+outN*ostep/2, 12);
+    ctx.fillText(`(${outN}×${outN})`, ox+outN*ostep/2, 22);
+    for (let i=0; i<outN; i++) for (let j=0; j<outN; j++) {
+      const window = [];
+      for (let wi=0; wi<win; wi++) for (let wj=0; wj<win; wj++) window.push(data[i*win+wi][j*win+wj]);
+      const v = li===0 ? Math.max(...window) : (window.reduce((a,b)=>a+b,0)/window.length);
+      const norm = v / 9;
+      ctx.fillStyle = li===0 ? `rgba(62,207,130,${norm*0.8+0.1})` : `rgba(167,139,250,${norm*0.8+0.1})`;
+      ctx.fillRect(ox+j*ostep+1, startY+i*ostep+1, ostep-2, ostep-2);
+      ctx.fillStyle = '#e8e6e0'; ctx.font = '10px monospace'; ctx.textAlign = 'center';
+      ctx.fillText(li===0 ? Math.round(v) : v.toFixed(1), ox+j*ostep+ostep/2, startY+i*ostep+ostep*0.62);
+    }
+  });
+}
+setTimeout(drawPooling, 100);
+
+// ============================================================
+// TRAINING CURVE
+// ============================================================
+function genCurve(lrIdx, opt, n=50) {
+  const lrs = [0.0001, 0.001, 0.01, 0.1, 1.0];
+  const lr = lrs[lrIdx];
+  const tooHigh = lr >= 0.1, tooLow = lr <= 0.0001;
+  const trainLoss=[], valLoss=[], trainAcc=[];
+  let tl = 2.3, vl = 2.35, ta = 0.1;
+  for (let i=0; i<n; i++) {
+    const decay = opt==='adam' ? 0.93 : (opt==='rmsprop' ? 0.91 : 0.88);
+    const noise = tooHigh ? (Math.random()-0.5)*0.6 : (Math.random()-0.5)*0.04;
+    const vNoise = (Math.random()-0.5)*0.06;
+    if (!tooHigh) {
+      tl = Math.max(0.05, tl * decay + noise);
+      vl = Math.max(0.08, vl * (decay + 0.01) + vNoise + (tooLow ? 0.005 : 0));
+      ta = Math.min(0.99, ta + (1-ta)*0.12*(tooLow?0.4:1));
+    } else {
+      tl = 1.5 + Math.sin(i*0.4)*0.5 + Math.random()*0.4;
+      vl = 1.8 + Math.sin(i*0.4+0.5)*0.6 + Math.random()*0.4;
+      ta = 0.2 + Math.random()*0.3;
+    }
+    trainLoss.push(tl); valLoss.push(vl); trainAcc.push(ta);
+  }
+  return {trainLoss, valLoss, trainAcc};
+}
+
+function runTraining() {
+  const c = document.getElementById('train-canvas');
+  if (!c) return;
+  const lrIdx = parseInt(document.getElementById('lr-val').value) - 1;
+  const opt = document.getElementById('opt-sel').value;
+  const {trainLoss, valLoss, trainAcc} = genCurve(lrIdx, opt);
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#0e0f11'; ctx.fillRect(0,0,W,H);
+  const pad={l:44,r:20,t:15,b:30};
+  const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+  const n=trainLoss.length;
+  function xOf(i){return pad.l+i/(n-1)*pw;}
+  const maxL=Math.max(...trainLoss,...valLoss);
+
+  // Grid
+  ctx.strokeStyle='rgba(255,255,255,0.04)'; ctx.lineWidth=0.5;
+  for(let i=0;i<=5;i++){const y=pad.t+i/5*ph;ctx.beginPath();ctx.moveTo(pad.l,y);ctx.lineTo(W-pad.r,y);ctx.stroke();}
+
+  // Dual y-axis: loss (left) 0..maxL, acc (right) 0..1
+  function yLoss(v){return pad.t+ph-(v/maxL)*ph;}
+  function yAcc(v){return pad.t+ph-v*ph;}
+
+  function drawLine(arr, yFn, color, dash=[]) {
+    ctx.beginPath(); ctx.strokeStyle=color; ctx.lineWidth=1.8; ctx.setLineDash(dash);
+    arr.forEach((v,i)=>{ const px=xOf(i),py=yFn(v); i===0?ctx.moveTo(px,py):ctx.lineTo(px,py); });
+    ctx.stroke(); ctx.setLineDash([]);
+  }
+  drawLine(trainLoss, yLoss, '#4f9cf9');
+  drawLine(valLoss, yLoss, '#f56565', [6,4]);
+  drawLine(trainAcc, yAcc, '#3ecf82');
+
+  // Y axis labels
+  ctx.fillStyle='rgba(255,255,255,0.3)'; ctx.font='9px monospace'; ctx.textAlign='right';
+  for(let i=0;i<=5;i++){
+    const v=(maxL*(1-i/5)).toFixed(1);
+    ctx.fillText(v, pad.l-4, pad.t+i/5*ph+3);
+  }
+  ctx.textAlign='left';
+  for(let i=0;i<=5;i++){
+    const v=(1-i/5).toFixed(1);
+    ctx.fillText(v, W-pad.r+4, pad.t+i/5*ph+3);
+  }
+  // X labels
+  ctx.textAlign='center';
+  [0,10,20,30,40,49].forEach(i=>{ctx.fillText(i+1,xOf(i),H-pad.b+14);});
+  ctx.fillText('Epoch',xOf(24),H);
+}
+
+setTimeout(runTraining, 100);
+
+// ============================================================
+// OVERFITTING CHART
+// ============================================================
+function drawFitness() {
+  const c = document.getElementById('fit-canvas');
+  if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle='#1c1f26'; ctx.fillRect(0,0,W,H);
+  const n=40, pad={l:10,r:10,t:20,b:20};
+  const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+  function xOf(i){return pad.l+i/(n-1)*pw;}
+  function yOf(v){return pad.t+ph-(v)*ph;}
+
+  const trainAcc=[], valAcc=[];
+  for(let i=0;i<n;i++){
+    trainAcc.push(Math.min(0.99, 0.5+(i/n)*0.5));
+    valAcc.push(i<20 ? 0.5+(i/20)*0.3 : Math.max(0.55, 0.8-(i-20)/n*0.5+Math.random()*0.03));
+  }
+
+  ctx.font='9px monospace'; ctx.fillStyle='rgba(255,255,255,0.4)'; ctx.textAlign='center';
+  ctx.fillText('Acc vs Epoch', W/2, 12);
+  // shading overfitting
+  ctx.fillStyle='rgba(245,101,101,0.08)';
+  ctx.fillRect(xOf(20), pad.t, xOf(39)-xOf(20), ph);
+  ctx.fillStyle='rgba(245,101,101,0.3)'; ctx.font='8px monospace';
+  ctx.fillText('Overfitting', xOf(30), pad.t+12);
+
+  function drawLine(arr, col) {
+    ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=1.5;
+    arr.forEach((v,i)=>i===0?ctx.moveTo(xOf(i),yOf(v)):ctx.lineTo(xOf(i),yOf(v)));
+    ctx.stroke();
+  }
+  drawLine(trainAcc, '#4f9cf9');
+  drawLine(valAcc, '#f56565');
+  ctx.fillStyle='#4f9cf9'; ctx.font='8px monospace'; ctx.textAlign='left'; ctx.fillText('Train',pad.l+2,H-pad.b+14);
+  ctx.fillStyle='#f56565'; ctx.textAlign='right'; ctx.fillText('Val',W-pad.r,H-pad.b+14);
+}
+
+// ============================================================
+// DRAW CANVAS (DIGIT)
+// ============================================================
+let isDrawing = false;
+function initDrawCanvas() {
+  const c = document.getElementById('draw-canvas');
+  if (!c || c._initialized) return;
+  c._initialized = true;
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#000'; ctx.fillRect(0,0,c.width,c.height);
+
+  function getPos(e) {
+    const r = c.getBoundingClientRect();
+    const src = e.touches ? e.touches[0] : e;
+    return {x:src.clientX-r.left, y:src.clientY-r.top};
+  }
+  function draw(e) {
+    if (!isDrawing) return;
+    const {x, y} = getPos(e);
+    ctx.fillStyle = '#fff'; ctx.beginPath();
+    ctx.arc(x, y, 12, 0, Math.PI*2); ctx.fill();
+    e.preventDefault();
+  }
+  c.addEventListener('mousedown', e => { isDrawing=true; draw(e); });
+  c.addEventListener('mousemove', draw);
+  c.addEventListener('mouseup', () => isDrawing=false);
+  c.addEventListener('touchstart', e => { isDrawing=true; draw(e); }, {passive:false});
+  c.addEventListener('touchmove', draw, {passive:false});
+  c.addEventListener('touchend', () => isDrawing=false);
+}
+
+function clearCanvas() {
+  const c = document.getElementById('draw-canvas');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle = '#000'; ctx.fillRect(0,0,c.width,c.height);
+  document.getElementById('pred-result').textContent = '?';
+  document.getElementById('prob-bars').innerHTML = '';
+  const fc = document.getElementById('feat-canvas');
+  const fctx = fc.getContext('2d');
+  fctx.fillStyle='#1c1f26'; fctx.fillRect(0,0,fc.width,fc.height);
+}
+
+function classifyDigit() {
+  const c = document.getElementById('draw-canvas');
+  const ctx = c.getContext('2d');
+  const imgData = ctx.getImageData(0,0,c.width,c.height).data;
+
+  // Check if canvas has content
+  let hasContent = false;
+  for (let i=0; i<imgData.length; i+=4) { if (imgData[i]>10) { hasContent=true; break; } }
+  if (!hasContent) { document.getElementById('pred-result').textContent = '?'; return; }
+
+  // Find bounding box of drawn content
+  let minX=c.width, maxX=0, minY=c.height, maxY=0;
+  for (let y=0; y<c.height; y++) for (let x=0; x<c.width; x++) {
+    if (imgData[(y*c.width+x)*4] > 10) { minX=Math.min(minX,x); maxX=Math.max(maxX,x); minY=Math.min(minY,y); maxY=Math.max(maxY,y); }
+  }
+  const cx = (minX+maxX)/2, cy2 = (minY+maxY)/2;
+
+  // Simple heuristic classification based on aspect ratio and density
+  const w=maxX-minX, h=maxY-minY;
+  const aspect = w / (h || 1);
+
+  // Count pixels in different regions
+  function density(x1,y1,x2,y2) {
+    let cnt=0, total=0;
+    for(let y=y1;y<y2;y++) for(let x=x1;x<x2;x++) { if(x>=0&&y>=0&&x<c.width&&y<c.height){ total++; if(imgData[(y*c.width+x)*4]>10)cnt++; } }
+    return cnt/total;
+  }
+  const topD = density(minX,minY,maxX,minY+(maxY-minY)/2);
+  const botD = density(minX,minY+(maxY-minY)/2,maxX,maxY);
+  const leftD = density(minX,minY,minX+(maxX-minX)/2,maxY);
+  const rightD = density(minX+(maxX-minX)/2,minY,maxX,maxY);
+
+  // Heuristic digit classification
+  let probs = new Array(10).fill(0);
+  if (aspect > 1.5) probs[1] = 0.1, probs[7] = 0.8, probs[4] = 0.1;
+  else if (aspect < 0.5) probs[1] = 0.85, probs[7] = 0.1, probs[4] = 0.05;
+  else {
+    const sym = Math.abs(topD - botD) + Math.abs(leftD - rightD);
+    if (sym < 0.05) { probs[0]=0.5; probs[8]=0.3; probs[9]=0.2; }
+    else if (topD > botD * 1.3) { probs[7]=0.5; probs[1]=0.3; probs[4]=0.2; }
+    else if (botD > topD * 1.3) { probs[2]=0.4; probs[3]=0.3; probs[5]=0.3; }
+    else if (leftD > rightD * 1.2) { probs[6]=0.4; probs[5]=0.3; probs[0]=0.3; }
+    else { probs[8]=0.35; probs[3]=0.3; probs[9]=0.2; probs[0]=0.15; }
+  }
+  // Add some noise
+  probs = probs.map((p,i) => Math.max(0.001, p + (Math.random()*0.08)));
+  const sum = probs.reduce((a,b)=>a+b,0);
+  probs = probs.map(p => p/sum);
+
+  const digit = probs.indexOf(Math.max(...probs));
+  document.getElementById('pred-result').textContent = digit;
+
+  // Probability bars
+  const barsHtml = probs.map((p,i) => `
+    <div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">
+      <div style="font-family:var(--mono);font-size:12px;width:14px;color:${i===digit?'var(--green)':'var(--text2)'}">${i}</div>
+      <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+        <div style="height:100%;border-radius:4px;width:${(p*100).toFixed(1)}%;background:${i===digit?'var(--green)':'var(--accent)'};opacity:${i===digit?1:0.5}"></div>
+      </div>
+      <div style="font-family:var(--mono);font-size:10px;color:var(--text3);width:40px">${(p*100).toFixed(1)}%</div>
+    </div>`).join('');
+  document.getElementById('prob-bars').innerHTML = barsHtml;
+
+  // Feature maps (simulated)
+  drawFeatureMaps(imgData, c.width, c.height);
+}
+
+function drawFeatureMaps(imgData, sw, sh) {
+  const c = document.getElementById('feat-canvas');
+  const ctx = c.getContext('2d');
+  ctx.fillStyle='#0e0f11'; ctx.fillRect(0,0,c.width,c.height);
+  // Simulate 4 feature maps with different filters
+  const filters = [
+    [[-1,0,1],[-2,0,2],[-1,0,1]],  // edge vertical
+    [[-1,-2,-1],[0,0,0],[1,2,1]],  // edge horizontal
+    [[0,-1,0],[-1,4,-1],[0,-1,0]], // laplacian
+    [[1,1,1],[1,1,1],[1,1,1]],     // blur
+  ];
+  const maps = 4, mw = Math.floor(c.width / maps) - 2;
+  filters.forEach((filt, fi) => {
+    const ox = fi*(mw+2)+1;
+    const msize = 14;
+    const step = mw / msize;
+    for(let i=0;i<msize;i++) for(let j=0;j<msize;j++) {
+      let sum=0;
+      for(let ki=0;ki<3;ki++) for(let kj=0;kj<3;kj++) {
+        const px = Math.floor((j+kj-1)/msize * sw);
+        const py = Math.floor((i+ki-1)/msize * sh);
+        if(px>=0&&py>=0&&px<sw&&py<sh) sum += (imgData[(py*sw+px)*4]/255) * filt[ki][kj];
+      }
+      const v = Math.max(0, sum);
+      ctx.fillStyle = `rgba(79,156,249,${Math.min(1,v)})`;
+      ctx.fillRect(ox+j*step, i*step, step-0.5, step-0.5);
+    }
+    const labels=['Vert Edge','Horiz Edge','Laplacian','Blur'];
+    ctx.fillStyle='rgba(255,255,255,0.35)'; ctx.font='7px monospace'; ctx.textAlign='center';
+    ctx.fillText(labels[fi], ox+mw/2, c.height-2);
+  });
+}
+
+// Init all on load
+window.addEventListener('load', () => {
+  drawActivations();
+  drawMLP();
+  updateConvOutput();
+  initConv();
+  setTimeout(() => {
+    drawArch();
+    drawPooling();
+    runTraining();
+    drawFitness();
+    initDrawCanvas();
+  }, 200);
+});
+
+window.addEventListener('resize', () => {
+  const active = document.querySelector('.section.active')?.id;
+  if (active==='tab-ann') { drawActivations(); drawMLP(); }
+  else if (active==='tab-arsitektur') drawArch();
+  else if (active==='tab-pooling') drawPooling();
+  else if (active==='tab-training') { runTraining(); drawFitness(); }
+});
+</script>
+</body>
+</html>
