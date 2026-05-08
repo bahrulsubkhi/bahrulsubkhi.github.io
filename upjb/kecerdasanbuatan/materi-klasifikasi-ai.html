@@ -1,0 +1,292 @@
+```html
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Materi Klasifikasi AI</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+
+  <style>
+    body {
+      background-color: #f5f7fb;
+      font-family: 'Segoe UI', sans-serif;
+      line-height: 1.8;
+      color: #333;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #0d6efd, #6610f2);
+      color: white;
+      padding: 80px 20px;
+      text-align: center;
+    }
+
+    .hero h1 {
+      font-weight: 700;
+    }
+
+    .content {
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      margin-top: -40px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .section-title {
+      margin-top: 40px;
+      margin-bottom: 20px;
+      font-weight: bold;
+      color: #0d6efd;
+    }
+
+    .card-custom {
+      border: none;
+      border-radius: 16px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+      transition: 0.3s;
+    }
+
+    .card-custom:hover {
+      transform: translateY(-5px);
+    }
+
+    .formula {
+      background: #f8f9fa;
+      padding: 15px;
+      border-left: 5px solid #0d6efd;
+      border-radius: 10px;
+      overflow-x: auto;
+    }
+
+    footer {
+      margin-top: 50px;
+      padding: 20px;
+      text-align: center;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+
+  <section class="hero">
+    <div class="container">
+      <h1>Klasifikasi pada Artificial Intelligence</h1>
+      <p class="lead mt-3">
+        Naive Bayes, Decision Tree, dan Support Vector Machine
+      </p>
+    </div>
+  </section>
+
+  <div class="container mb-5">
+    <div class="content">
+
+      <h2 class="section-title">
+        <i class="bi bi-book"></i> Pendahuluan
+      </h2>
+
+      <p>
+        Klasifikasi merupakan salah satu metode dalam Machine Learning yang digunakan
+        untuk memprediksi kategori atau kelas dari suatu data berdasarkan pola yang
+        telah dipelajari sebelumnya.
+      </p>
+
+      <p>
+        Dalam klasifikasi, model dilatih menggunakan data yang memiliki label
+        kemudian digunakan untuk memprediksi data baru.
+      </p>
+
+      <div class="row g-4 mt-3">
+        <div class="col-md-4">
+          <div class="card card-custom p-4 h-100">
+            <h5><i class="bi bi-envelope"></i> Spam Detection</h5>
+            <p>Menentukan email spam atau bukan spam.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-custom p-4 h-100">
+            <h5><i class="bi bi-heart-pulse"></i> Diagnosa Penyakit</h5>
+            <p>Prediksi penyakit berdasarkan gejala pasien.</p>
+          </div>
+        </div>
+
+        <div class="col-md-4">
+          <div class="card card-custom p-4 h-100">
+            <h5><i class="bi bi-chat-dots"></i> Analisis Sentimen</h5>
+            <p>Klasifikasi sentimen positif dan negatif.</p>
+          </div>
+        </div>
+      </div>
+
+      <h2 class="section-title">
+        1. Naive Bayes
+      </h2>
+
+      <p>
+        Naive Bayes adalah algoritma klasifikasi berbasis probabilitas yang
+        menggunakan Teorema Bayes dengan asumsi setiap fitur bersifat independen.
+      </p>
+
+      <div class="formula">
+        <strong>Rumus Naive Bayes:</strong><br>
+        P(H|X) = ( P(X|H) × P(H) ) / P(X)
+      </div>
+
+      <h5 class="mt-4">Kelebihan</h5>
+      <ul>
+        <li>Cepat dan sederhana</li>
+        <li>Efektif untuk klasifikasi teks</li>
+        <li>Cocok untuk dataset besar</li>
+      </ul>
+
+      <h5>Kekurangan</h5>
+      <ul>
+        <li>Asumsi independensi fitur tidak selalu realistis</li>
+        <li>Sensitif terhadap missing value</li>
+      </ul>
+
+      <h2 class="section-title">
+        2. Decision Tree
+      </h2>
+
+      <p>
+        Decision Tree merupakan algoritma klasifikasi berbentuk pohon keputusan.
+        Setiap node merepresentasikan atribut dan leaf merepresentasikan hasil klasifikasi.
+      </p>
+
+      <div class="formula">
+        <strong>Entropy:</strong><br>
+        Entropy(S) = -Σ pi log2 pi
+      </div>
+
+      <div class="formula mt-3">
+        <strong>Information Gain:</strong><br>
+        Gain(S,A) = Entropy(S) - Σ ( |Sv| / |S| ) Entropy(Sv)
+      </div>
+
+      <h5 class="mt-4">Kelebihan</h5>
+      <ul>
+        <li>Mudah dipahami</li>
+        <li>Mudah divisualisasikan</li>
+        <li>Tidak memerlukan normalisasi data</li>
+      </ul>
+
+      <h5>Kekurangan</h5>
+      <ul>
+        <li>Rentan overfitting</li>
+        <li>Sensitif terhadap perubahan data kecil</li>
+      </ul>
+
+      <h2 class="section-title">
+        3. Support Vector Machine (SVM)
+      </h2>
+
+      <p>
+        Support Vector Machine adalah algoritma klasifikasi yang bekerja dengan
+        mencari hyperplane terbaik untuk memisahkan data antar kelas.
+      </p>
+
+      <div class="formula">
+        <strong>Persamaan Hyperplane:</strong><br>
+        w · x + b = 0
+      </div>
+
+      <h5 class="mt-4">Kelebihan</h5>
+      <ul>
+        <li>Akurasi tinggi</li>
+        <li>Efektif untuk data berdimensi tinggi</li>
+        <li>Baik untuk klasifikasi kompleks</li>
+      </ul>
+
+      <h5>Kekurangan</h5>
+      <ul>
+        <li>Training lebih lambat</li>
+        <li>Sulit dipahami pemula</li>
+        <li>Tidak cocok untuk dataset sangat besar</li>
+      </ul>
+
+      <h2 class="section-title">
+        <i class="bi bi-table"></i> Perbandingan Algoritma
+      </h2>
+
+      <div class="table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-primary">
+            <tr>
+              <th>Algoritma</th>
+              <th>Kelebihan</th>
+              <th>Kekurangan</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Naive Bayes</td>
+              <td>Cepat dan sederhana</td>
+              <td>Asumsi independensi fitur</td>
+            </tr>
+            <tr>
+              <td>Decision Tree</td>
+              <td>Mudah dipahami</td>
+              <td>Overfitting</td>
+            </tr>
+            <tr>
+              <td>SVM</td>
+              <td>Akurasi tinggi</td>
+              <td>Training lambat</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h2 class="section-title">
+        <i class="bi bi-lightbulb"></i> Kesimpulan
+      </h2>
+
+      <p>
+        Klasifikasi merupakan teknik penting dalam Artificial Intelligence untuk
+        memprediksi kategori data.
+      </p>
+
+      <p>
+        Pemilihan algoritma tergantung pada jenis data, ukuran dataset,
+        dan tingkat akurasi yang diinginkan.
+      </p>
+
+      <h2 class="section-title">
+        <i class="bi bi-pencil-square"></i> Latihan
+      </h2>
+
+      <ol>
+        <li>Jelaskan pengertian klasifikasi!</li>
+        <li>Apa fungsi Teorema Bayes?</li>
+        <li>Mengapa Decision Tree mudah overfitting?</li>
+        <li>Apa yang dimaksud hyperplane pada SVM?</li>
+        <li>Sebutkan contoh penerapan klasifikasi!</li>
+      </ol>
+
+      <h2 class="section-title">
+        <i class="bi bi-journal-text"></i> Referensi
+      </h2>
+
+      <ul>
+        <li>Han, Kamber, & Pei - Data Mining Concepts and Techniques</li>
+        <li>Scikit-Learn Documentation</li>
+        <li>Introduction to Data Mining</li>
+      </ul>
+
+    </div>
+  </div>
+
+  <footer>
+    © 2026 Materi Artificial Intelligence - Bahrul Subkhi
+  </footer>
+
+</body>
+</html>
+```
