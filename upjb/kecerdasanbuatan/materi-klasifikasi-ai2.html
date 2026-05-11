@@ -1,0 +1,1810 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Klasifikasi — Kecerdasan Buatan</title>
+<style>
+:root {
+  --bg:     #f5f4f0;
+  --bg2:    #ffffff;
+  --bg3:    #eceae4;
+  --bg4:    #e2e0da;
+  --text:   #1a1a18;
+  --text2:  #5a5a56;
+  --text3:  #9a9a96;
+  --border: rgba(0,0,0,0.08);
+  --border2:rgba(0,0,0,0.14);
+  --accent: #185FA5;
+  --acc2:   #378ADD;
+  --green:  #0F6E56;
+  --green2: #1D9E75;
+  --amber:  #854F0B;
+  --amber2: #C97C10;
+  --coral:  #A32D2D;
+  --coral2: #E24B4A;
+  --purple: #534AB7;
+  --purple2:#7F77DD;
+  --teal:   #0D7D7A;
+  --teal2:  #2DD4BF;
+  --r: 10px; --rsm: 6px;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#101010;--bg2:#181818;--bg3:#222;--bg4:#2a2a2a;
+    --text:#e8e6e0;--text2:#a0a09a;--text3:#606060;
+    --border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);
+    --accent:#4f9cf9;--acc2:#7BC4FF;
+    --green:#2DD4BF;--green2:#3ecf82;
+    --amber:#f5a623;--amber2:#fbbf24;
+    --coral:#f87171;--coral2:#fca5a5;
+    --purple:#a78bfa;--purple2:#c4b5fd;
+    --teal:#2DD4BF;--teal2:#67e8f9;
+  }
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--text);line-height:1.65;min-height:100vh}
+
+/* HEADER */
+.header{position:sticky;top:0;z-index:200;background:rgba(245,244,240,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border2);padding:0 28px}
+@media(prefers-color-scheme:dark){.header{background:rgba(16,16,16,0.94)}}
+.header-inner{max-width:1160px;margin:0 auto;height:54px;display:flex;align-items:center;gap:14px}
+.hchip{font-size:11px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--accent);background:rgba(24,95,165,0.1);border:1px solid rgba(24,95,165,0.2);padding:3px 10px;border-radius:4px}
+.htitle{font-size:13px;color:var(--text2)}
+.hdot{width:4px;height:4px;border-radius:50%;background:var(--border2)}
+
+/* NAV */
+.nav-wrap{position:sticky;top:54px;z-index:190;background:rgba(245,244,240,0.94);backdrop-filter:blur(12px);border-bottom:1px solid var(--border);padding:0 28px}
+@media(prefers-color-scheme:dark){.nav-wrap{background:rgba(16,16,16,0.94)}}
+.nav{max-width:1160px;margin:0 auto;display:flex;overflow-x:auto}
+.nav::-webkit-scrollbar{display:none}
+.nav button{font-family:inherit;font-size:12.5px;padding:13px 15px;border:none;background:transparent;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s}
+.nav button:hover{color:var(--text2)}
+.nav button.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:500}
+
+/* MAIN */
+.main{max-width:1160px;margin:0 auto;padding:32px 28px 100px}
+.section{display:none;animation:fadeUp .25s ease}
+.section.active{display:block}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:var(--r);padding:20px 24px;margin-bottom:14px}
+.card-alt{background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px 18px}
+
+/* GRID */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-bottom:14px}
+.g4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+@media(max-width:700px){.g2,.g3,.g4{grid-template-columns:1fr}}
+
+/* TYPE */
+.page-h{font-size:26px;font-weight:700;letter-spacing:-.3px;margin-bottom:5px}
+.page-sub{font-size:14px;color:var(--text2);margin-bottom:26px}
+h2{font-size:17px;font-weight:600;margin-bottom:7px}
+h3{font-size:14px;font-weight:600;margin-bottom:7px;color:var(--text)}
+p{font-size:13.5px;color:var(--text2);line-height:1.7}
+ul{font-size:13.5px;color:var(--text2);line-height:1.9;padding-left:18px}
+strong{color:var(--text);font-weight:600}
+
+/* BADGES */
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:9px;letter-spacing:.3px;text-transform:uppercase}
+.ba{background:rgba(24,95,165,.1);color:var(--accent);border:1px solid rgba(24,95,165,.2)}
+.bg{background:rgba(15,110,86,.1);color:var(--green);border:1px solid rgba(15,110,86,.2)}
+.bam{background:rgba(133,79,11,.1);color:var(--amber);border:1px solid rgba(133,79,11,.2)}
+.bc{background:rgba(163,45,45,.1);color:var(--coral);border:1px solid rgba(163,45,45,.2)}
+.bp{background:rgba(83,74,183,.1);color:var(--purple);border:1px solid rgba(83,74,183,.2)}
+.bt{background:rgba(13,125,122,.1);color:var(--teal);border:1px solid rgba(13,125,122,.2)}
+
+/* TAGS */
+.tag{display:inline-block;font-size:11px;padding:2px 9px;border-radius:4px;margin:2px}
+.ty{background:rgba(15,110,86,.1);color:var(--green)}
+.tn{background:rgba(163,45,45,.1);color:var(--coral)}
+
+/* FORMULA */
+.formula{font-family:'Courier New',monospace;font-size:12.5px;background:var(--bg3);border-left:3px solid var(--accent);border-radius:0 6px 6px 0;padding:10px 16px;color:var(--text);margin:10px 0;line-height:1.7;overflow-x:auto}
+
+/* STEP */
+.step{display:flex;gap:12px;margin-bottom:11px;align-items:flex-start}
+.snum{min-width:26px;height:26px;border-radius:50%;background:rgba(24,95,165,.1);color:var(--accent);font-size:12px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+
+/* CONTROLS */
+.ctrl{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.ctrl label{font-size:12px;color:var(--text2);font-weight:500}
+.ctrl span{font-size:12px;font-weight:600;color:var(--text);min-width:24px;font-family:'Courier New',monospace}
+.ctrl input[type=range]{-webkit-appearance:none;appearance:none;width:110px;height:3px;background:var(--border2);border-radius:2px;outline:none;cursor:pointer}
+.ctrl input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:14px;height:14px;border-radius:50%;background:var(--accent);cursor:pointer;border:2px solid var(--bg2)}
+
+/* BUTTONS */
+.btn{font-family:inherit;font-size:12px;font-weight:500;padding:7px 16px;border-radius:var(--rsm);border:1px solid var(--border2);background:var(--bg3);color:var(--text);cursor:pointer;transition:all .15s}
+.btn:hover{background:var(--bg4)}
+.btn-p{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-p:hover{opacity:.9}
+
+canvas{border-radius:8px;display:block;max-width:100%}
+
+/* CODE */
+.code{font-family:'Courier New',monospace;font-size:12px;line-height:1.85;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--r);padding:16px 18px;overflow-x:auto;color:var(--text);margin:8px 0}
+.kw{color:var(--purple)}.fn{color:var(--green)}.st{color:var(--amber)}.cm{color:var(--text3)}.nm{color:var(--accent)}
+
+/* SOAL */
+.soal{border:1px solid var(--border);border-radius:var(--r);padding:16px 20px;margin-bottom:10px;cursor:pointer;transition:background .15s}
+.soal:hover{background:var(--bg3)}
+.soal-head{display:flex;justify-content:space-between;gap:12px}
+.soal-q{font-size:13.5px;font-weight:500;line-height:1.5}
+.soal-icon{color:var(--text3);font-size:14px;flex-shrink:0;transition:transform .2s}
+.soal-icon.open{transform:rotate(180deg)}
+.soal-ans{display:none;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);font-size:13px;color:var(--text2);line-height:1.75}
+.soal-ans.show{display:block}
+
+/* METRICS */
+.metric{background:var(--bg3);border-radius:var(--rsm);padding:14px 18px}
+.metric-l{font-size:10px;color:var(--text3);margin-bottom:3px;font-weight:600;text-transform:uppercase;letter-spacing:.4px}
+.metric-v{font-size:22px;font-weight:700}
+.metric-s{font-size:11px;color:var(--text3);margin-top:2px}
+
+/* STITLE */
+.stitle{display:flex;align-items:center;gap:12px;margin-bottom:22px}
+.stbar{width:4px;border-radius:2px}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;font-size:13px}
+th{background:var(--bg3);color:var(--text2);font-weight:600;padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.3px;text-transform:uppercase}
+td{padding:9px 12px;border-top:1px solid var(--border);color:var(--text2)}
+td:first-child{color:var(--text);font-weight:500}
+
+/* INFO */
+.info{background:rgba(24,95,165,.07);border:1px solid rgba(24,95,165,.15);border-radius:var(--rsm);padding:12px 16px;font-size:13px;color:var(--accent);margin:10px 0}
+.warn{background:rgba(133,79,11,.07);border:1px solid rgba(133,79,11,.15);border-radius:var(--rsm);padding:12px 16px;font-size:13px;color:var(--amber);margin:10px 0}
+
+/* FOOTER */
+.footer{text-align:center;padding:32px 0;font-size:11px;color:var(--text3);border-top:1px solid var(--border);margin-top:48px}
+
+/* DECISION TREE NODE */
+.dt-node{text-align:center;padding:6px 10px;border-radius:6px;font-size:11px;font-weight:500;display:inline-block}
+</style>
+</head>
+<body>
+
+<header class="header">
+  <div class="header-inner">
+    <div class="hchip">🎓 Kecerdasan Buatan</div>
+    <div class="hdot"></div>
+    <div class="htitle">Materi 5 — Klasifikasi: Naive Bayes, Decision Tree & SVM</div>
+    <div style="margin-left:auto;font-size:11px;color:var(--text3)">S1 Informatika · 2025</div>
+  </div>
+</header>
+
+<nav class="nav-wrap">
+  <div class="nav">
+    <button class="active" onclick="showTab('intro',this)">📖 Pengantar</button>
+    <button onclick="showTab('nb',this)">🎲 Naive Bayes</button>
+    <button onclick="showTab('dt',this)">🌳 Decision Tree</button>
+    <button onclick="showTab('svm',this)">📐 SVM</button>
+    <button onclick="showTab('compare',this)">📊 Perbandingan</button>
+    <button onclick="showTab('code',this)">💻 Kode Python</button>
+    <button onclick="showTab('latihan',this)">✏️ Latihan</button>
+  </div>
+</nav>
+
+<main class="main">
+
+<!-- ===== PENGANTAR ===== -->
+<section id="tab-intro" class="section active">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--accent)"></div>
+    <div>
+      <div class="page-h">Klasifikasi</div>
+      <div class="page-sub">Supervised learning untuk memprediksi kelas — dari email spam hingga diagnosis medis</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="badge ba">Definisi</span>
+    <h2>Apa itu Klasifikasi?</h2>
+    <p style="margin-top:8px">Klasifikasi adalah tugas <strong>supervised learning</strong> di mana model belajar dari data berlabel untuk memprediksi kelas/kategori data baru. Model dilatih dengan contoh input–output, lalu digunakan untuk mengklasifikasi data yang belum pernah dilihat.</p>
+    <div class="formula">f : X → Y &nbsp;&nbsp; X = fitur input, Y = label kelas {C₁, C₂, ..., Cₖ}</div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Klasifikasi vs Regresi</h3>
+      <svg width="100%" viewBox="0 0 360 130" style="margin-top:8px">
+        <rect x="10" y="20" width="155" height="90" rx="8" fill="rgba(24,95,165,.06)" stroke="rgba(24,95,165,.2)" stroke-width="1"/>
+        <text x="87" y="42" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor" opacity=".7">Klasifikasi</text>
+        <circle cx="50" cy="70" r="9" fill="#378ADD" opacity=".8"/><circle cx="75" cy="58" r="9" fill="#378ADD" opacity=".8"/>
+        <circle cx="60" cy="85" r="9" fill="#378ADD" opacity=".8"/>
+        <circle cx="120" cy="70" r="9" fill="#E24B4A" opacity=".8"/><circle cx="140" cy="58" r="9" fill="#E24B4A" opacity=".8"/>
+        <circle cx="130" cy="88" r="9" fill="#E24B4A" opacity=".8"/>
+        <line x1="92" y1="42" x2="92" y2="105" stroke="currentColor" stroke-width="1" stroke-dasharray="4 3" opacity=".3"/>
+        <text x="87" y="115" text-anchor="middle" font-size="9" fill="currentColor" opacity=".4">Output: Kelas diskrit</text>
+
+        <rect x="195" y="20" width="155" height="90" rx="8" fill="rgba(15,110,86,.06)" stroke="rgba(15,110,86,.2)" stroke-width="1"/>
+        <text x="272" y="42" text-anchor="middle" font-size="12" font-weight="600" fill="currentColor" opacity=".7">Regresi</text>
+        <circle cx="215" cy="95" r="4" fill="var(--amber)" opacity=".8"/><circle cx="228" cy="88" r="4" fill="var(--amber)" opacity=".8"/>
+        <circle cx="241" cy="80" r="4" fill="var(--amber)" opacity=".8"/><circle cx="254" cy="74" r="4" fill="var(--amber)" opacity=".8"/>
+        <circle cx="267" cy="67" r="4" fill="var(--amber)" opacity=".8"/><circle cx="280" cy="60" r="4" fill="var(--amber)" opacity=".8"/>
+        <circle cx="293" cy="55" r="4" fill="var(--amber)" opacity=".8"/><circle cx="333" cy="38" r="4" fill="var(--amber)" opacity=".8"/>
+        <line x1="210" y1="100" x2="340" y2="34" stroke="var(--green)" stroke-width="1.5" opacity=".7"/>
+        <text x="272" y="115" text-anchor="middle" font-size="9" fill="currentColor" opacity=".4">Output: Nilai kontinu</text>
+      </svg>
+    </div>
+    <div class="card">
+      <h3>Aplikasi Nyata</h3>
+      <ul style="margin-top:8px">
+        <li>📧 Filter spam email (spam / bukan spam)</li>
+        <li>🏥 Diagnosis penyakit (positif / negatif)</li>
+        <li>💳 Deteksi fraud transaksi bank</li>
+        <li>😊 Analisis sentimen ulasan produk</li>
+        <li>🌿 Klasifikasi spesies tanaman/hewan</li>
+        <li>🖼️ Pengenalan gambar & wajah</li>
+        <li>📰 Kategorisasi berita otomatis</li>
+        <li>🎓 Prediksi kelulusan mahasiswa</li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Alur Kerja Klasifikasi</h3>
+    <svg width="100%" viewBox="0 0 900 100">
+      <defs>
+        <marker id="arri" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto">
+          <path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".4"/>
+        </marker>
+      </defs>
+      <!-- nodes -->
+      <rect x="10" y="28" width="120" height="44" rx="8" fill="rgba(24,95,165,.1)" stroke="var(--accent)" stroke-width="1"/>
+      <text x="70" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--accent)">Data Berlabel</text>
+      <text x="70" y="65" text-anchor="middle" font-size="10" fill="var(--text2)">(training set)</text>
+
+      <rect x="165" y="28" width="130" height="44" rx="8" fill="rgba(15,110,86,.1)" stroke="var(--green)" stroke-width="1"/>
+      <text x="230" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--green)">Preprocessing</text>
+      <text x="230" y="65" text-anchor="middle" font-size="10" fill="var(--text2)">normalisasi, encode</text>
+
+      <rect x="330" y="28" width="130" height="44" rx="8" fill="rgba(83,74,183,.1)" stroke="var(--purple)" stroke-width="1"/>
+      <text x="395" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--purple)">Training Model</text>
+      <text x="395" y="65" text-anchor="middle" font-size="10" fill="var(--text2)">NB / DT / SVM</text>
+
+      <rect x="495" y="28" width="130" height="44" rx="8" fill="rgba(133,79,11,.1)" stroke="var(--amber)" stroke-width="1"/>
+      <text x="560" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--amber)">Evaluasi</text>
+      <text x="560" y="65" text-anchor="middle" font-size="10" fill="var(--text2)">accuracy, F1, AUC</text>
+
+      <rect x="660" y="28" width="130" height="44" rx="8" fill="rgba(163,45,45,.1)" stroke="var(--coral)" stroke-width="1"/>
+      <text x="725" y="52" text-anchor="middle" font-size="12" font-weight="600" fill="var(--coral)">Prediksi</text>
+      <text x="725" y="65" text-anchor="middle" font-size="10" fill="var(--text2)">data baru → kelas</text>
+
+      <rect x="825" y="28" width="65" height="44" rx="8" fill="rgba(13,125,122,.1)" stroke="var(--teal)" stroke-width="1"/>
+      <text x="857" y="55" text-anchor="middle" font-size="12" font-weight="600" fill="var(--teal)">Deploy</text>
+
+      <line x1="130" y1="50" x2="163" y2="50" stroke="currentColor" stroke-width="1" opacity=".3" marker-end="url(#arri)"/>
+      <line x1="295" y1="50" x2="328" y2="50" stroke="currentColor" stroke-width="1" opacity=".3" marker-end="url(#arri)"/>
+      <line x1="460" y1="50" x2="493" y2="50" stroke="currentColor" stroke-width="1" opacity=".3" marker-end="url(#arri)"/>
+      <line x1="625" y1="50" x2="658" y2="50" stroke="currentColor" stroke-width="1" opacity=".3" marker-end="url(#arri)"/>
+      <line x1="790" y1="50" x2="823" y2="50" stroke="currentColor" stroke-width="1" opacity=".3" marker-end="url(#arri)"/>
+    </svg>
+  </div>
+
+  <div class="g4">
+    <div class="metric"><div class="metric-l">Algoritma dibahas</div><div class="metric-v" style="color:var(--accent)">3</div><div class="metric-s">Naive Bayes, DT, SVM</div></div>
+    <div class="metric"><div class="metric-l">Tipe learning</div><div class="metric-v" style="color:var(--green)">Supervised</div><div class="metric-s">Butuh data berlabel</div></div>
+    <div class="metric"><div class="metric-l">Output</div><div class="metric-v" style="color:var(--purple)">Kelas</div><div class="metric-s">Hard / probabilistik</div></div>
+    <div class="metric"><div class="metric-l">Evaluasi utama</div><div class="metric-v" style="color:var(--amber)">Accuracy</div><div class="metric-s">Precision, Recall, F1</div></div>
+  </div>
+
+  <div class="card">
+    <h3>Metrik Evaluasi Klasifikasi</h3>
+    <div class="g2" style="margin-top:12px;margin-bottom:0">
+      <div>
+        <h3 style="color:var(--text2);font-size:12px;margin-bottom:10px">Confusion Matrix</h3>
+        <canvas id="cm-canvas" width="320" height="200" style="width:100%"></canvas>
+      </div>
+      <div>
+        <h3 style="color:var(--text2);font-size:12px;margin-bottom:10px">Formula Metrik</h3>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-top:4px">
+          <div><span style="font-weight:600;font-size:13px">Accuracy</span>
+          <div class="formula" style="font-size:11px;margin:4px 0">(TP + TN) / (TP+TN+FP+FN)</div></div>
+          <div><span style="font-weight:600;font-size:13px">Precision</span>
+          <div class="formula" style="font-size:11px;margin:4px 0">TP / (TP + FP)</div></div>
+          <div><span style="font-weight:600;font-size:13px">Recall (Sensitivity)</span>
+          <div class="formula" style="font-size:11px;margin:4px 0">TP / (TP + FN)</div></div>
+          <div><span style="font-weight:600;font-size:13px">F1-Score</span>
+          <div class="formula" style="font-size:11px;margin:4px 0">2 × (Precision × Recall) / (Precision + Recall)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== NAIVE BAYES ===== -->
+<section id="tab-nb" class="section">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--green)"></div>
+    <div>
+      <div class="page-h">Naive Bayes</div>
+      <div class="page-sub">Classifier probabilistik berbasis Teorema Bayes — cepat, simpel, efektif</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bg">Teorema Bayes</span>
+      <h2>Dasar Teori</h2>
+      <p style="margin-top:8px">Naive Bayes menggunakan Teorema Bayes untuk menghitung probabilitas posterior setiap kelas, lalu memilih kelas dengan probabilitas tertinggi (Maximum A Posteriori).</p>
+      <div class="formula">P(C|X) = P(X|C) · P(C) / P(X)</div>
+      <p style="font-size:12px;margin-top:4px">P(C|X) = posterior, P(X|C) = likelihood, P(C) = prior, P(X) = evidence</p>
+      <div class="formula" style="margin-top:10px">Prediksi: ŷ = argmaxₖ P(Cₖ) · Π P(xᵢ|Cₖ)</div>
+      <p style="font-size:12px;margin-top:4px">Asumsi "Naive": semua fitur <strong>independen</strong> satu sama lain (given class)</p>
+    </div>
+    <div class="card">
+      <h3>Jenis Naive Bayes</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:11px">
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px">Gaussian NB</div>
+          <p style="font-size:12px">Fitur kontinu — diasumsikan berdistribusi Normal/Gaussian</p>
+          <div class="formula" style="font-size:11px;margin:4px 0">P(xᵢ|C) = (1/√2πσ²) · e^(-(x-μ)²/2σ²)</div>
+        </div>
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px">Multinomial NB</div>
+          <p style="font-size:12px">Fitur diskrit/count — cocok untuk klasifikasi teks (frekuensi kata)</p>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px">Bernoulli NB</div>
+          <p style="font-size:12px">Fitur binary (0/1) — cocok untuk text classification (ada/tidak kata)</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px;margin-bottom:3px">Complement NB</div>
+          <p style="font-size:12px">Cocok untuk dataset imbalanced — hitung komplemen tiap kelas</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📊 Demo: Klasifikasi Email Spam</h3>
+    <p style="margin-bottom:14px">Klik kata-kata untuk memasukkan ke email, lalu klasifikasikan apakah spam atau bukan spam.</p>
+    <div class="g2" style="margin-bottom:0">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Klik kata untuk tambah ke email:</div>
+        <div id="word-buttons" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px"></div>
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:6px">Email kamu:</div>
+        <div id="email-content" style="min-height:60px;border:1px solid var(--border2);border-radius:var(--rsm);padding:10px 14px;font-size:13px;color:var(--text);background:var(--bg3);font-family:'Courier New',monospace;line-height:1.8">
+          (klik kata di atas untuk mulai menulis)
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn btn-p" onclick="classifyEmail()">🔍 Klasifikasi</button>
+          <button class="btn" onclick="resetEmail()">↺ Reset</button>
+        </div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--text2);margin-bottom:8px">Hasil Klasifikasi:</div>
+        <div id="nb-result" style="background:var(--bg3);border:1px solid var(--border);border-radius:var(--r);padding:16px;min-height:160px">
+          <div style="font-size:13px;color:var(--text3);text-align:center;padding-top:30px">Tambah kata lalu klik Klasifikasi</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Langkah Klasifikasi Manual</h3>
+      <div style="margin-top:8px">
+        <div class="step"><div class="snum">1</div><p>Hitung <strong>prior</strong> P(Spam) dan P(Bukan Spam) dari data training</p></div>
+        <div class="step"><div class="snum">2</div><p>Hitung <strong>likelihood</strong> P(kata|kelas) untuk setiap kata dalam email</p></div>
+        <div class="step"><div class="snum">3</div><p>Kalikan semua likelihood (log-sum untuk stabilitas numerik)</p></div>
+        <div class="step"><div class="snum">4</div><p>Pilih kelas dengan <strong>skor posterior tertinggi</strong></p></div>
+      </div>
+      <div class="warn" style="margin-top:10px">⚠️ <strong>Laplace Smoothing:</strong> Tambahkan +1 ke setiap count untuk menghindari probabilitas nol saat kata baru tidak ada di training.</div>
+    </div>
+    <div class="card">
+      <h3>Kelebihan & Kekurangan</h3>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:10px">
+        <span class="tag ty">Sangat cepat (O(n·d))</span>
+        <span class="tag ty">Scalable data besar</span>
+        <span class="tag ty">Sedikit training data</span>
+        <span class="tag ty">Robust noise</span>
+        <span class="tag ty">Probabilistic output</span>
+        <span class="tag tn">Asumsi independensi lemah</span>
+        <span class="tag tn">Kurang akurat fitur korelasi</span>
+        <span class="tag tn">Estimasi prob. kurang tepat</span>
+      </div>
+      <div class="info" style="margin-top:12px">
+        💡 Naive Bayes bekerja sangat baik untuk <strong>klasifikasi teks</strong> meski asumsi independensinya sering dilanggar di dunia nyata.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DECISION TREE ===== -->
+<section id="tab-dt" class="section">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--amber)"></div>
+    <div>
+      <div class="page-h">Decision Tree</div>
+      <div class="page-sub">Model pohon keputusan yang mudah diinterpretasi — if-else yang dioptimasi</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bam">Pohon Keputusan</span>
+      <h2>Konsep Dasar</h2>
+      <p style="margin-top:8px">Decision Tree mempartisi ruang fitur secara rekursif menggunakan aturan if-else untuk memisahkan kelas. Setiap node internal berisi tes pada fitur, setiap daun berisi prediksi kelas.</p>
+      <div style="margin-top:12px;display:flex;flex-direction:column;gap:10px">
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Root Node</div>
+          <p style="font-size:12px">Node teratas — fitur yang paling informatif untuk split pertama</p>
+        </div>
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Internal Node</div>
+          <p style="font-size:12px">Berisi kondisi split (misal: "usia > 30")</p>
+        </div>
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Leaf Node</div>
+          <p style="font-size:12px">Node terminal — berisi prediksi kelas atau nilai</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Kriteria Split</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:12px">
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Gini Impurity (CART)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">Gini = 1 - Σ pᵢ²</div>
+          <p style="font-size:12px">0 = murni, 0.5 = campuran sempurna. Digunakan di scikit-learn.</p>
+        </div>
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Information Gain / Entropy (ID3, C4.5)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">Entropy = -Σ pᵢ · log₂(pᵢ)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">IG = H(parent) - Σ (|child|/|parent|)·H(child)</div>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Variance Reduction (Regresi)</div>
+          <div class="formula" style="font-size:11px;margin:5px 0">Var = Σ(yᵢ - ȳ)² / n</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🌳 Visualisasi Decision Tree Interaktif</h3>
+    <p style="margin-bottom:12px">Klik node untuk expand/collapse. Ganti dataset untuk melihat pohon yang berbeda.</p>
+    <div class="ctrl">
+      <label>Dataset:</label>
+      <select id="dt-dataset" onchange="buildDT()" style="font-family:inherit;font-size:12px;padding:6px 12px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:4px">
+        <option value="weather">Bermain tenis (cuaca)</option>
+        <option value="loan">Persetujuan pinjaman</option>
+        <option value="exam">Kelulusan ujian</option>
+      </select>
+      <label>Max depth:</label>
+      <input type="range" min="1" max="4" value="3" id="dt-depth" oninput="document.getElementById('dt-dv').textContent=this.value;buildDT()">
+      <span id="dt-dv">3</span>
+      <button class="btn" onclick="buildDT()">↺ Rebuild</button>
+    </div>
+    <canvas id="dt-canvas" width="900" height="340" style="width:100%;border:1px solid var(--border);border-radius:8px;cursor:pointer" onclick="dtClick(event)"></canvas>
+    <div id="dt-info" style="font-size:12px;color:var(--text2);margin-top:8px;font-family:'Courier New',monospace"></div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Algoritma Pembangunan Pohon</h3>
+      <div style="margin-top:8px">
+        <div class="step"><div class="snum">1</div><p>Hitung impurity seluruh dataset (Gini/Entropy)</p></div>
+        <div class="step"><div class="snum">2</div><p>Untuk setiap fitur & threshold → hitung information gain split</p></div>
+        <div class="step"><div class="snum">3</div><p>Pilih split dengan information gain tertinggi</p></div>
+        <div class="step"><div class="snum">4</div><p>Partisi data menjadi dua subset (atau lebih)</p></div>
+        <div class="step"><div class="snum">5</div><p>Rekursif untuk setiap subset hingga stopping criteria</p></div>
+      </div>
+      <p style="font-size:12px;margin-top:8px"><strong>Stopping criteria:</strong> max depth, min samples per leaf, impurity = 0, atau semua data sama kelasnya</p>
+    </div>
+    <div class="card">
+      <h3>Overfitting & Pruning</h3>
+      <p style="margin-top:6px">Decision tree cenderung overfit jika dibiarkan tumbuh terlalu dalam. <strong>Pruning</strong> memangkas cabang yang tidak signifikan.</p>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:8px">
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Pre-pruning (Early Stopping)</div>
+          <p style="font-size:12px">max_depth, min_samples_split, min_samples_leaf — hentikan sebelum split terlalu kecil</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Post-pruning (Cost-Complexity)</div>
+          <p style="font-size:12px">Bangun pohon penuh, lalu pangkas subtree yang meningkatkan error</p>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Random Forest (Ensemble)</div>
+          <p style="font-size:12px">Banyak pohon + bagging → overfitting berkurang drastis</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧮 Kalkulator Gini Impurity & Entropy</h3>
+    <p style="margin-bottom:12px">Geser slider untuk mengatur proporsi kelas dan lihat nilai impurity secara live.</p>
+    <div class="ctrl">
+      <label>Kelas A (%):</label>
+      <input type="range" min="0" max="100" value="50" id="imp-p" oninput="updateImpurity()">
+      <span id="imp-pv" style="font-family:'Courier New',monospace">50%</span>
+    </div>
+    <canvas id="imp-canvas" width="900" height="180" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+    <div id="imp-vals" style="font-size:13px;color:var(--text2);margin-top:8px;font-family:'Courier New',monospace"></div>
+  </div>
+</section>
+
+<!-- ===== SVM ===== -->
+<section id="tab-svm" class="section">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--purple)"></div>
+    <div>
+      <div class="page-h">Support Vector Machine (SVM)</div>
+      <div class="page-sub">Maximizing the margin — classifier berbasis hyperplane optimal</div>
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <span class="badge bp">Large Margin Classifier</span>
+      <h2>Konsep Dasar</h2>
+      <p style="margin-top:8px">SVM mencari <strong>hyperplane</strong> yang memisahkan dua kelas dengan <strong>margin maksimum</strong>. Titik data yang paling dekat dengan hyperplane disebut <strong>support vectors</strong>.</p>
+      <div class="formula">Hyperplane: w·x + b = 0</div>
+      <div class="formula">Objective: Maximize margin = 2/||w||</div>
+      <div class="formula" style="margin-top:4px">Constraint: yᵢ(w·xᵢ + b) ≥ 1 untuk semua i</div>
+      <p style="font-size:12px;margin-top:8px">w = weight vector, b = bias, margin = 2/||w||</p>
+    </div>
+    <div class="card">
+      <h3>Hard vs Soft Margin</h3>
+      <div style="margin-top:8px;display:flex;flex-direction:column;gap:12px">
+        <div style="border-left:3px solid var(--coral);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Hard Margin SVM</div>
+          <p style="font-size:12px">Tidak ada titik yang boleh melewati margin — hanya untuk data <strong>linearly separable</strong>. Sangat sensitif terhadap outlier.</p>
+        </div>
+        <div style="border-left:3px solid var(--purple);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Soft Margin SVM (C-SVM) ⭐</div>
+          <p style="font-size:12px">Izinkan beberapa titik melanggar margin dengan slack variable ξᵢ.</p>
+          <div class="formula" style="font-size:11px;margin:5px 0">Minimize: ½||w||² + C·Σξᵢ</div>
+          <p style="font-size:12px"><strong>C besar</strong> = hard margin (fit lebih ketat). <strong>C kecil</strong> = lebih toleran.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>📐 Visualisasi SVM Interaktif</h3>
+    <div class="ctrl">
+      <label>C (regularisasi):</label>
+      <input type="range" min="1" max="10" value="5" id="svm-c" oninput="document.getElementById('svm-cv').textContent=['0.01','0.1','1','5','10','50','100','500','1000','∞'][this.value-1];drawSVM()">
+      <span id="svm-cv">10</span>
+      <label>Kernel:</label>
+      <select id="svm-kernel" onchange="drawSVM()" style="font-family:inherit;font-size:12px;padding:6px 12px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:4px">
+        <option value="linear">Linear</option>
+        <option value="rbf">RBF (Gaussian)</option>
+        <option value="poly">Polynomial</option>
+      </select>
+      <button class="btn" onclick="generateSVMData()">↺ Generate data baru</button>
+    </div>
+    <canvas id="svm-canvas" width="900" height="340" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+    <div style="display:flex;gap:16px;margin-top:8px;flex-wrap:wrap">
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#378ADD"></div><span style="font-size:12px;color:var(--text2)">Kelas A</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:#E24B4A"></div><span style="font-size:12px;color:var(--text2)">Kelas B</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:10px;height:10px;border-radius:50%;background:none;border:2px solid var(--purple)"></div><span style="font-size:12px;color:var(--text2)">Support Vectors</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:16px;height:2px;background:var(--purple)"></div><span style="font-size:12px;color:var(--text2)">Hyperplane</span></div>
+      <div style="display:flex;align-items:center;gap:5px"><div style="width:16px;height:1px;background:var(--purple);opacity:.4;border-top:1px dashed"></div><span style="font-size:12px;color:var(--text2)">Margin</span></div>
+    </div>
+    <p style="font-size:12px;color:var(--text3);margin-top:6px">💡 Klik canvas untuk tambah titik data baru</p>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Kernel Trick</h3>
+      <p style="margin-top:6px;margin-bottom:12px">Data yang tidak linearly separable di dimensi rendah bisa menjadi separable di dimensi lebih tinggi menggunakan <strong>kernel function</strong>.</p>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="border-left:3px solid var(--accent);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Linear: K(x,z) = x·z</div>
+          <p style="font-size:12px">Data sudah linearly separable. Cepat dan sederhana.</p>
+        </div>
+        <div style="border-left:3px solid var(--green);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">RBF/Gaussian: K(x,z) = e^(-γ||x-z||²)</div>
+          <p style="font-size:12px">Paling umum. γ mengontrol "radius" pengaruh setiap titik.</p>
+        </div>
+        <div style="border-left:3px solid var(--amber);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Polynomial: K(x,z) = (x·z + c)^d</div>
+          <p style="font-size:12px">d = degree polinomial. Cocok untuk data dengan interaksi non-linear.</p>
+        </div>
+        <div style="border-left:3px solid var(--coral);padding-left:12px">
+          <div style="font-weight:600;font-size:13px">Sigmoid: K(x,z) = tanh(αx·z + c)</div>
+          <p style="font-size:12px">Mirip neural network. Jarang digunakan.</p>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Hyperparameter Tuning</h3>
+      <div style="margin-top:8px;overflow-x:auto">
+        <table>
+          <thead><tr><th>Param</th><th>Pengaruh kecil</th><th>Pengaruh besar</th></tr></thead>
+          <tbody>
+            <tr><td>C (regularisasi)</td><td>Margin lebar, lebih toleran</td><td>Margin sempit, fit ketat</td></tr>
+            <tr><td>γ (RBF gamma)</td><td>Decision boundary halus</td><td>Decision boundary kompleks</td></tr>
+            <tr><td>degree (poly)</td><td>Lebih simpel</td><td>Lebih kompleks, overfit</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="info" style="margin-top:12px">
+        💡 Gunakan <strong>GridSearchCV</strong> dengan cross-validation untuk mencari kombinasi C dan γ terbaik.
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:5px;margin-top:12px">
+        <span class="tag ty">Efektif di high-dim space</span>
+        <span class="tag ty">Robust overfitting</span>
+        <span class="tag ty">Kernel sangat fleksibel</span>
+        <span class="tag tn">Lambat untuk data besar</span>
+        <span class="tag tn">Sensitif scaling</span>
+        <span class="tag tn">Susah interpretasi</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== PERBANDINGAN ===== -->
+<section id="tab-compare" class="section">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--teal)"></div>
+    <div>
+      <div class="page-h">Perbandingan & Evaluasi</div>
+      <div class="page-sub">Panduan memilih algoritma dan mengukur performa klasifikasi</div>
+    </div>
+  </div>
+
+  <div class="g3" style="margin-bottom:14px">
+    <div class="card-alt" style="padding:18px">
+      <div class="badge bg" style="margin-bottom:10px">Naive Bayes</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Training speed</span><span style="font-weight:600;color:var(--green)">⚡ Sangat cepat</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Pred. speed</span><span style="font-weight:600;color:var(--green)">⚡ Sangat cepat</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Akurasi umum</span><span style="font-weight:600">Sedang</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Interpretabilitas</span><span style="font-weight:600;color:var(--green)">Tinggi</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Data kecil</span><span style="font-weight:600;color:var(--green)">✓ Baik</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Output prob</span><span style="font-weight:600;color:var(--green)">✓ Ya</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">Non-linear</span><span style="font-weight:600;color:var(--coral)">✗ Tidak</span></div>
+    </div>
+    <div class="card-alt" style="padding:18px">
+      <div class="badge bam" style="margin-bottom:10px">Decision Tree</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Training speed</span><span style="font-weight:600;color:var(--amber)">🚗 Sedang</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Pred. speed</span><span style="font-weight:600;color:var(--green)">⚡ Sangat cepat</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Akurasi umum</span><span style="font-weight:600">Sedang</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Interpretabilitas</span><span style="font-weight:600;color:var(--green)">Sangat tinggi</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Data kecil</span><span style="font-weight:600;color:var(--green)">✓ Baik</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Output prob</span><span style="font-weight:600;color:var(--amber)">△ Leaf ratio</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">Non-linear</span><span style="font-weight:600;color:var(--green)">✓ Ya</span></div>
+    </div>
+    <div class="card-alt" style="padding:18px">
+      <div class="badge bp" style="margin-bottom:10px">SVM</div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Training speed</span><span style="font-weight:600;color:var(--coral)">🐢 Lambat (O(n²-³))</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Pred. speed</span><span style="font-weight:600;color:var(--amber)">🚗 Sedang</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Akurasi umum</span><span style="font-weight:600;color:var(--green)">Tinggi</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Interpretabilitas</span><span style="font-weight:600;color:var(--coral)">Rendah</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Data kecil</span><span style="font-weight:600;color:var(--green)">✓ Sangat baik</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span style="color:var(--text2)">Output prob</span><span style="font-weight:600;color:var(--coral)">✗ Perlu kalibrasi</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--text2)">Non-linear</span><span style="font-weight:600;color:var(--green)">✓ Kernel trick</span></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>🧭 Kapan Gunakan Apa?</h3>
+    <svg width="100%" viewBox="0 0 900 240">
+      <defs><marker id="arrx" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M2 1L8 5L2 9" fill="none" stroke="currentColor" stroke-width="1.5" opacity=".35"/></marker></defs>
+      <!-- root -->
+      <rect x="330" y="10" width="240" height="44" rx="9" fill="rgba(24,95,165,.1)" stroke="var(--accent)" stroke-width="1"/>
+      <text x="450" y="37" text-anchor="middle" font-size="13" font-weight="600" fill="var(--accent)">Masalah Klasifikasi Kamu</text>
+      <!-- branches text -->
+      <text x="120" y="82" text-anchor="middle" font-size="11" fill="var(--text2)">Fitur independen /</text>
+      <text x="120" y="95" text-anchor="middle" font-size="11" fill="var(--text2)">data teks besar</text>
+      <text x="370" y="82" text-anchor="middle" font-size="11" fill="var(--text2)">Butuh interpretasi /</text>
+      <text x="370" y="95" text-anchor="middle" font-size="11" fill="var(--text2)">aturan if-else jelas</text>
+      <text x="700" y="82" text-anchor="middle" font-size="11" fill="var(--text2)">Akurasi max / data</text>
+      <text x="700" y="95" text-anchor="middle" font-size="11" fill="var(--text2)">tidak terlalu besar</text>
+      <!-- lines -->
+      <line x1="450" y1="54" x2="120" y2="107" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arrx)"/>
+      <line x1="450" y1="54" x2="370" y2="107" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arrx)"/>
+      <line x1="450" y1="54" x2="700" y2="107" stroke="currentColor" stroke-width="1" opacity=".2" marker-end="url(#arrx)"/>
+      <!-- results -->
+      <rect x="30" y="110" width="180" height="48" rx="8" fill="rgba(15,110,86,.1)" stroke="var(--green)" stroke-width="1"/>
+      <text x="120" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="var(--green)">Naive Bayes</text>
+      <text x="120" y="150" text-anchor="middle" font-size="10" fill="var(--text2)">Gaussian / Multinomial</text>
+      <rect x="265" y="110" width="210" height="48" rx="8" fill="rgba(133,79,11,.1)" stroke="var(--amber)" stroke-width="1"/>
+      <text x="370" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="var(--amber)">Decision Tree</text>
+      <text x="370" y="150" text-anchor="middle" font-size="10" fill="var(--text2)">atau Random Forest</text>
+      <rect x="600" y="110" width="200" height="48" rx="8" fill="rgba(83,74,183,.1)" stroke="var(--purple)" stroke-width="1"/>
+      <text x="700" y="133" text-anchor="middle" font-size="13" font-weight="700" fill="var(--purple)">SVM</text>
+      <text x="700" y="150" text-anchor="middle" font-size="10" fill="var(--text2)">kernel RBF / Linear</text>
+      <!-- second level -->
+      <text x="450" y="195" text-anchor="middle" font-size="11" fill="var(--text2)">Data sangat besar (&gt;100K) → Logistic Regression, SGD, atau Neural Network</text>
+      <text x="450" y="212" text-anchor="middle" font-size="11" fill="var(--text2)">Selalu coba beberapa model dan bandingkan dengan cross-validation!</text>
+    </svg>
+  </div>
+
+  <div class="card">
+    <h3>🎯 Demo Perbandingan — Classifier Playground</h3>
+    <p style="margin-bottom:12px">Lihat bagaimana ketiga algoritma membentuk decision boundary yang berbeda pada dataset yang sama.</p>
+    <div class="ctrl">
+      <label>Dataset:</label>
+      <select id="play-data" onchange="drawPlayground()" style="font-family:inherit;font-size:12px;padding:6px 12px;background:var(--bg3);color:var(--text);border:1px solid var(--border2);border-radius:4px">
+        <option value="linear">Linearly Separable</option>
+        <option value="circles">Concentric Circles</option>
+        <option value="moons">Two Moons</option>
+        <option value="blobs">Multi-blob</option>
+      </select>
+      <button class="btn" onclick="drawPlayground()">↺ Generate ulang</button>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:8px">
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--green);margin-bottom:4px;text-align:center">Naive Bayes</div>
+        <canvas id="pg-nb" width="280" height="220" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+        <div id="pg-nb-acc" style="font-size:11px;text-align:center;margin-top:4px;color:var(--text2);font-family:'Courier New',monospace"></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--amber);margin-bottom:4px;text-align:center">Decision Tree</div>
+        <canvas id="pg-dt" width="280" height="220" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+        <div id="pg-dt-acc" style="font-size:11px;text-align:center;margin-top:4px;color:var(--text2);font-family:'Courier New',monospace"></div>
+      </div>
+      <div>
+        <div style="font-size:12px;font-weight:600;color:var(--purple);margin-bottom:4px;text-align:center">SVM (RBF)</div>
+        <canvas id="pg-svm" width="280" height="220" style="width:100%;border:1px solid var(--border);border-radius:8px"></canvas>
+        <div id="pg-svm-acc" style="font-size:11px;text-align:center;margin-top:4px;color:var(--text2);font-family:'Courier New',monospace"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Cross-Validation & Evaluasi Model</h3>
+    <div class="g2" style="margin-top:10px;margin-bottom:0">
+      <div>
+        <h3 style="font-size:12px;color:var(--text2);margin-bottom:10px">k-Fold Cross Validation</h3>
+        <canvas id="cv-canvas" width="400" height="160" style="width:100%"></canvas>
+        <p style="font-size:12px;margin-top:8px">Data dibagi k=5 fold. Setiap fold bergantian jadi validation set. Hasilnya dirata-rata → estimasi performa lebih stabil.</p>
+      </div>
+      <div>
+        <h3 style="font-size:12px;color:var(--text2);margin-bottom:10px">ROC Curve & AUC</h3>
+        <canvas id="roc-canvas" width="400" height="160" style="width:100%"></canvas>
+        <p style="font-size:12px;margin-top:8px">AUC = Area Under ROC Curve. AUC=1.0 sempurna, AUC=0.5 random. Digunakan saat class imbalanced.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== KODE PYTHON ===== -->
+<section id="tab-code" class="section">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--green2)"></div>
+    <div>
+      <div class="page-h">Implementasi Python</div>
+      <div class="page-sub">Kode siap pakai dengan scikit-learn — copy & run di Jupyter/Colab</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>Setup & Load Dataset</h3>
+    <div class="code">
+<span class="cm"># pip install scikit-learn pandas matplotlib seaborn</span>
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_iris, make_classification
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score, GridSearchCV
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler, LabelEncoder
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> (classification_report, confusion_matrix,
+                             accuracy_score, roc_auc_score, ConfusionMatrixDisplay)
+
+<span class="cm"># ---- Load Iris dataset ----</span>
+iris = load_iris()
+X, y = iris.data, iris.target
+feature_names = iris.feature_names
+class_names   = iris.target_names
+
+<span class="cm"># ---- Split train/test ----</span>
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>, stratify=y
+)
+
+<span class="cm"># ---- Normalisasi (WAJIB untuk SVM) ----</span>
+scaler  = StandardScaler()
+X_train = scaler.<span class="fn">fit_transform</span>(X_train)
+X_test  = scaler.<span class="fn">transform</span>(X_test)   <span class="cm"># JANGAN fit ulang!</span>
+
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"Train: {X_train.shape}, Test: {X_test.shape}"</span>)
+    </div>
+  </div>
+
+  <div class="g2">
+    <div class="card">
+      <h3>Naive Bayes</h3>
+      <div class="code">
+<span class="kw">from</span> sklearn.naive_bayes <span class="kw">import</span> (
+    GaussianNB, MultinomialNB, BernoulliNB
+)
+
+<span class="cm"># ---- Gaussian NB (fitur kontinu) ----</span>
+gnb = GaussianNB()
+gnb.<span class="fn">fit</span>(X_train, y_train)
+y_pred_nb = gnb.<span class="fn">predict</span>(X_test)
+
+<span class="cm"># Probabilitas tiap kelas</span>
+proba = gnb.<span class="fn">predict_proba</span>(X_test)
+<span class="fn">print</span>(<span class="st">"Probabilitas sampel pertama:"</span>, proba[<span class="nm">0</span>].round(<span class="nm">3</span>))
+
+<span class="cm"># ---- Evaluasi ----</span>
+acc = <span class="fn">accuracy_score</span>(y_test, y_pred_nb)
+<span class="fn">print</span>(<span class="kw">f</span><span class="st">"\nAccuracy: {acc:.4f}"</span>)
+<span class="fn">print</span>(<span class="fn">classification_report</span>(y_test, y_pred_nb,
+      target_names=class_names))
+
+<span class="cm"># ---- Multinomial NB (untuk teks) ----</span>
+<span class="kw">from</span> sklearn.feature_extraction.text <span class="kw">import</span> TfidfVectorizer
+<span class="cm"># vectorizer = TfidfVectorizer()</span>
+<span class="cm"># X_text = vectorizer.fit_transform(corpus)</span>
+<span class="cm"># mnb = MultinomialNB(alpha=1.0)  # Laplace smoothing</span>
+<span class="cm"># mnb.fit(X_text, y_text)</span>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Decision Tree</h3>
+      <div class="code">
+<span class="kw">from</span> sklearn.tree <span class="kw">import</span> (DecisionTreeClassifier,
+                           export_text, plot_tree)
+
+<span class="cm"># ---- Decision Tree ----</span>
+dt = DecisionTreeClassifier(
+    criterion=<span class="st">'gini'</span>,     <span class="cm"># atau 'entropy'</span>
+    max_depth=<span class="nm">4</span>,
+    min_samples_split=<span class="nm">5</span>,
+    min_samples_leaf=<span class="nm">2</span>,
+    random_state=<span class="nm">42</span>
+)
+dt.<span class="fn">fit</span>(X_train, y_train)
+y_pred_dt = dt.<span class="fn">predict</span>(X_test)
+
+<span class="cm"># ---- Visualisasi pohon ----</span>
+plt.<span class="fn">figure</span>(figsize=(<span class="nm">15</span>, <span class="nm">6</span>))
+<span class="fn">plot_tree</span>(dt, feature_names=feature_names,
+           class_names=class_names,
+           filled=<span class="nm">True</span>, rounded=<span class="nm">True</span>)
+plt.<span class="fn">show</span>()
+
+<span class="cm"># Cetak aturan if-else</span>
+rules = <span class="fn">export_text</span>(dt, feature_names=feature_names)
+<span class="fn">print</span>(rules)
+
+<span class="cm"># Feature importance</span>
+importances = pd.<span class="fn">Series</span>(dt.feature_importances_,
+                          index=feature_names)
+importances.<span class="fn">sort_values</span>().<span class="fn">plot</span>(kind=<span class="st">'barh'</span>)
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h3>SVM + Hyperparameter Tuning</h3>
+    <div class="code">
+<span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+
+<span class="cm"># ---- SVM dasar ----</span>
+svm = SVC(kernel=<span class="st">'rbf'</span>, C=<span class="nm">1.0</span>, gamma=<span class="st">'scale'</span>,
+          probability=<span class="nm">True</span>, random_state=<span class="nm">42</span>)
+svm.<span class="fn">fit</span>(X_train, y_train)
+y_pred_svm = svm.<span class="fn">predict</span>(X_test)
+
+<span class="cm"># ---- GridSearchCV untuk tuning C & gamma ----</span>
+param_grid = {
+    <span class="st">'C'</span>:     [<span class="nm">0.1</span>, <span class="nm">1</span>, <span class="nm">10</span>, <span class="nm">100</span>],
+    <span class="st">'gamma'</span>: [<span class="st">'scale'</span>, <span class="st">'auto'</span>, <span class="nm">0.1</span>, <span class="nm">0.01</span>],
+    <span class="st">'kernel'</span>:[<span class="st">'rbf'</span>, <span class="st">'linear'</span>]
+}
+grid_search = GridSearchCV(
+    SVC(probability=<span class="nm">True</span>), param_grid,
+    cv=<span class="nm">5</span>, scoring=<span class="st">'accuracy'</span>, n_jobs=<span class="nm">-1</span>
+)
+grid_search.<span class="fn">fit</span>(X_train, y_train)
+
+<span class="fn">print</span>(<span class="st">"Best params:"</span>, grid_search.best_params_)
+<span class="fn">print</span>(<span class="st">"Best CV score:"</span>, grid_search.best_score_.<span class="fn">round</span>(<span class="nm">4</span>))
+best_svm = grid_search.best_estimator_
+
+<span class="cm"># ---- Perbandingan 3 model ----</span>
+models = {<span class="st">'Naive Bayes'</span>: gnb, <span class="st">'Decision Tree'</span>: dt, <span class="st">'SVM'</span>: best_svm}
+<span class="kw">for</span> name, model <span class="kw">in</span> models.items():
+    scores = <span class="fn">cross_val_score</span>(model, X_train, y_train, cv=<span class="nm">5</span>)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="st">"{name:15s}: {scores.mean():.4f} ± {scores.std():.4f}"</span>)
+
+<span class="cm"># ---- Confusion Matrix visual ----</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">3</span>, figsize=(<span class="nm">15</span>, <span class="nm">4</span>))
+<span class="kw">for</span> ax, (name, model) <span class="kw">in</span> <span class="fn">zip</span>(axes, models.items()):
+    cm = <span class="fn">confusion_matrix</span>(y_test, model.<span class="fn">predict</span>(X_test))
+    <span class="fn">ConfusionMatrixDisplay</span>(cm, display_labels=class_names).<span class="fn">plot</span>(ax=ax)
+    ax.<span class="fn">set_title</span>(name)
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()
+    </div>
+  </div>
+</section>
+
+<!-- ===== LATIHAN ===== -->
+<section id="tab-latihan" class="section">
+  <div class="stitle">
+    <div class="stbar" style="height:32px;background:var(--amber)"></div>
+    <div>
+      <div class="page-h">Latihan & Diskusi</div>
+      <div class="page-sub">Klik soal untuk melihat jawaban — dari konseptual hingga hitungan manual</div>
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q1')">
+    <div class="soal-head">
+      <div><span class="badge ba" style="margin-bottom:6px">Konseptual</span>
+      <div class="soal-q">1. Jelaskan perbedaan supervised dan unsupervised learning dengan contoh masing-masing. Mengapa klasifikasi termasuk supervised learning?</div></div>
+      <div class="soal-icon" id="q1-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q1-a">
+      <strong>Supervised Learning:</strong> Model belajar dari data yang sudah diberi label (pasangan input-output). Tujuannya adalah mempelajari fungsi pemetaan f: X → Y. Contoh: klasifikasi spam (input=email, label=spam/bukan), prediksi harga rumah (input=fitur rumah, label=harga).<br><br>
+      <strong>Unsupervised Learning:</strong> Tidak ada label. Model mencari pola atau struktur tersembunyi. Contoh: clustering pelanggan (K-Means, DBSCAN), dimensionality reduction (PCA).<br><br>
+      <strong>Klasifikasi termasuk supervised</strong> karena: (1) membutuhkan dataset berlabel untuk training, (2) model belajar memetakan fitur → kelas dari contoh berlabel, (3) performa dievaluasi dengan membandingkan prediksi vs label sebenarnya.
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q2')">
+    <div class="soal-head">
+      <div><span class="badge bg" style="margin-bottom:6px">Naive Bayes — Hitung Manual</span>
+      <div class="soal-q">2. Dataset: 5 email spam dan 5 email normal. "gratis" muncul di 4 spam, 1 normal. "meeting" muncul di 1 spam, 4 normal. Email baru berisi "gratis meeting". Hitung skor Naive Bayes untuk spam vs normal (gunakan Laplace smoothing α=1, vocab=10 kata).</div></div>
+      <div class="soal-icon" id="q2-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q2-a">
+      <strong>Prior:</strong><br>
+      P(Spam) = 5/10 = 0.5 &nbsp;|&nbsp; P(Normal) = 5/10 = 0.5<br><br>
+      <strong>Likelihood dengan Laplace Smoothing (α=1, vocab=10):</strong><br>
+      P("gratis"|Spam) = (4+1)/(5+10) = 5/15 = 0.333<br>
+      P("gratis"|Normal) = (1+1)/(5+10) = 2/15 = 0.133<br>
+      P("meeting"|Spam) = (1+1)/(5+10) = 2/15 = 0.133<br>
+      P("meeting"|Normal) = (4+1)/(5+10) = 5/15 = 0.333<br><br>
+      <strong>Skor Posterior (proportional):</strong><br>
+      Score(Spam) = P(Spam) × P("gratis"|Spam) × P("meeting"|Spam)<br>
+      = 0.5 × 0.333 × 0.133 = <strong>0.0222</strong><br><br>
+      Score(Normal) = P(Normal) × P("gratis"|Normal) × P("meeting"|Normal)<br>
+      = 0.5 × 0.133 × 0.333 = <strong>0.0222</strong><br><br>
+      <strong>Hasil:</strong> Score(Spam) = Score(Normal) → <strong>Tie! Ambiguous.</strong> Dalam praktik bisa dipilih kelas default atau digunakan lebih banyak fitur untuk memecah tie.
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q3')">
+    <div class="soal-head">
+      <div><span class="badge bam" style="margin-bottom:6px">Decision Tree — Entropy</span>
+      <div class="soal-q">3. Dataset 10 data: 6 positif, 4 negatif. Setelah split pada fitur A: cabang kiri 4 positif 1 negatif, cabang kanan 2 positif 3 negatif. Hitung Entropy sebelum dan sesudah split, lalu Information Gain-nya.</div></div>
+      <div class="soal-icon" id="q3-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q3-a">
+      <strong>Entropy sebelum split (Parent):</strong><br>
+      p+ = 6/10 = 0.6, p- = 4/10 = 0.4<br>
+      H(Parent) = -(0.6·log₂0.6 + 0.4·log₂0.4) = -(0.6·(-0.737) + 0.4·(-1.322))<br>
+      = -(-0.442 - 0.529) = <strong>0.971 bits</strong><br><br>
+      <strong>Entropy cabang kiri (5 data: 4+, 1-):</strong><br>
+      H(L) = -(4/5·log₂(4/5) + 1/5·log₂(1/5)) = -(0.8·(-0.322) + 0.2·(-2.322))<br>
+      = -(-0.258 - 0.464) = <strong>0.722 bits</strong><br><br>
+      <strong>Entropy cabang kanan (5 data: 2+, 3-):</strong><br>
+      H(R) = -(2/5·log₂(2/5) + 3/5·log₂(3/5)) = -(0.4·(-1.322) + 0.6·(-0.737))<br>
+      = -(-0.529 - 0.442) = <strong>0.971 bits</strong><br><br>
+      <strong>Weighted entropy setelah split:</strong><br>
+      H(After) = (5/10)·H(L) + (5/10)·H(R) = 0.5·0.722 + 0.5·0.971 = <strong>0.847 bits</strong><br><br>
+      <strong>Information Gain:</strong><br>
+      IG = H(Parent) - H(After) = 0.971 - 0.847 = <strong>0.124 bits</strong>
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q4')">
+    <div class="soal-head">
+      <div><span class="badge bp" style="margin-bottom:6px">SVM</span>
+      <div class="soal-q">4. Jelaskan apa itu "margin" di SVM dan mengapa memaksimalkan margin penting untuk generalisasi. Apa bedanya hard margin dan soft margin?</div></div>
+      <div class="soal-icon" id="q4-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q4-a">
+      <strong>Margin</strong> adalah jarak antara hyperplane pemisah dengan titik data terdekat dari masing-masing kelas (support vectors). Margin = 2/||w||.<br><br>
+      <strong>Mengapa memaksimalkan margin penting?</strong><br>
+      • Margin yang besar → model lebih robust terhadap variasi kecil pada data baru<br>
+      • Teorema Generalisasi (VC dimension): error generalisasi terikat dengan 1/margin². Margin besar = bound lebih ketat<br>
+      • Intuitif: garis yang jauh dari kedua kelas lebih "yakin" dalam mengklasifikasi<br><br>
+      <strong>Hard Margin:</strong> Tidak ada titik yang boleh melewati margin. Hanya berfungsi jika data <em>perfectly linearly separable</em>. Satu outlier bisa merusak seluruh solusi.<br><br>
+      <strong>Soft Margin (C-SVM):</strong> Mengizinkan beberapa pelanggaran margin dengan menambah slack variable ξᵢ dan parameter regularisasi C. C besar → lebih dekat hard margin (fit ketat, mungkin overfit). C kecil → margin lebih lebar, toleran outlier (lebih general).
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q5')">
+    <div class="soal-head">
+      <div><span class="badge bt" style="margin-bottom:6px">Evaluasi</span>
+      <div class="soal-q">5. Model menghasilkan: TP=90, TN=85, FP=15, FN=10. Hitung Accuracy, Precision, Recall, dan F1-Score. Jika ini model deteksi kanker, mana metrik yang paling penting?</div></div>
+      <div class="soal-icon" id="q5-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q5-a">
+      <strong>Hitungan:</strong><br>
+      Total = 90+85+15+10 = 200<br>
+      Accuracy = (90+85)/200 = <strong>87.5%</strong><br>
+      Precision = 90/(90+15) = <strong>85.7%</strong><br>
+      Recall = 90/(90+10) = <strong>90.0%</strong><br>
+      F1 = 2 × (0.857 × 0.900) / (0.857 + 0.900) = <strong>87.8%</strong><br><br>
+      <strong>Untuk deteksi kanker: Recall paling penting!</strong><br>
+      Alasan: FN (pasien kanker tidak terdeteksi) jauh lebih berbahaya daripada FP (pasien sehat didiagnosa positif). FP hanya menyebabkan test tambahan, FN bisa fatal. Kita ingin meminimalkan FN → maksimalkan Recall.<br><br>
+      Tradeoff: Meningkatkan Recall biasanya menurunkan Precision. Gunakan <strong>F-beta score</strong> dengan β>1 untuk memprioritaskan Recall lebih dari Precision.
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q6')">
+    <div class="soal-head">
+      <div><span class="badge bc" style="margin-bottom:6px">Studi Kasus</span>
+      <div class="soal-q">6. Startup edutech ingin memprediksi mahasiswa yang berisiko drop-out berdasarkan: IPK, kehadiran, keterlambatan bayar SPP, dan aktivitas di e-learning. Dataset: 2000 mahasiswa, 300 drop-out. Algoritma apa yang kamu rekomendasikan dan mengapa?</div></div>
+      <div class="soal-icon" id="q6-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q6-a">
+      <strong>Rekomendasi: Decision Tree → Random Forest</strong><br><br>
+      <strong>Alasan pilih Decision Tree dulu:</strong><br>
+      • Butuh <em>interpretabilitas</em> — dosen/admin perlu tahu alasan spesifik: "mahasiswa X berisiko karena IPK &lt; 2.0 DAN kehadiran &lt; 60%"<br>
+      • Fitur campuran numerik (IPK, kehadiran) dan kategorikal (keterlambatan) — DT menangani keduanya<br>
+      • 2000 data cukup untuk DT, tidak perlu SVM yang lebih lambat<br><br>
+      <strong>Perhatian khusus (class imbalance):</strong><br>
+      300 drop-out vs 1700 tidak → imbalanced! Solusi:<br>
+      • class_weight='balanced' di DecisionTreeClassifier<br>
+      • SMOTE oversampling pada kelas minoritas<br>
+      • Gunakan F1 atau AUC-ROC sebagai metrik, bukan accuracy<br><br>
+      <strong>Upgrade ke Random Forest:</strong> setelah DT berjalan, ensemble 100+ pohon untuk akurasi lebih tinggi sambil tetap bisa lihat feature importance (fitur mana paling prediktif).
+    </div>
+  </div>
+
+  <div class="soal" onclick="toggleSoal('q7')">
+    <div class="soal-head">
+      <div><span class="badge bg" style="margin-bottom:6px">Coding</span>
+      <div class="soal-q">7. Tulis kode Python lengkap: load dataset breast cancer (sklearn), split 80/20, train ketiga classifier (NB, DT, SVM), bandingkan dengan 5-fold CV, dan tampilkan confusion matrix masing-masing.</div></div>
+      <div class="soal-icon" id="q7-i">▾</div>
+    </div>
+    <div class="soal-ans" id="q7-a">
+      <div class="code" style="font-size:11px">
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_breast_cancer
+<span class="kw">from</span> sklearn.model_selection <span class="kw">import</span> train_test_split, cross_val_score
+<span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+<span class="kw">from</span> sklearn.naive_bayes <span class="kw">import</span> GaussianNB
+<span class="kw">from</span> sklearn.tree <span class="kw">import</span> DecisionTreeClassifier
+<span class="kw">from</span> sklearn.svm <span class="kw">import</span> SVC
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> confusion_matrix, ConfusionMatrixDisplay, accuracy_score
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+<span class="cm"># 1. Load data</span>
+data = load_breast_cancer()
+X, y = data.data, data.target
+
+<span class="cm"># 2. Split & Scale</span>
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=<span class="nm">0.2</span>, random_state=<span class="nm">42</span>, stratify=y)
+sc = StandardScaler()
+X_train = sc.<span class="fn">fit_transform</span>(X_train)
+X_test  = sc.<span class="fn">transform</span>(X_test)
+
+<span class="cm"># 3. Define models</span>
+models = {
+    <span class="st">'Naive Bayes'</span>:    GaussianNB(),
+    <span class="st">'Decision Tree'</span>:  DecisionTreeClassifier(max_depth=<span class="nm">5</span>, random_state=<span class="nm">42</span>),
+    <span class="st">'SVM (RBF)'</span>:     SVC(kernel=<span class="st">'rbf'</span>, C=<span class="nm">10</span>, gamma=<span class="st">'scale'</span>, random_state=<span class="nm">42</span>)
+}
+
+<span class="cm"># 4. Train, CV, Evaluate</span>
+print(<span class="st">f"{'Model':<20} {'CV Mean':>8} {'CV Std':>8} {'Test Acc':>10}"</span>)
+print(<span class="st">"-"</span> * <span class="nm">50</span>)
+fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">3</span>, figsize=(<span class="nm">15</span>, <span class="nm">4</span>))
+
+<span class="kw">for</span> ax, (name, model) <span class="kw">in</span> <span class="fn">zip</span>(axes, models.items()):
+    <span class="cm"># 5-Fold Cross Validation</span>
+    cv_scores = <span class="fn">cross_val_score</span>(model, X_train, y_train, cv=<span class="nm">5</span>, scoring=<span class="st">'accuracy'</span>)
+    <span class="cm"># Train on full train set</span>
+    model.<span class="fn">fit</span>(X_train, y_train)
+    y_pred = model.<span class="fn">predict</span>(X_test)
+    test_acc = <span class="fn">accuracy_score</span>(y_test, y_pred)
+    <span class="fn">print</span>(<span class="kw">f</span><span class="st">"{name:<20} {cv_scores.mean():.4f}   {cv_scores.std():.4f}   {test_acc:.4f}"</span>)
+    <span class="cm"># Confusion Matrix</span>
+    cm = <span class="fn">confusion_matrix</span>(y_test, y_pred)
+    <span class="fn">ConfusionMatrixDisplay</span>(cm, display_labels=data.target_names).<span class="fn">plot</span>(ax=ax, colorbar=<span class="nm">False</span>)
+    ax.<span class="fn">set_title</span>(<span class="kw">f</span><span class="st">"{name}\n(Test Acc={test_acc:.3f})"</span>)
+
+plt.<span class="fn">tight_layout</span>()
+plt.<span class="fn">show</span>()
+      </div>
+    </div>
+  </div>
+
+</section>
+</main>
+
+<footer class="footer">
+  Kecerdasan Buatan · Materi 5 — Klasifikasi: Naive Bayes, Decision Tree & SVM &nbsp;·&nbsp; S1 Informatika 2025
+</footer>
+
+<script>
+// ========================================================
+// NAV
+// ========================================================
+function showTab(id, btn) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  btn.classList.add('active');
+  const fns = {
+    intro: () => { drawCM(); },
+    nb: () => { initNB(); },
+    dt: () => { buildDT(); updateImpurity(); },
+    svm: () => { generateSVMData(); },
+    compare: () => { drawPlayground(); drawCV(); drawROC(); },
+  };
+  if (fns[id]) setTimeout(fns[id], 60);
+}
+
+function toggleSoal(id) {
+  const a = document.getElementById(id+'-a'), i = document.getElementById(id+'-i');
+  a.classList.toggle('show');
+  i.classList.toggle('open');
+  i.textContent = a.classList.contains('show') ? '▴' : '▾';
+}
+
+// ========================================================
+// UTILITIES
+// ========================================================
+function isDark() { return window.matchMedia('(prefers-color-scheme:dark)').matches; }
+function bg() { return isDark() ? '#181818' : '#ffffff'; }
+function bg3() { return isDark() ? '#222' : '#eceae4'; }
+function textCol() { return isDark() ? '#a0a09a' : '#9a9a96'; }
+function lineCol() { return isDark() ? 'rgba(255,255,255,0.08)' : 'rgba(0,0,0,0.07)'; }
+
+// ========================================================
+// CONFUSION MATRIX
+// ========================================================
+function drawCM() {
+  const c = document.getElementById('cm-canvas'); if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+  const vals = [[85,15],[10,90]];
+  const labels = ['Prediksi Positif','Prediksi Negatif'];
+  const rows = ['Aktual Positif','Aktual Negatif'];
+  const colors = [['rgba(15,110,86,.6)','rgba(163,45,45,.4)'],['rgba(163,45,45,.4)','rgba(15,110,86,.6)']];
+  const cx = ['TP','FP','FN','TN'];
+  const cw = 110, ch = 80, ox = 100, oy = 50;
+  ctx.font='11px sans-serif'; ctx.textAlign='center';
+  labels.forEach((l,j) => { ctx.fillStyle=isDark()?'#ccc':'#555'; ctx.fillText(l, ox+cw*(j+0.5), oy-10); });
+  ctx.save(); ctx.translate(20, oy+ch); ctx.rotate(-Math.PI/2);
+  ctx.fillStyle=isDark()?'#ccc':'#555'; ctx.font='10px sans-serif';
+  rows.forEach((r,i) => ctx.fillText(r, -ch*i, 0));
+  ctx.restore();
+  vals.forEach((row,i) => row.forEach((v,j) => {
+    ctx.fillStyle = colors[i][j];
+    ctx.fillRect(ox+j*cw+1, oy+i*ch+1, cw-2, ch-2);
+    ctx.fillStyle = isDark()?'#fff':'#111'; ctx.font='bold 22px sans-serif'; ctx.textAlign='center';
+    ctx.fillText(v, ox+j*cw+cw/2, oy+i*ch+ch/2+4);
+    ctx.fillStyle = textCol(); ctx.font='10px monospace';
+    ctx.fillText(cx[i*2+j], ox+j*cw+cw/2, oy+i*ch+ch-8);
+  }));
+  ctx.strokeStyle = lineCol(); ctx.lineWidth=1;
+  ctx.strokeRect(ox,oy,cw*2,ch*2);
+  ctx.beginPath(); ctx.moveTo(ox+cw,oy); ctx.lineTo(ox+cw,oy+ch*2); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(ox,oy+ch); ctx.lineTo(ox+cw*2,oy+ch); ctx.stroke();
+}
+drawCM();
+
+// ========================================================
+// NAIVE BAYES DEMO
+// ========================================================
+const spamWords = ['gratis','menang','hadiah','klik','promo','diskon','segera','uang'];
+const hamWords  = ['meeting','laporan','tugas','deadline','rapat','kampus','kuliah','ujian'];
+const spamFreq  = {gratis:0.82,menang:0.78,hadiah:0.75,klik:0.70,promo:0.68,diskon:0.65,segera:0.60,uang:0.72};
+const hamFreq   = {meeting:0.80,laporan:0.75,tugas:0.85,deadline:0.70,rapat:0.72,kampus:0.78,kuliah:0.83,ujian:0.77};
+
+let emailWords = [];
+
+function initNB() {
+  const wb = document.getElementById('word-buttons'); if (!wb) return;
+  wb.innerHTML = '';
+  const allWords = [...spamWords, ...hamWords];
+  allWords.forEach(w => {
+    const btn = document.createElement('button');
+    btn.className = 'btn';
+    btn.textContent = w;
+    btn.style.fontSize = '12px';
+    btn.style.padding = '5px 12px';
+    btn.style.background = spamWords.includes(w) ? 'rgba(163,45,45,.1)' : 'rgba(15,110,86,.1)';
+    btn.style.color = spamWords.includes(w) ? 'var(--coral)' : 'var(--green)';
+    btn.style.borderColor = spamWords.includes(w) ? 'rgba(163,45,45,.2)' : 'rgba(15,110,86,.2)';
+    btn.onclick = () => addWord(w);
+    wb.appendChild(btn);
+  });
+}
+
+function addWord(w) {
+  emailWords.push(w);
+  document.getElementById('email-content').textContent = emailWords.join(' ') || '(klik kata di atas)';
+}
+
+function resetEmail() {
+  emailWords = [];
+  document.getElementById('email-content').textContent = '(klik kata di atas untuk mulai menulis)';
+  document.getElementById('nb-result').innerHTML = '<div style="font-size:13px;color:var(--text3);text-align:center;padding-top:30px">Tambah kata lalu klik Klasifikasi</div>';
+}
+
+function classifyEmail() {
+  if (!emailWords.length) return;
+  const priorSpam = 0.5, priorHam = 0.5;
+  let logSpam = Math.log(priorSpam), logHam = Math.log(priorHam);
+  const details = [];
+  emailWords.forEach(w => {
+    const ps = spamFreq[w] || 0.1;
+    const ph = hamFreq[w] || 0.1;
+    const hps = ps >= ph ? 'var(--coral)' : 'var(--text2)';
+    const hph = ph >= ps ? 'var(--green)' : 'var(--text2)';
+    details.push({w, ps, ph, hps, hph});
+    logSpam += Math.log(ps); logHam += Math.log(ph);
+  });
+  const isSpam = logSpam > logHam;
+  const totalLog = Math.max(logSpam, logHam);
+  const probSpam = 1/(1+Math.exp(logHam-logSpam));
+  const probHam  = 1 - probSpam;
+
+  let html = `
+    <div style="font-size:20px;font-weight:700;color:${isSpam?'var(--coral)':'var(--green)'};margin-bottom:12px">
+      ${isSpam?'🚫 SPAM':'✅ BUKAN SPAM'}
+    </div>
+    <div style="margin-bottom:10px">
+      <div style="font-size:12px;color:var(--text2);margin-bottom:4px">Probabilitas:</div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+        <span style="font-size:11px;width:80px;color:var(--coral)">Spam</span>
+        <div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${(probSpam*100).toFixed(1)}%;background:var(--coral);border-radius:4px"></div>
+        </div>
+        <span style="font-size:11px;font-family:'Courier New',monospace;color:var(--coral)">${(probSpam*100).toFixed(1)}%</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:8px">
+        <span style="font-size:11px;width:80px;color:var(--green)">Normal</span>
+        <div style="flex:1;height:8px;background:var(--bg4);border-radius:4px;overflow:hidden">
+          <div style="height:100%;width:${(probHam*100).toFixed(1)}%;background:var(--green);border-radius:4px"></div>
+        </div>
+        <span style="font-size:11px;font-family:'Courier New',monospace;color:var(--green)">${(probHam*100).toFixed(1)}%</span>
+      </div>
+    </div>
+    <div style="font-size:11px;color:var(--text3);font-family:'Courier New',monospace">
+      ${details.map(d=>`<span style="color:${d.hps}">${d.w}(S:${d.ps.toFixed(2)})</span> <span style="color:${d.hph}">(N:${d.ph.toFixed(2)})</span>`).join(' · ')}
+    </div>`;
+  document.getElementById('nb-result').innerHTML = html;
+}
+
+initNB();
+
+// ========================================================
+// DECISION TREE VISUALIZATION
+// ========================================================
+const DT_DATA = {
+  weather: {
+    name:'Cuaca → Bermain Tenis?',
+    tree: {
+      label:'Outlook', val:'', samples:14, impurity:.459, children:[
+        {label:'Sunny', val:'Humidity?', samples:5, impurity:.480, children:[
+          {label:'≤70', val:'Main', samples:3, impurity:0, leaf:true, cls:'pos'},
+          {label:'>70', val:'Tidak', samples:2, impurity:0, leaf:true, cls:'neg'}
+        ]},
+        {label:'Overcast', val:'Main ✓', samples:4, impurity:0, leaf:true, cls:'pos'},
+        {label:'Rain', val:'Wind?', samples:5, impurity:.480, children:[
+          {label:'Weak', val:'Main', samples:3, impurity:0, leaf:true, cls:'pos'},
+          {label:'Strong', val:'Tidak', samples:2, impurity:0, leaf:true, cls:'neg'}
+        ]}
+      ]
+    }
+  },
+  loan: {
+    name:'Persetujuan Pinjaman',
+    tree: {
+      label:'Pendapatan', val:'', samples:20, impurity:.468, children:[
+        {label:'≥5jt', val:'Kredit?', samples:10, impurity:.32, children:[
+          {label:'Baik', val:'Disetujui ✓', samples:7, impurity:0, leaf:true, cls:'pos'},
+          {label:'Buruk', val:'Ditolak', samples:3, impurity:.444, children:[
+            {label:'Agunan?', val:'', samples:3, impurity:.444, children:[
+              {label:'Ada', val:'Disetujui ✓', samples:2, impurity:0, leaf:true, cls:'pos'},
+              {label:'Tidak', val:'Ditolak ✗', samples:1, impurity:0, leaf:true, cls:'neg'}
+            ]}
+          ]}
+        ]},
+        {label:'<5jt', val:'Riwayat?', samples:10, impurity:.480, children:[
+          {label:'Baik', val:'Disetujui ✓', samples:4, impurity:0, leaf:true, cls:'pos'},
+          {label:'Buruk', val:'Ditolak ✗', samples:6, impurity:0, leaf:true, cls:'neg'}
+        ]}
+      ]
+    }
+  },
+  exam: {
+    name:'Kelulusan Ujian',
+    tree: {
+      label:'Kehadiran', val:'', samples:30, impurity:.499, children:[
+        {label:'≥80%', val:'Nilai Tugas?', samples:18, impurity:.346, children:[
+          {label:'≥70', val:'Lulus ✓', samples:14, impurity:0, leaf:true, cls:'pos'},
+          {label:'<70', val:'Belajar Tambahan?', samples:4, impurity:.500, children:[
+            {label:'Ya', val:'Lulus ✓', samples:3, impurity:0, leaf:true, cls:'pos'},
+            {label:'Tidak', val:'Tidak Lulus ✗', samples:1, impurity:0, leaf:true, cls:'neg'}
+          ]}
+        ]},
+        {label:'<80%', val:'SKS Ulang?', samples:12, impurity:.278, children:[
+          {label:'Ya', val:'Tidak Lulus ✗', samples:9, impurity:0, leaf:true, cls:'neg'},
+          {label:'Tidak', val:'Lulus ✓', samples:3, impurity:0, leaf:true, cls:'pos'}
+        ]}
+      ]
+    }
+  }
+};
+
+let dtNodes = [];
+
+function buildDT() {
+  const key = document.getElementById('dt-dataset').value;
+  const maxD = +document.getElementById('dt-depth').value;
+  const data = DT_DATA[key];
+  dtNodes = [];
+  const c = document.getElementById('dt-canvas'); if (!c) return;
+  const ctx = c.getContext('2d');
+  const W = c.width, H = c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+  layoutTree(data.tree, W/2, 38, W, 1, maxD, ctx);
+  document.getElementById('dt-info').textContent = `Dataset: ${data.name} | Max depth: ${maxD} | Nodes: ${dtNodes.length}`;
+}
+
+function layoutTree(node, x, y, availW, depth, maxD, ctx, parent=null) {
+  if (depth > maxD && !node.leaf) return;
+  const nodeW = 90, nodeH = 36, vGap = 72;
+  dtNodes.push({x, y, node, w:nodeW, h:nodeH});
+
+  if (parent) {
+    ctx.beginPath(); ctx.moveTo(parent.x, parent.y+18); ctx.lineTo(x, y-18);
+    ctx.strokeStyle = isDark() ? 'rgba(255,255,255,0.15)' : 'rgba(0,0,0,0.15)';
+    ctx.lineWidth=1.5; ctx.stroke();
+  }
+
+  const isLeaf = node.leaf || !node.children || depth >= maxD;
+  const col = isLeaf ? (node.cls==='pos'?'rgba(15,110,86,.15)':'rgba(163,45,45,.15)') : 'rgba(24,95,165,.1)';
+  const stroke = isLeaf ? (node.cls==='pos'?'var(--green)':'var(--coral)') : 'var(--accent)';
+
+  ctx.fillStyle = col;
+  ctx.strokeStyle = stroke;
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, x-nodeW/2, y-18, nodeW, nodeH, 6);
+  ctx.fill(); ctx.stroke();
+
+  ctx.fillStyle = isDark()?'#e8e6e0':'#1a1a18';
+  ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center';
+  ctx.fillText(node.label, x, y-2);
+  ctx.fillStyle = isLeaf ? stroke : (isDark()?'#8bbcf7':'#185FA5');
+  ctx.font = '10px sans-serif';
+  ctx.fillText(node.val || '', x, y+12);
+
+  if (!isLeaf && node.children && depth < maxD) {
+    const n = node.children.length;
+    const childAvailW = availW / n;
+    node.children.forEach((ch, i) => {
+      const cx2 = x - availW/2 + childAvailW*(i+0.5);
+      const cy2 = y + vGap;
+      const midX = (x+cx2)/2, midY = (y+cy2)/2;
+      ctx.fillStyle = isDark()?'rgba(255,255,255,0.4)':'rgba(0,0,0,0.4)';
+      ctx.font='10px sans-serif'; ctx.textAlign='center';
+      ctx.fillText(ch.label||'', midX, midY-2);
+      layoutTree(ch, cx2, cy2, childAvailW, depth+1, maxD, ctx, {x,y});
+    });
+  }
+}
+
+function roundRect(ctx, x, y, w, h, r) {
+  ctx.beginPath();
+  ctx.moveTo(x+r, y);
+  ctx.lineTo(x+w-r, y); ctx.quadraticCurveTo(x+w, y, x+w, y+r);
+  ctx.lineTo(x+w, y+h-r); ctx.quadraticCurveTo(x+w, y+h, x+w-r, y+h);
+  ctx.lineTo(x+r, y+h); ctx.quadraticCurveTo(x, y+h, x, y+h-r);
+  ctx.lineTo(x, y+r); ctx.quadraticCurveTo(x, y, x+r, y);
+  ctx.closePath();
+}
+
+function dtClick(e) {
+  const c = document.getElementById('dt-canvas');
+  const r = c.getBoundingClientRect();
+  const mx = (e.clientX-r.left)*(c.width/r.width);
+  const my = (e.clientY-r.top)*(c.height/r.height);
+  dtNodes.forEach(n => {
+    if (mx>n.x-n.w/2 && mx<n.x+n.w/2 && my>n.y-18 && my<n.y+18) {
+      document.getElementById('dt-info').textContent =
+        `Node: "${n.node.label}" | Nilai: "${n.node.val}" | Samples: ${n.node.samples} | Gini: ${n.node.impurity}`;
+    }
+  });
+}
+
+setTimeout(buildDT, 100);
+
+// ========================================================
+// GINI / ENTROPY CALCULATOR
+// ========================================================
+function updateImpurity() {
+  const pA = +document.getElementById('imp-p').value / 100;
+  const pB = 1 - pA;
+  document.getElementById('imp-pv').textContent = (pA*100).toFixed(0) + '%';
+
+  const gini = 1 - (pA*pA + pB*pB);
+  const ent = pA===0||pB===0 ? 0 : -(pA*Math.log2(pA)+pB*Math.log2(pB));
+  document.getElementById('imp-vals').textContent =
+    `Kelas A: ${(pA*100).toFixed(0)}%  |  Kelas B: ${(pB*100).toFixed(0)}%  |  Gini Impurity: ${gini.toFixed(4)}  |  Entropy: ${ent.toFixed(4)} bits`;
+
+  const c = document.getElementById('imp-canvas'); if (!c) return;
+  const ctx = c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+
+  const pad={l:50,r:50,t:20,b:30};
+  const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+
+  // Grid
+  ctx.strokeStyle=lineCol(); ctx.lineWidth=0.5;
+  [0,.25,.5,.75,1].forEach(v => {
+    const y2 = pad.t+ph*(1-v/1);
+    ctx.beginPath(); ctx.moveTo(pad.l,y2); ctx.lineTo(W-pad.r,y2); ctx.stroke();
+    ctx.fillStyle=textCol(); ctx.font='9px monospace'; ctx.textAlign='right';
+    ctx.fillText(v.toFixed(2), pad.l-4, y2+3);
+  });
+
+  function xOf(v){return pad.l+v*pw;}
+  function giniOf(v){return 1-v*v-(1-v)*(1-v);}
+  function entOf(v){return v<=0||v>=1?0:-(v*Math.log2(v)+(1-v)*Math.log2(1-v));}
+
+  function drawCurve(fn, col, max=1){
+    ctx.beginPath(); ctx.strokeStyle=col; ctx.lineWidth=2;
+    for(let i=0;i<=200;i++){
+      const v=i/200, fv=fn(v);
+      const px=xOf(v), py=pad.t+ph*(1-fv/max);
+      i===0?ctx.moveTo(px,py):ctx.lineTo(px,py);
+    }
+    ctx.stroke();
+  }
+
+  drawCurve(giniOf, isDark()?'#4f9cf9':'#185FA5');
+  drawCurve(entOf, isDark()?'#3ecf82':'#0F6E56');
+
+  // Current position marker
+  const gx = xOf(pA);
+  const gy_gini = pad.t+ph*(1-gini/1);
+  const gy_ent  = pad.t+ph*(1-ent/1);
+  ctx.beginPath(); ctx.moveTo(gx, pad.t); ctx.lineTo(gx, pad.t+ph);
+  ctx.strokeStyle='rgba(245,166,35,.5)'; ctx.lineWidth=1.5; ctx.setLineDash([5,4]);
+  ctx.stroke(); ctx.setLineDash([]);
+
+  [['Gini='+gini.toFixed(3), gy_gini, isDark()?'#4f9cf9':'#185FA5'],
+   ['Ent='+ent.toFixed(3), gy_ent, isDark()?'#3ecf82':'#0F6E56']].forEach(([lbl,y2,col])=>{
+    ctx.beginPath(); ctx.arc(gx,y2,5,0,Math.PI*2);
+    ctx.fillStyle=col; ctx.fill();
+    ctx.fillStyle=col; ctx.font='bold 10px monospace'; ctx.textAlign=gx>W/2?'right':'left';
+    ctx.fillText(lbl, gx+(gx>W/2?-8:8), y2-6);
+  });
+
+  // x-axis labels
+  ctx.fillStyle=textCol(); ctx.font='9px monospace'; ctx.textAlign='center';
+  [0,.25,.5,.75,1].forEach(v=>ctx.fillText(v.toFixed(2),xOf(v),H-pad.b+14));
+  ctx.fillText('p(Kelas A)', W/2, H);
+
+  // Legend
+  ctx.font='11px sans-serif'; ctx.textAlign='left';
+  ctx.fillStyle=isDark()?'#4f9cf9':'#185FA5'; ctx.fillText('— Gini',pad.l,pad.t+14);
+  ctx.fillStyle=isDark()?'#3ecf82':'#0F6E56'; ctx.fillText('— Entropy',pad.l+70,pad.t+14);
+}
+
+setTimeout(updateImpurity, 100);
+
+// ========================================================
+// SVM VISUALIZATION
+// ========================================================
+let svmData = [];
+
+function generateSVMData() {
+  svmData = [];
+  for(let i=0;i<40;i++){
+    const cls = i<20?0:1;
+    const cx = cls===0?140:260, cy=170;
+    const angle=Math.random()*Math.PI*2, r=20+Math.random()*60;
+    svmData.push({x:cx+Math.cos(angle)*r+(Math.random()-.5)*20,y:cy+Math.sin(angle)*r*.7+(Math.random()-.5)*20,cls});
+  }
+  drawSVM();
+}
+
+function addSVMPoint(e) {
+  const c=document.getElementById('svm-canvas');
+  const r=c.getBoundingClientRect();
+  const x=(e.clientX-r.left)*(c.width/r.width), y=(e.clientY-r.top)*(c.height/r.height);
+  const cls = x < c.width/2 ? 0 : 1;
+  svmData.push({x,y,cls});
+  drawSVM();
+}
+
+function drawSVM() {
+  const c=document.getElementById('svm-canvas'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+  if(!svmData.length) return;
+
+  const kernel=document.getElementById('svm-kernel').value;
+  const Cval=+document.getElementById('svm-c').value;
+
+  // Decision boundary simulation
+  const res=40;
+  const imgData=ctx.createImageData(W,H);
+  const isDk=isDark();
+  for(let py=0;py<H;py+=2) for(let px=0;px<W;px+=2){
+    let score=0;
+    svmData.forEach(d=>{
+      const dx=px-d.x, dy=py-d.y;
+      const dist2=dx*dx+dy*dy;
+      let k;
+      if(kernel==='linear') k=(px*d.x+py*d.y)/50000;
+      else if(kernel==='rbf') k=Math.exp(-dist2/(2*(40+Cval*8)*(40+Cval*8)));
+      else k=Math.pow(Math.max(0,(px*d.x+py*d.y)/50000+1),2);
+      score+=(d.cls===0?-1:1)*k;
+    });
+    const isA=score<0;
+    const alpha=Math.min(0.12,Math.abs(score)*0.03);
+    for(let dy=0;dy<2;dy++) for(let dx=0;dx<2;dx++){
+      const idx=((py+dy)*W+(px+dx))*4;
+      if(isA){imgData.data[idx]=isDk?55:55;imgData.data[idx+1]=isDk?142:142;imgData.data[idx+2]=isDk?221:221;}
+      else{imgData.data[idx]=isDk?226:226;imgData.data[idx+1]=isDk?75:75;imgData.data[idx+2]=isDk?74:74;}
+      imgData.data[idx+3]=Math.round(alpha*255);
+    }
+  }
+  ctx.putImageData(imgData,0,0);
+
+  // Hyperplane approximation (linear case — find midpoint)
+  if(kernel==='linear'){
+    const mid=W/2;
+    ctx.beginPath();
+    const slope=(svmData.filter(d=>d.cls===0).reduce((s,d)=>s+d.y,0)/20 -
+                 svmData.filter(d=>d.cls===1).reduce((s,d)=>s+d.y,0)/20) /
+                (svmData.filter(d=>d.cls===0).reduce((s,d)=>s+d.x,0)/20 -
+                 svmData.filter(d=>d.cls===1).reduce((s,d)=>s+d.x,0)/20+.01)*(-1);
+    const pivY=H/2;
+    ctx.moveTo(0, pivY-slope*mid);
+    ctx.lineTo(W, pivY+slope*(W-mid));
+    ctx.strokeStyle=isDark()?'#a78bfa':'#534AB7'; ctx.lineWidth=2.5; ctx.stroke();
+    // Margin lines
+    [30,-30].forEach(offset=>{
+      ctx.beginPath();
+      ctx.moveTo(0, pivY-slope*mid+offset);
+      ctx.lineTo(W, pivY+slope*(W-mid)+offset);
+      ctx.strokeStyle=isDark()?'rgba(167,139,250,.4)':'rgba(83,74,183,.4)';
+      ctx.lineWidth=1.5; ctx.setLineDash([6,4]); ctx.stroke(); ctx.setLineDash([]);
+    });
+  }
+
+  // Draw points + support vectors
+  svmData.forEach(d=>{
+    const colA=isDark()?'#378ADD':'#185FA5', colB=isDark()?'#E24B4A':'#A32D2D';
+    const col=d.cls===0?colA:colB;
+    const distToMid=Math.abs(d.x-W/2);
+    const isSV=distToMid<80;
+    ctx.beginPath(); ctx.arc(d.x,d.y,isSV?7:5,0,Math.PI*2);
+    ctx.fillStyle=col+'cc'; ctx.fill();
+    ctx.strokeStyle=col; ctx.lineWidth=1.5; ctx.stroke();
+    if(isSV){
+      ctx.beginPath(); ctx.arc(d.x,d.y,11,0,Math.PI*2);
+      ctx.strokeStyle=isDark()?'#a78bfa':'#534AB7'; ctx.lineWidth=1.5; ctx.stroke();
+    }
+  });
+}
+
+document.addEventListener('DOMContentLoaded',()=>{
+  const sc=document.getElementById('svm-canvas');
+  if(sc) sc.addEventListener('click', addSVMPoint);
+});
+
+generateSVMData();
+
+// ========================================================
+// PLAYGROUND (3 classifier side-by-side)
+// ========================================================
+let pgData=[];
+
+function generatePlayData(type){
+  const pts=[];
+  if(type==='linear'){
+    for(let i=0;i<80;i++){
+      const cls=i<40?0:1;
+      pts.push({x:20+Math.random()*(cls===0?120:80),y:20+Math.random()*200,cls});
+    }
+  } else if(type==='circles'){
+    for(let i=0;i<80;i++){
+      const cls=i<40?0:1;
+      const r=(cls===0?30:80)+Math.random()*20;
+      const a=Math.random()*Math.PI*2;
+      pts.push({x:140+Math.cos(a)*r,y:110+Math.sin(a)*r,cls});
+    }
+  } else if(type==='moons'){
+    for(let i=0;i<80;i++){
+      const cls=i<40?0:1;
+      const a=(i%40/40)*Math.PI*(cls===0?1:-1)+Math.random()*.3-.15;
+      const r=80+Math.random()*20;
+      pts.push({x:140+(cls===0?-1:1)*Math.cos(a)*r,y:110-(cls===0?1:-1)*Math.sin(a)*r*.8,cls});
+    }
+  } else {
+    [[60,80],[200,80],[60,150],[200,150]].forEach((c,ci)=>{
+      for(let i=0;i<20;i++) pts.push({x:c[0]+(Math.random()-.5)*60,y:c[1]+(Math.random()-.5)*50,cls:ci%2});
+    });
+  }
+  return pts;
+}
+
+function nbScore(px,py,data){
+  const c0=data.filter(d=>d.cls===0), c1=data.filter(d=>d.cls===1);
+  function gauss(v,mu,sig){const s=sig||20; return Math.exp(-((v-mu)**2)/(2*s*s));}
+  const mu0x=c0.reduce((s,d)=>s+d.x,0)/c0.length, mu0y=c0.reduce((s,d)=>s+d.y,0)/c0.length;
+  const mu1x=c1.reduce((s,d)=>s+d.x,0)/c1.length, mu1y=c1.reduce((s,d)=>s+d.y,0)/c1.length;
+  const sig=40;
+  const p0=gauss(px,mu0x,sig)*gauss(py,mu0y,sig)*(c0.length/data.length);
+  const p1=gauss(px,mu1x,sig)*gauss(py,mu1y,sig)*(c1.length/data.length);
+  return p0>=p1?0:1;
+}
+
+function dtScore(px,py,data){
+  // Simple axis-aligned split
+  const best={gain:-1,feat:'x',thresh:0};
+  ['x','y'].forEach(feat=>{
+    const vals=[...new Set(data.map(d=>d[feat]))].sort((a,b)=>a-b);
+    vals.forEach(t=>{
+      const l=data.filter(d=>d[feat]<=t), r=data.filter(d=>d[feat]>t);
+      if(!l.length||!r.length) return;
+      const gL=1-([0,1].reduce((s,c)=>s+((l.filter(d=>d.cls===c).length/l.length)**2),0));
+      const gR=1-([0,1].reduce((s,c)=>s+((r.filter(d=>d.cls===c).length/r.length)**2),0));
+      const g=1-(l.length/data.length)*gL-(r.length/data.length)*gR;
+      if(g>best.gain){best.gain=g;best.feat=feat;best.thresh=t;}
+    });
+  });
+  const side=px<=best.thresh && best.feat==='x'||(py<=best.thresh&&best.feat==='y') ? 'left':'right';
+  const subset=data.filter(d=>best.feat==='x'?(d.x<=best.thresh?side==='left':side==='right'):(d.y<=best.thresh?side==='left':side==='right'));
+  const c0=data.filter(d=>(best.feat==='x'?d.x:d.y)<=(best.feat==='x'?px:py)&&d.cls===0).length;
+  const c1=data.filter(d=>(best.feat==='x'?d.x:d.y)<=(best.feat==='x'?px:py)&&d.cls===1).length;
+  return c0>=c1?0:1;
+}
+
+function svmScore2(px,py,data){
+  let score=0;
+  data.forEach(d=>{
+    const dx=px-d.x, dy=py-d.y;
+    const k=Math.exp(-(dx*dx+dy*dy)/(2*50*50));
+    score+=(d.cls===0?-1:1)*k;
+  });
+  return score<0?0:1;
+}
+
+function drawPGCanvas(canvasId, scoreFn, data, label) {
+  const c=document.getElementById(canvasId); if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+  const res=6;
+  for(let py=0;py<H;py+=res) for(let px=0;px<W;px+=res){
+    const cls=scoreFn(px,py,data);
+    ctx.fillStyle=cls===0?'rgba(55,138,221,0.15)':'rgba(226,75,74,0.15)';
+    ctx.fillRect(px,py,res,res);
+  }
+  data.forEach(d=>{
+    ctx.beginPath(); ctx.arc(d.x,d.y,4,0,Math.PI*2);
+    ctx.fillStyle=d.cls===0?'rgba(55,138,221,.85)':'rgba(226,75,74,.85)';
+    ctx.fill(); ctx.strokeStyle=d.cls===0?'#185FA5':'#A32D2D'; ctx.lineWidth=1; ctx.stroke();
+  });
+  // Compute accuracy
+  let correct=0;
+  data.forEach(d=>{if(scoreFn(d.x,d.y,data)===d.cls)correct++;});
+  const acc=(correct/data.length*100).toFixed(1);
+  document.getElementById(canvasId.replace('pg-','pg-')+'-acc').textContent = `Accuracy: ${acc}%`;
+}
+
+function drawPlayground(){
+  const type=document.getElementById('play-data').value;
+  pgData=generatePlayData(type);
+  drawPGCanvas('pg-nb', nbScore, pgData);
+  drawPGCanvas('pg-dt', dtScore, pgData);
+  drawPGCanvas('pg-svm', svmScore2, pgData);
+}
+setTimeout(drawPlayground, 100);
+
+// ========================================================
+// CV VISUALIZATION
+// ========================================================
+function drawCV(){
+  const c=document.getElementById('cv-canvas'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+  const k=5, foldW=(W-80)/k, foldH=28, startY=28;
+  ctx.font='10px sans-serif'; ctx.fillStyle=textCol(); ctx.textAlign='left';
+  ctx.fillText('5-Fold Cross Validation:', 4, 18);
+  for(let fold=0;fold<k;fold++){
+    ctx.font='9px monospace'; ctx.fillStyle=textCol(); ctx.textAlign='left';
+    ctx.fillText('Fold '+(fold+1), 4, startY+fold*(foldH+5)+foldH*.6);
+    for(let f2=0;f2<k;f2++){
+      const isVal=f2===fold;
+      ctx.fillStyle=isVal?'rgba(24,95,165,.7)':'rgba(62,207,130,.4)';
+      ctx.fillRect(80+f2*foldW+2, startY+fold*(foldH+5), foldW-3, foldH);
+      if(isVal){
+        ctx.fillStyle='#fff'; ctx.font='9px sans-serif'; ctx.textAlign='center';
+        ctx.fillText('Val', 80+f2*foldW+foldW/2, startY+fold*(foldH+5)+foldH*.6);
+      }
+    }
+  }
+  // Legend
+  const ly=H-14;
+  ctx.fillStyle='rgba(62,207,130,.6)'; ctx.fillRect(4,ly,14,10);
+  ctx.fillStyle=textCol(); ctx.font='10px sans-serif'; ctx.textAlign='left';
+  ctx.fillText('Train', 22, ly+8);
+  ctx.fillStyle='rgba(24,95,165,.7)'; ctx.fillRect(64,ly,14,10);
+  ctx.fillText('Validation', 82, ly+8);
+}
+
+// ========================================================
+// ROC CURVE
+// ========================================================
+function drawROC(){
+  const c=document.getElementById('roc-canvas'); if(!c) return;
+  const ctx=c.getContext('2d');
+  const W=c.width, H=c.height;
+  ctx.clearRect(0,0,W,H); ctx.fillStyle=bg(); ctx.fillRect(0,0,W,H);
+  const pad={l:40,r:20,t:15,b:35};
+  const pw=W-pad.l-pad.r, ph=H-pad.t-pad.b;
+  function xOf(v){return pad.l+v*pw;} function yOf(v){return pad.t+ph-v*ph;}
+
+  // Grid
+  ctx.strokeStyle=lineCol(); ctx.lineWidth=.5;
+  [0,.25,.5,.75,1].forEach(v=>{
+    ctx.beginPath(); ctx.moveTo(xOf(v),pad.t); ctx.lineTo(xOf(v),pad.t+ph); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(pad.l,yOf(v)); ctx.lineTo(pad.l+pw,yOf(v)); ctx.stroke();
+  });
+
+  // Random line
+  ctx.beginPath(); ctx.moveTo(xOf(0),yOf(0)); ctx.lineTo(xOf(1),yOf(1));
+  ctx.strokeStyle=textCol(); ctx.lineWidth=1; ctx.setLineDash([5,4]); ctx.stroke(); ctx.setLineDash([]);
+
+  // ROC curves
+  const curves=[
+    {pts:[[0,0],[.05,.4],[.1,.65],[.2,.82],[.35,.9],[.5,.95],[.7,.98],[1,1]],col:isDark()?'#4f9cf9':'#185FA5',lbl:'SVM (AUC=0.96)'},
+    {pts:[[0,0],[.08,.45],[.15,.68],[.25,.80],[.4,.88],[.55,.93],[.75,.97],[1,1]],col:isDark()?'#3ecf82':'#0F6E56',lbl:'NB (AUC=0.93)'},
+    {pts:[[0,0],[.1,.38],[.2,.60],[.3,.74],[.45,.84],[.6,.90],[.8,.95],[1,1]],col:isDark()?'#f5a623':'#854F0B',lbl:'DT (AUC=0.89)'},
+  ];
+
+  curves.forEach(curve=>{
+    ctx.beginPath(); ctx.strokeStyle=curve.col; ctx.lineWidth=2;
+    curve.pts.forEach((p,i)=>i===0?ctx.moveTo(xOf(p[0]),yOf(p[1])):ctx.lineTo(xOf(p[0]),yOf(p[1])));
+    ctx.stroke();
+  });
+
+  // Legend
+  curves.forEach((curve,i)=>{
+    ctx.fillStyle=curve.col; ctx.font='10px sans-serif'; ctx.textAlign='left';
+    ctx.fillText('— '+curve.lbl, xOf(.4), pad.t+14+i*14);
+  });
+
+  // Axes
+  ctx.fillStyle=textCol(); ctx.font='9px monospace'; ctx.textAlign='center';
+  ctx.fillText('FPR (1-Specificity)', xOf(.5), H);
+  ctx.save(); ctx.translate(12,yOf(.5)); ctx.rotate(-Math.PI/2);
+  ctx.fillText('TPR (Recall)', 0, 0); ctx.restore();
+}
+
+// Init on load
+window.addEventListener('load', () => {
+  drawCM();
+  initNB();
+  setTimeout(()=>{
+    buildDT(); updateImpurity();
+    generateSVMData();
+    drawPlayground(); drawCV(); drawROC();
+  }, 200);
+});
+
+window.addEventListener('resize', ()=>{
+  const id=document.querySelector('.section.active')?.id;
+  if(id==='tab-intro') drawCM();
+  else if(id==='tab-dt'){buildDT();updateImpurity();}
+  else if(id==='tab-svm') drawSVM();
+  else if(id==='tab-compare'){drawPlayground();drawCV();drawROC();}
+});
+</script>
+</body>
+</html>
