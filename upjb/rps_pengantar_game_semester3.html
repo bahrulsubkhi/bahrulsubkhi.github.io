@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RPS Sub-CPMK 16 Minggu — Pengantar Game (Semester 3)</title>
+<style>
+  :root {
+    --bg:#0f1620; --panel:#161f2c; --panel2:#1c2836; --text:#e7edf5; --muted:#93a3b8; --accent:#4f8cff; --border:#26334a;
+    --c2:#4f8cff; --c3:#22c55e;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',Roboto,Arial,sans-serif; line-height:1.55; }
+  header { max-width:1200px; margin:0 auto; padding:32px 24px 8px; }
+  header h1 { margin:0 0 6px; font-size:1.6rem; }
+  header p.sub { color:var(--muted); margin:0 0 4px; }
+  .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin:18px 0; }
+  .info-item .label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  .info-item .value { font-weight:600; }
+  .legend { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:8px; }
+  .legend-title { font-weight:600; margin-bottom:10px; color:var(--accent); }
+  .legend-item { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:.88rem; color:var(--muted); }
+  main { max-width:1200px; margin:0 auto; padding:8px 24px 60px; }
+  section { margin-top:30px; }
+  section h2 { font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:10px; }
+  .cpmk-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:14px; }
+  .cpmk-card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px 16px; }
+  .cpmk-head { display:flex; gap:8px; margin-bottom:8px; }
+  .cpmk-card p { margin:0; font-size:.87rem; }
+  .badge { font-size:.68rem; padding:2px 7px; border-radius:999px; font-weight:600; color:#0f1620; }
+  .cpl2 { background:var(--c2); } .cpl3 { background:var(--c3); }
+  .tag { display:inline-block; font-size:.65rem; font-weight:700; color:#0f1620; padding:1px 6px; border-radius:5px; margin-right:6px; background:var(--accent); }
+  .tag.cmulti { background:#f5a524; }
+  .tag.cpmk1 { background:var(--c2); } .tag.cpmk2 { background:var(--c3); }
+  .table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; margin-top:14px; }
+  table.rps { border-collapse:collapse; width:100%; font-size:.82rem; min-width:1080px; }
+  table.rps thead th { background:var(--panel2); padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+  table.rps td { padding:10px 8px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.rps td.wk-no { text-align:center; font-weight:700; color:var(--accent); }
+  table.rps td.wk-bobot { text-align:center; font-weight:700; white-space:nowrap; }
+  .bloom { display:inline-block; margin-left:6px; font-size:.62rem; color:var(--muted); border:1px solid var(--border); border-radius:5px; padding:0 5px; }
+  tr.examrow { background:#1a2436; }
+  tr.examrow td.wk-no { color:#f5a524; }
+  footer { max-width:1200px; margin:0 auto; padding:0 24px 40px; color:var(--muted); font-size:.8rem; }
+  .total-row td { font-weight:700; background:var(--panel2); }
+
+  .rubric-block { margin-top:26px; }
+  .rubric-block h3 { font-size:.98rem; margin-bottom:2px; color:var(--accent); }
+  .rubric-scope { color:var(--muted); font-size:.8rem; margin:0 0 8px; }
+  table.rubric { border-collapse:collapse; width:100%; font-size:.78rem; min-width:900px; }
+  table.rubric thead th { background:var(--panel2); padding:8px; text-align:center; border-bottom:1px solid var(--border); white-space:nowrap; }
+  table.rubric thead th:first-child { text-align:left; }
+  table.rubric .lvl-label { font-weight:400; color:var(--muted); font-size:.68rem; }
+  table.rubric td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.rubric td.crit-name { font-weight:600; white-space:nowrap; }
+  table.rubric .crit-bobot { display:block; font-weight:400; color:var(--muted); font-size:.72rem; }
+  .rubric-note { color:var(--muted); font-size:.75rem; margin:6px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>RPS &mdash; Rincian Sub-CPMK 16 Minggu</h1>
+  <p class="sub">Mata Kuliah <b>Pengantar Game</b> &middot; Semester 3 &middot; Prodi S1 Informatika UPJB &middot; Kurikulum 2024</p>
+  <div class="info-grid">
+    <div class="info-item"><div class="label">Kode MK</div><div class="value">INF2302020</div></div>
+    <div class="info-item"><div class="label">SKS</div><div class="value">2 SKS (2 Teori, 0 Praktik pada Tabel 7.1)</div></div>
+    <div class="info-item"><div class="label">Prasyarat</div><div class="value">Dasar Pemrograman (Semester 1)</div></div>
+    <div class="info-item"><div class="label">CPL yang Dibebankan</div><div class="value">CPL-2, CPL-3</div></div>
+  </div>
+  <div class="legend">
+    <div class="legend-title">Legenda CPL pada MK ini</div>
+    <div class="legend-item"><span class="badge cpl2">CPL-2</span><span>Mengkaji &amp; memanfaatkan IPTEK bidang RPL/AI, pengambilan keputusan berbasis kajian ilmiah</span></div><div class="legend-item"><span class="badge cpl3">CPL-3</span><span>Pembelajaran mandiri sepanjang hayat &amp; kewirausahaan berbasis teknologi</span></div>
+  </div>
+  <div class="legend" style="border-color:#f5a524;">
+    <div class="legend-title" style="color:#f5a524;">Catatan Sumber &amp; Batas Cakupan</div>
+    <p style="color:var(--muted);font-size:.85rem;margin:0 0 8px;">
+      MK ini <b>tidak muncul di halaman mapping</b> (hanya mencakup 5 klaster: AI &amp; Data, Sistem, RPL, Matematika, Pemrograman). Buku pedoman kurikulum (Tabel 5.3 &amp; 7.1) hanya mencantumkan <b>Semester 3, 2 SKS (2 teori, 0 praktik), CPL-2 &amp; CPL-3</b> &mdash; tanpa rincian bahan kajian/topik mingguan resmi. Topik pada RPS ini adalah <b>susunan saya sendiri</b> sebagai pengantar pengembangan game yang wajar untuk MK "Pengantar" (level konsep &amp; prototipe sederhana), meski beberapa minggu tetap saya beri komponen praktikum ringan (game engine) agar CPMK-2 &mdash; "merancang prototipe game" &mdash; benar-benar tercapai.
+    </p>
+    <p style="color:var(--muted);font-size:.85rem;margin:0;">Perlu direview/disahkan tim kurikulum sebelum dipakai resmi, termasuk penyesuaian jika prodi ingin MK ini murni teori tanpa praktikum engine.</p>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Capaian Pembelajaran Mata Kuliah (CPMK)</h2>
+    <div class="cpmk-grid">
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk1">CPMK-1</span><span class="badge cpl2">CPL-2</span></div>
+    <p>Mahasiswa mampu menjelaskan konsep dan elemen dasar pengembangan game (sejarah, genre, game design, game engine).</p>
+  </div>
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk2">CPMK-2</span><span class="badge cpl3">CPL-3</span></div>
+    <p>Mahasiswa mampu merancang dan mengimplementasikan prototipe game sederhana secara mandiri, dari konsep hingga dapat dimainkan (playable).</p>
+  </div></div>
+  </section>
+
+  <section>
+    <h2>Rincian Sub-CPMK per Minggu (16 Minggu)</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:-4px;">Kolom Bloom menandai level kognitif Taksonomi Bloom target minggu tersebut (progresif C2&rarr;C6). Total bobot penilaian 16 minggu = 100%.</p>
+    <div class="table-wrap">
+      <table class="rps">
+        <thead>
+          <tr>
+            <th>Mgg</th><th>Sub-CPMK</th><th>Bahan Kajian / Materi</th><th>Bentuk &amp; Metode Pembelajaran</th>
+            <th>Indikator &amp; Kriteria Penilaian</th><th>Bentuk Penilaian</th><th>Bobot</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr class="weekrow">
+      <td class="wk-no">1</td>
+      <td class="wk-sub">Mampu menjelaskan sejarah singkat dan klasifikasi genre game <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">RPS & kontrak kuliah; sejarah perkembangan game; klasifikasi genre (action, puzzle, RPG, strategy, casual)</td>
+      <td class="wk-bentuk">Ceramah interaktif, diskusi</td>
+      <td class="wk-indikator">Mampu mengklasifikasikan minimal 5 judul game ke genre yang tepat beserta alasannya</td>
+      <td class="wk-penilaian">Partisipasi diskusi</td>
+      <td class="wk-bobot">2%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">2</td>
+      <td class="wk-sub">Mampu menjelaskan elemen dasar desain game menggunakan framework MDA (Mechanics, Dynamics, Aesthetics) <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Framework MDA, game mechanics vs dynamics vs aesthetics, elemen fun (Bartle taxonomy singkat)</td>
+      <td class="wk-bentuk">Ceramah, studi kasus</td>
+      <td class="wk-indikator">Mampu memetakan mechanics-dynamics-aesthetics pada 1 game populer secara tepat</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">3</td>
+      <td class="wk-sub">Mampu menjelaskan konsep game loop dan finite state machine pada game <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Struktur game loop (update-render), FSM untuk state karakter/game (menu, playing, pause, game over)</td>
+      <td class="wk-bentuk">Ceramah, demo diagram</td>
+      <td class="wk-indikator">Mampu menggambarkan diagram FSM sederhana untuk alur state sebuah game</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">4</td>
+      <td class="wk-sub">Mampu merancang level/dunia game sederhana dalam bentuk Game Design Document (GDD) <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Level design dasar, world building, penyusunan GDD ringkas (konsep, mekanik, target pemain)</td>
+      <td class="wk-bentuk">Praktikum desain (workshop)</td>
+      <td class="wk-indikator">GDD memuat konsep, mekanik inti, dan sketsa level yang jelas dan layak dikembangkan</td>
+      <td class="wk-penilaian">Tugas praktikum 1 (GDD)</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">5</td>
+      <td class="wk-sub">Mampu menggunakan game engine (Godot/Unity 2D) untuk membuat scene sederhana <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Instalasi & antarmuka game engine, konsep scene/node, workflow dasar pengembangan game 2D</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Scene sederhana berhasil dibuat dan dijalankan pada game engine yang dipilih</td>
+      <td class="wk-penilaian">Tugas praktikum 2</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">6</td>
+      <td class="wk-sub">Mampu mengimplementasikan sprite dan animasi 2D sederhana pada game engine <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Import sprite, sprite sheet, animasi frame-by-frame, animator/animation player</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Karakter/objek game menampilkan animasi 2D yang berjalan sesuai state (idle, gerak)</td>
+      <td class="wk-penilaian">Tugas praktikum 3</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">7</td>
+      <td class="wk-sub">Mampu menulis script sederhana untuk perilaku objek game (gerakan & collision) <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Input handling, pergerakan objek (kinematic movement), collision detection dasar</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Objek game merespons input dan mendeteksi tabrakan (collision) dengan benar</td>
+      <td class="wk-penilaian">Tugas praktikum 4</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow examrow">
+      <td class="wk-no">8</td>
+      <td class="wk-sub">Evaluasi Tengah Semester — mengukur ketercapaian Sub-CPMK minggu 1&ndash;7 (konsep game, GDD, game engine, sprite/animasi, scripting dasar) <span class="tag cmulti">CPMK-1&ndash;2</span><span class="bloom">C2&ndash;C3</span></td>
+      <td class="wk-materi">Materi minggu 1&ndash;7</td>
+      <td class="wk-bentuk">Ujian tertulis / take-home case</td>
+      <td class="wk-indikator">Ketepatan konsep desain game dan ketepatan implementasi dasar pada game engine</td>
+      <td class="wk-penilaian">UTS</td>
+      <td class="wk-bobot">20%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">9</td>
+      <td class="wk-sub">Mampu mengimplementasikan mekanik skor dan kondisi menang/kalah <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Sistem skor, kondisi win/lose, transisi antar scene (menu-game-game over)</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Game menampilkan skor yang berubah sesuai aksi pemain dan berpindah scene saat kondisi menang/kalah tercapai</td>
+      <td class="wk-penilaian">Tugas praktikum 5</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">10</td>
+      <td class="wk-sub">Mampu merancang UI/UX dasar untuk game (menu, HUD) <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Prinsip UI game (HUD, menu utama, pause menu), layout & keterbacaan elemen UI</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Menu utama dan HUD (skor/nyawa) tampil jelas dan berfungsi sesuai alur permainan</td>
+      <td class="wk-penilaian">Tugas praktikum 6</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">11</td>
+      <td class="wk-sub">Mampu mengintegrasikan elemen audio (sound effect & background music) ke dalam game <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Import audio, trigger sound effect pada event tertentu, background music looping</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Sound effect dan musik latar terintegrasi dan terpicu sesuai event yang tepat</td>
+      <td class="wk-penilaian">Tugas praktikum 7</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">12</td>
+      <td class="wk-sub">Mampu melakukan playtesting dan menyesuaikan balance game berdasarkan feedback <span class="tag cpmk2">CPMK-2</span><span class="bloom">C4</span></td>
+      <td class="wk-materi">Metode playtesting sederhana, pengumpulan feedback, penyesuaian parameter (difficulty balancing)</td>
+      <td class="wk-bentuk">Praktikum + sesi playtesting antar kelompok</td>
+      <td class="wk-indikator">Laporan playtesting memuat feedback dari minimal 3 pemain dan perubahan balance yang dilakukan</td>
+      <td class="wk-penilaian">Tugas praktikum 8</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">13</td>
+      <td class="wk-sub">Mampu menjelaskan model bisnis dan monetisasi dalam industri game <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Model bisnis game (premium, free-to-play, in-app purchase, ads), gambaran industri & karier game developer</td>
+      <td class="wk-bentuk">Ceramah, diskusi</td>
+      <td class="wk-indikator">Mampu menjelaskan minimal 3 model monetisasi beserta kelebihan/kekurangannya</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">14</td>
+      <td class="wk-sub">Mampu melakukan build dan packaging game sederhana untuk didistribusikan <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Export/build game untuk platform target (desktop/web/Android), persiapan rilis dasar</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Game berhasil di-build menjadi file yang dapat dijalankan/didistribusikan di luar editor</td>
+      <td class="wk-penilaian">Tugas praktikum 9</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">15</td>
+      <td class="wk-sub">Mampu merancang dan mengimplementasikan prototipe game sederhana yang playable dari awal hingga akhir <span class="tag cmulti">CPMK-1&ndash;2</span><span class="bloom">C5&ndash;C6</span></td>
+      <td class="wk-materi">Integrasi seluruh komponen (mekanik, UI, audio, balancing) menjadi satu prototipe utuh</td>
+      <td class="wk-bentuk">Praktikum mandiri/kelompok + asistensi</td>
+      <td class="wk-indikator">Prototipe game playable dari awal hingga akhir (menu &rarr; gameplay &rarr; win/lose) tanpa error fatal</td>
+      <td class="wk-penilaian">Proyek akhir (prototipe game)</td>
+      <td class="wk-bobot">15%</td>
+    </tr>
+    <tr class="weekrow examrow">
+      <td class="wk-no">16</td>
+      <td class="wk-sub">Mampu mempresentasikan dan mendemokan prototipe game yang dibangun serta mempertanggungjawabkan keputusan desainnya <span class="tag cmulti">CPMK-1&ndash;2</span><span class="bloom">C6</span></td>
+      <td class="wk-materi">Presentasi & demo prototipe, tanya-jawab, evaluasi akhir</td>
+      <td class="wk-bentuk">Presentasi & demo langsung</td>
+      <td class="wk-indikator">Demo berjalan lancar, mampu menjelaskan dan mempertahankan keputusan desain saat ditanya</td>
+      <td class="wk-penilaian">UAS (Presentasi & Demo)</td>
+      <td class="wk-bobot">15%</td>
+    </tr>
+          <tr class="total-row"><td colspan="6" style="text-align:right;">Total Bobot Penilaian</td><td style="text-align:center;">100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Rubrik Penilaian</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:-4px;">Rubrik analitik per komponen penilaian pada tabel Sub-CPMK di atas. Skor tiap kriteria menggunakan skala 0&ndash;100, nilai komponen akhir = jumlah (skor kriteria &times; bobot kriteria).</p>
+    
+    <div class="rubric-block">
+      <h3>Rubrik Holistik Partisipasi &amp; Kuis</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 1, 2, 3, 13 — partisipasi diskusi &amp; kuis konsep</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Jawaban/Kontribusi Diskusi<span class="crit-bobot">60%</span></td><td>Jawaban/kontribusi tepat, menunjukkan pemahaman konsep desain game yang kuat</td><td>Jawaban/kontribusi tepat pada sebagian besar poin</td><td>Jawaban/kontribusi sebagian benar, sebagian keliru</td><td>Jawaban/kontribusi tidak tepat atau tidak relevan</td></tr><tr><td class="crit-name">Keaktifan &amp; Inisiatif<span class="crit-bobot">40%</span></td><td>Aktif bertanya/menjawab dengan inisiatif tinggi sepanjang sesi</td><td>Cukup aktif berkontribusi dalam diskusi</td><td>Berkontribusi hanya ketika diminta</td><td>Tidak berkontribusi dalam sesi diskusi</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Tugas Praktikum (Desain &amp; Coding Game)</h3>
+      <p class="rubric-scope">Berlaku untuk: Tugas Praktikum 1–9 (Minggu 4–7, 9–12, 14)</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Konsep &amp; Desain<span class="crit-bobot">25%</span></td><td>Konsep/desain yang diterapkan tepat, orisinal, dan mempertimbangkan pengalaman pemain</td><td>Konsep/desain tepat namun kurang mendalam pada beberapa bagian</td><td>Konsep/desain sebagian besar benar namun ada kekurangan pada logika permainan</td><td>Konsep/desain tidak tepat atau tidak sesuai tujuan tugas</td></tr><tr><td class="crit-name">Fungsionalitas Implementasi<span class="crit-bobot">35%</span></td><td>Fitur/mekanik berjalan sempurna tanpa bug, dapat dimainkan dari awal hingga akhir</td><td>Fitur/mekanik berjalan baik dengan bug minor yang tidak mengganggu</td><td>Fitur/mekanik berjalan namun ada bug yang mengganggu pengalaman bermain</td><td>Fitur/mekanik tidak berjalan atau game tidak dapat dimainkan</td></tr><tr><td class="crit-name">Kualitas Asset &amp; Kerapian Proyek<span class="crit-bobot">20%</span></td><td>Asset (sprite/audio/UI) rapi, konsisten gaya visual, dan proyek terorganisir dengan baik</td><td>Asset cukup rapi dengan sedikit inkonsistensi</td><td>Asset digunakan namun kurang rapi/proyek kurang terorganisir</td><td>Asset tidak rapi dan proyek berantakan</td></tr><tr><td class="crit-name">Dokumentasi &amp; Refleksi<span class="crit-bobot">20%</span></td><td>Dokumentasi (GDD/laporan) lengkap disertai refleksi keputusan desain yang tajam</td><td>Dokumentasi cukup lengkap dengan refleksi yang relevan</td><td>Dokumentasi minim namun proyek masih bisa dipahami</td><td>Tidak ada dokumentasi/refleksi</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Ujian Tengah Semester (UTS)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 8 — evaluasi CPMK-1 &amp; CPMK-2 (konsep dasar hingga scripting dasar)</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Konsep Desain Game<span class="crit-bobot">40%</span></td><td>Menjawab seluruh konsep (genre, MDA, game loop, FSM) dengan tepat dan sistematis</td><td>Menjawab sebagian besar konsep dengan tepat</td><td>Menjawab sebagian konsep dengan benar, sebagian keliru</td><td>Sebagian besar jawaban konsep salah/tidak relevan</td></tr><tr><td class="crit-name">Ketepatan Penerapan pada Studi Kasus<span class="crit-bobot">40%</span></td><td>Mampu merancang/menganalisis kasus game dengan justifikasi desain yang kuat</td><td>Mampu merancang/menganalisis kasus dengan justifikasi memadai</td><td>Rancangan/analisis kurang tepat namun logika dasarnya benar</td><td>Rancangan/analisis tidak sesuai studi kasus yang diberikan</td></tr><tr><td class="crit-name">Kejelasan &amp; Sistematika Jawaban<span class="crit-bobot">20%</span></td><td>Jawaban runtut, rapi, dan mudah diikuti alur berpikirnya</td><td>Jawaban cukup runtut dengan sedikit lompatan logika</td><td>Jawaban kurang sistematis namun masih dapat dipahami</td><td>Jawaban tidak terstruktur dan sulit dipahami</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Proyek Akhir (Prototipe Game)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 15 — integrasi &amp; implementasi prototipe game playable</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Kelengkapan &amp; Playability<span class="crit-bobot">30%</span></td><td>Prototipe lengkap dan dapat dimainkan penuh dari menu hingga win/lose tanpa hambatan</td><td>Prototipe dapat dimainkan dengan sedikit kekurangan minor</td><td>Prototipe dapat dimainkan sebagian, ada fitur inti yang belum berfungsi</td><td>Prototipe tidak dapat dimainkan sesuai rencana</td></tr><tr><td class="crit-name">Kreativitas &amp; Orisinalitas Konsep<span class="crit-bobot">20%</span></td><td>Konsep game orisinal dan menunjukkan kreativitas yang menonjol</td><td>Konsep game cukup orisinal dengan sentuhan kreatif</td><td>Konsep game umum/mirip contoh yang sudah ada</td><td>Konsep game tidak jelas atau tidak ada usaha kreatif</td></tr><tr><td class="crit-name">Integrasi Komponen (mekanik, UI, audio)<span class="crit-bobot">30%</span></td><td>Seluruh komponen terintegrasi mulus dan saling mendukung pengalaman bermain</td><td>Sebagian besar komponen terintegrasi dengan baik</td><td>Komponen ada namun integrasinya kurang mulus (mis. audio tidak sinkron)</td><td>Komponen tidak terintegrasi dengan baik</td></tr><tr><td class="crit-name">Dokumentasi &amp; Hasil Playtesting<span class="crit-bobot">20%</span></td><td>Dokumentasi lengkap (GDD final, hasil playtesting, perubahan balance) dan reflektif</td><td>Dokumentasi cukup lengkap</td><td>Dokumentasi minim namun proyek masih bisa dipahami</td><td>Tidak ada dokumentasi</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Presentasi &amp; Demo UAS</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 16 — presentasi, demo langsung &amp; tanya-jawab</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Penguasaan Konsep &amp; Keputusan Desain<span class="crit-bobot">30%</span></td><td>Menguasai seluruh keputusan desain dan mampu menjelaskan alasannya secara mendalam</td><td>Menguasai sebagian besar keputusan desain dengan penjelasan memadai</td><td>Penguasaan konsep terbatas pada bagian permukaan</td><td>Tidak menguasai konsep/keputusan desain yang diambil</td></tr><tr><td class="crit-name">Kemampuan Menjawab Pertanyaan<span class="crit-bobot">25%</span></td><td>Menjawab seluruh pertanyaan dengan tepat, kritis, dan reflektif</td><td>Menjawab sebagian besar pertanyaan dengan tepat</td><td>Menjawab pertanyaan namun kurang tepat/kurang mendalam</td><td>Tidak mampu menjawab sebagian besar pertanyaan</td></tr><tr><td class="crit-name">Kualitas Demo Prototipe<span class="crit-bobot">30%</span></td><td>Demo berjalan lancar tanpa crash, menunjukkan seluruh fitur utama dengan meyakinkan</td><td>Demo berjalan baik dengan sedikit kendala teknis minor</td><td>Demo berjalan namun ada fitur yang gagal ditampilkan/error</td><td>Demo tidak berjalan atau gagal ditampilkan</td></tr><tr><td class="crit-name">Kualitas Penyampaian &amp; Media Presentasi<span class="crit-bobot">15%</span></td><td>Penyampaian percaya diri, runtut, slide/media pendukung informatif dan rapi</td><td>Penyampaian cukup baik dengan media pendukung memadai</td><td>Penyampaian kurang runtut atau media pendukung kurang informatif</td><td>Penyampaian tidak jelas dan media pendukung tidak memadai</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+  </section>
+</main>
+<footer>
+  Rincian Sub-CPMK dan rubrik ini adalah draf operasional untuk mata kuliah Pengantar Game, disusun berdasarkan CPL &amp; SKS resmi pada buku pedoman kurikulum S1 Informatika UPJB 2024 (Tabel 5.3 &amp; 7.1), dilengkapi topik mingguan hasil rancangan sendiri karena tidak tercantum rinci di buku pedoman maupun halaman mapping. Wajib direview dan disahkan oleh dosen pengampu / koordinator mata kuliah sebelum digunakan sebagai RPS resmi.
+</footer>
+</body>
+</html>

@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RPS Sub-CPMK 16 Minggu — Sistem Cerdas (Semester 5)</title>
+<style>
+  :root {
+    --bg:#0f1620; --panel:#161f2c; --panel2:#1c2836; --text:#e7edf5; --muted:#93a3b8; --accent:#4f8cff; --border:#26334a;
+    --c3:#22c55e; --c6:#06b6d4; --c7:#a78bfa; --c8:#f472b6;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',Roboto,Arial,sans-serif; line-height:1.55; }
+  header { max-width:1200px; margin:0 auto; padding:32px 24px 8px; }
+  header h1 { margin:0 0 6px; font-size:1.6rem; }
+  header p.sub { color:var(--muted); margin:0 0 4px; }
+  .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin:18px 0; }
+  .info-item .label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  .info-item .value { font-weight:600; }
+  .legend { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:8px; }
+  .legend-title { font-weight:600; margin-bottom:10px; color:var(--accent); }
+  .legend-item { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:.88rem; color:var(--muted); }
+  main { max-width:1200px; margin:0 auto; padding:8px 24px 60px; }
+  section { margin-top:30px; }
+  section h2 { font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:10px; }
+  .cpmk-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:14px; }
+  .cpmk-card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px 16px; }
+  .cpmk-head { display:flex; gap:8px; margin-bottom:8px; }
+  .cpmk-card p { margin:0; font-size:.87rem; }
+  .badge { font-size:.68rem; padding:2px 7px; border-radius:999px; font-weight:600; color:#0f1620; }
+  .cpl3 { background:var(--c3); } .cpl6 { background:var(--c6); } .cpl7 { background:var(--c7); } .cpl8 { background:var(--c8); }
+  .tag { display:inline-block; font-size:.65rem; font-weight:700; color:#0f1620; padding:1px 6px; border-radius:5px; margin-right:6px; background:var(--accent); }
+  .tag.cmulti { background:#f5a524; }
+  .tag.cpmk1 { background:var(--c3); } .tag.cpmk2 { background:var(--c6); } .tag.cpmk3 { background:var(--c7); } .tag.cpmk4 { background:var(--c8); }
+  .table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; margin-top:14px; }
+  table.rps { border-collapse:collapse; width:100%; font-size:.82rem; min-width:1080px; }
+  table.rps thead th { background:var(--panel2); padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+  table.rps td { padding:10px 8px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.rps td.wk-no { text-align:center; font-weight:700; color:var(--accent); }
+  table.rps td.wk-bobot { text-align:center; font-weight:700; white-space:nowrap; }
+  .bloom { display:inline-block; margin-left:6px; font-size:.62rem; color:var(--muted); border:1px solid var(--border); border-radius:5px; padding:0 5px; }
+  tr.examrow { background:#1a2436; }
+  tr.examrow td.wk-no { color:#f5a524; }
+  footer { max-width:1200px; margin:0 auto; padding:0 24px 40px; color:var(--muted); font-size:.8rem; }
+  .total-row td { font-weight:700; background:var(--panel2); }
+
+  .rubric-block { margin-top:26px; }
+  .rubric-block h3 { font-size:.98rem; margin-bottom:2px; color:var(--accent); }
+  .rubric-scope { color:var(--muted); font-size:.8rem; margin:0 0 8px; }
+  table.rubric { border-collapse:collapse; width:100%; font-size:.78rem; min-width:900px; }
+  table.rubric thead th { background:var(--panel2); padding:8px; text-align:center; border-bottom:1px solid var(--border); white-space:nowrap; }
+  table.rubric thead th:first-child { text-align:left; }
+  table.rubric .lvl-label { font-weight:400; color:var(--muted); font-size:.68rem; }
+  table.rubric td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.rubric td.crit-name { font-weight:600; white-space:nowrap; }
+  table.rubric .crit-bobot { display:block; font-weight:400; color:var(--muted); font-size:.72rem; }
+  .rubric-note { color:var(--muted); font-size:.75rem; margin:6px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>RPS &mdash; Rincian Sub-CPMK 16 Minggu</h1>
+  <p class="sub">Mata Kuliah <b>Sistem Cerdas</b> &middot; Semester 5 &middot; Prodi S1 Informatika UPJB &middot; Kurikulum 2024</p>
+  <div class="info-grid">
+    <div class="info-item"><div class="label">Kode MK</div><div class="value">INF2303029</div></div>
+    <div class="info-item"><div class="label">SKS</div><div class="value">3 SKS (Teori + Praktik)</div></div>
+    <div class="info-item"><div class="label">Prasyarat</div><div class="value">Kecerdasan Buatan (Semester 4)</div></div>
+    <div class="info-item"><div class="label">CPL yang Dibebankan</div><div class="value">CPL-3, CPL-6, CPL-7, CPL-8</div></div>
+  </div>
+  <div class="legend">
+    <div class="legend-title">Legenda CPL pada MK ini</div>
+    <div class="legend-item"><span class="badge cpl3">CPL-3</span><span>Pembelajaran mandiri sepanjang hayat &amp; kewirausahaan berbasis teknologi</span></div><div class="legend-item"><span class="badge cpl6">CPL-6</span><span>Rancang, integrasi &amp; kelola platform perangkat keras/lunak, big data</span></div><div class="legend-item"><span class="badge cpl7">CPL-7</span><span>Rancang, bangun &amp; kelola aplikasi berbasis komputer/layanan awan</span></div><div class="legend-item"><span class="badge cpl8">CPL-8</span><span>Rancang, bangun &amp; kelola sistem cerdas &amp; perangkat berbasis sensor/IoT</span></div>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Capaian Pembelajaran Mata Kuliah (CPMK)</h2>
+    <div class="cpmk-grid">
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk1">CPMK-1</span><span class="badge cpl3">CPL-3</span></div>
+    <p>Mahasiswa mampu menjelaskan dan membedakan teknik kecerdasan buatan non-statistik (fuzzy logic, algoritma genetika, sistem pakar) dari pendekatan statistical learning.</p>
+  </div>
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk2">CPMK-2</span><span class="badge cpl6">CPL-6</span></div>
+    <p>Mahasiswa mampu merancang dan menerapkan sistem pakar serta metode ensemble learning (XGBoost) untuk penyelesaian masalah.</p>
+  </div>
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk3">CPMK-3</span><span class="badge cpl7">CPL-7</span></div>
+    <p>Mahasiswa mampu melakukan fine-tuning model Transformer/BERT untuk kasus terapan dan mengevaluasi performanya.</p>
+  </div>
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk4">CPMK-4</span><span class="badge cpl8">CPL-8</span></div>
+    <p>Mahasiswa mampu menerapkan explainable AI (SHAP/LIME) untuk menginterpretasikan model AI black-box dan mengintegrasikannya ke dalam solusi sistem cerdas.</p>
+  </div></div>
+  </section>
+
+  <section>
+    <h2>Rincian Sub-CPMK per Minggu (16 Minggu)</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:-4px;">Kolom Bloom menandai level kognitif Taksonomi Bloom target minggu tersebut (progresif C2&rarr;C6). Total bobot penilaian 16 minggu = 100%.</p>
+    <div class="table-wrap">
+      <table class="rps">
+        <thead>
+          <tr>
+            <th>Mgg</th><th>Sub-CPMK</th><th>Bahan Kajian / Materi</th><th>Bentuk &amp; Metode Pembelajaran</th>
+            <th>Indikator &amp; Kriteria Penilaian</th><th>Bentuk Penilaian</th><th>Bobot</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr class="weekrow">
+      <td class="wk-no">1</td>
+      <td class="wk-sub">Mampu membedakan pendekatan Sistem Cerdas (non-statistik & AI modern) dengan Machine Learning (statistical learning) <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">RPS & kontrak kuliah; posisi Sistem Cerdas dalam peta AI; ruang lingkup: fuzzy, GA, sistem pakar, ensemble, Transformer, XAI</td>
+      <td class="wk-bentuk">Ceramah interaktif, diskusi kelompok</td>
+      <td class="wk-indikator">Mampu memetakan minimal 5 topik AI ke kategori statistik vs non-statistik dengan benar</td>
+      <td class="wk-penilaian">Partisipasi diskusi</td>
+      <td class="wk-bobot">2%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">2</td>
+      <td class="wk-sub">Mampu menjelaskan konsep himpunan fuzzy, fungsi keanggotaan, dan operasi fuzzy <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Fuzzy set, membership function, fuzzifikasi, operasi himpunan fuzzy (union, intersection, complement)</td>
+      <td class="wk-bentuk">Ceramah, latihan soal</td>
+      <td class="wk-indikator">Mampu menghitung derajat keanggotaan pada studi kasus sederhana dengan galat < 5%</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">3</td>
+      <td class="wk-sub">Mampu merancang Fuzzy Inference System (FIS) Mamdani untuk kasus pengambilan keputusan <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Rule base fuzzy, proses inferensi, defuzzifikasi (centroid), implementasi dengan scikit-fuzzy</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">FIS berjalan dan menghasilkan output sesuai rule base yang dirancang</td>
+      <td class="wk-penilaian">Tugas praktikum 1</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">4</td>
+      <td class="wk-sub">Mampu menjelaskan komponen dan siklus kerja algoritma genetika <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Representasi kromosom, populasi, fungsi fitness, seleksi, crossover, mutasi</td>
+      <td class="wk-bentuk">Ceramah, demo visual</td>
+      <td class="wk-indikator">Mampu menjelaskan siklus GA dari inisialisasi hingga konvergensi secara runtut</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">5</td>
+      <td class="wk-sub">Mampu mengimplementasikan algoritma genetika untuk optimasi fungsi <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Coding GA di Python, studi kasus optimasi fungsi (mis. traveling salesman sederhana / knapsack)</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Solusi GA konvergen mendekati nilai optimum dalam jumlah generasi yang ditentukan</td>
+      <td class="wk-penilaian">Tugas praktikum 2</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">6</td>
+      <td class="wk-sub">Mampu merancang basis pengetahuan dan mesin inferensi sistem pakar sederhana <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Representasi pengetahuan (rule IF-THEN), forward chaining, backward chaining</td>
+      <td class="wk-bentuk">Ceramah, studi kasus, praktikum</td>
+      <td class="wk-indikator">Sistem pakar mampu memberikan kesimpulan yang konsisten dengan rule base pada minimal 3 skenario uji</td>
+      <td class="wk-penilaian">Tugas praktikum 3</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">7</td>
+      <td class="wk-sub">Mampu menerapkan ensemble learning (bagging, boosting) dan XGBoost pada kasus klasifikasi/regresi <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Konsep bagging vs boosting, gradient boosting, hyperparameter tuning XGBoost</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Model XGBoost mencapai akurasi/metrik yang kompetitif dibanding baseline yang ditentukan</td>
+      <td class="wk-penilaian">Tugas praktikum 4</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow examrow">
+      <td class="wk-no">8</td>
+      <td class="wk-sub">Evaluasi Tengah Semester — mengukur ketercapaian Sub-CPMK minggu 1&ndash;7 (fuzzy logic, FIS, algoritma genetika, sistem pakar, ensemble learning) <span class="tag cmulti">CPMK-1&ndash;2</span><span class="bloom">C2&ndash;C3</span></td>
+      <td class="wk-materi">Materi minggu 1&ndash;7</td>
+      <td class="wk-bentuk">Ujian tertulis / take-home case</td>
+      <td class="wk-indikator">Ketepatan konsep dan ketepatan penerapan teknik pada soal studi kasus</td>
+      <td class="wk-penilaian">UTS</td>
+      <td class="wk-bobot">20%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">9</td>
+      <td class="wk-sub">Mampu menjelaskan arsitektur Transformer (self-attention, encoder-decoder) dan model BERT <span class="tag cpmk3">CPMK-3</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Mekanisme self-attention, positional encoding, arsitektur BERT, pretrained language model</td>
+      <td class="wk-bentuk">Ceramah, diskusi paper</td>
+      <td class="wk-indikator">Mampu menjelaskan alur data pada arsitektur Transformer secara runtut</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">10</td>
+      <td class="wk-sub">Mampu melakukan fine-tuning model BERT untuk tugas klasifikasi teks <span class="tag cpmk3">CPMK-3</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Tokenisasi, transfer learning, pipeline HuggingFace Transformers</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Pipeline fine-tuning berjalan tanpa error dan model menghasilkan prediksi</td>
+      <td class="wk-penilaian">Tugas praktikum 5 (bag. 1)</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">11</td>
+      <td class="wk-sub">Mampu mengevaluasi performa model BERT hasil fine-tuning pada kasus terapan <span class="tag cpmk3">CPMK-3</span><span class="bloom">C4</span></td>
+      <td class="wk-materi">Metrik evaluasi (akurasi, precision, recall, F1), analisis kesalahan (error analysis)</td>
+      <td class="wk-bentuk">Praktikum lanjutan, diskusi hasil</td>
+      <td class="wk-indikator">Laporan evaluasi memuat metrik lengkap dan analisis kesalahan yang relevan</td>
+      <td class="wk-penilaian">Tugas praktikum 5 (bag. 2)</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">12</td>
+      <td class="wk-sub">Mampu menerapkan SHAP untuk menginterpretasikan model black-box <span class="tag cpmk4">CPMK-4</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Konsep interpretability, Shapley value, penerapan SHAP pada model ML/AI</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Visualisasi SHAP dihasilkan dan diinterpretasikan dengan benar terhadap fitur yang berpengaruh</td>
+      <td class="wk-penilaian">Tugas praktikum 6 (bag. 1)</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">13</td>
+      <td class="wk-sub">Mampu membandingkan hasil interpretasi SHAP dan LIME pada studi kasus yang sama <span class="tag cpmk4">CPMK-4</span><span class="bloom">C4</span></td>
+      <td class="wk-materi">Konsep LIME, perbandingan interpretability lokal vs global</td>
+      <td class="wk-bentuk">Praktikum coding, diskusi</td>
+      <td class="wk-indikator">Laporan perbandingan SHAP vs LIME disertai argumentasi kelebihan/kekurangan tiap metode</td>
+      <td class="wk-penilaian">Tugas praktikum 6 (bag. 2)</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">14</td>
+      <td class="wk-sub">Mampu merancang solusi sistem cerdas yang mengintegrasikan minimal dua teknik (mis. ensemble + XAI, atau fuzzy + sistem pakar) untuk kasus nyata <span class="tag cmulti">CPMK-1&ndash;4</span><span class="bloom">C5</span></td>
+      <td class="wk-materi">Perumusan masalah, pemilihan teknik, desain arsitektur solusi</td>
+      <td class="wk-bentuk">Kerja proyek kelompok/individu, konsultasi</td>
+      <td class="wk-indikator">Proposal proyek disetujui dosen dengan justifikasi teknik yang tepat terhadap masalah yang diangkat</td>
+      <td class="wk-penilaian">Proposal proyek akhir</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">15</td>
+      <td class="wk-sub">Mampu mengimplementasikan dan menguji solusi sistem cerdas yang telah dirancang <span class="tag cmulti">CPMK-1&ndash;4</span><span class="bloom">C5&ndash;C6</span></td>
+      <td class="wk-materi">Implementasi kode, pengujian sistem, dokumentasi teknis</td>
+      <td class="wk-bentuk">Praktikum mandiri + asistensi</td>
+      <td class="wk-indikator">Sistem berjalan sesuai spesifikasi rancangan dan terdokumentasi dengan baik</td>
+      <td class="wk-penilaian">Implementasi proyek akhir</td>
+      <td class="wk-bobot">10%</td>
+    </tr>
+    <tr class="weekrow examrow">
+      <td class="wk-no">16</td>
+      <td class="wk-sub">Mampu mempresentasikan dan mempertanggungjawabkan hasil proyek sistem cerdas secara ilmiah <span class="tag cmulti">CPMK-1&ndash;4</span><span class="bloom">C6</span></td>
+      <td class="wk-materi">Presentasi hasil proyek, tanya-jawab, evaluasi akhir</td>
+      <td class="wk-bentuk">Presentasi & ujian akhir</td>
+      <td class="wk-indikator">Presentasi jelas, mampu menjawab pertanyaan penguji terkait teknik & hasil yang dicapai</td>
+      <td class="wk-penilaian">UAS (Presentasi Proyek)</td>
+      <td class="wk-bobot">14%</td>
+    </tr>
+          <tr class="total-row"><td colspan="6" style="text-align:right;">Total Bobot Penilaian</td><td style="text-align:center;">100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Rubrik Penilaian</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:-4px;">Rubrik analitik per komponen penilaian pada tabel Sub-CPMK di atas. Skor tiap kriteria menggunakan skala 0&ndash;100, nilai komponen akhir = jumlah (skor kriteria &times; bobot kriteria).</p>
+    
+    <div class="rubric-block">
+      <h3>Rubrik Holistik Partisipasi &amp; Kuis</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 1, 2, 4, 9 — partisipasi diskusi &amp; kuis konsep</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Jawaban/Kontribusi Diskusi<span class="crit-bobot">60%</span></td><td>Jawaban/kontribusi tepat, menunjukkan pemahaman konsep yang kuat</td><td>Jawaban/kontribusi tepat pada sebagian besar poin</td><td>Jawaban/kontribusi sebagian benar, sebagian keliru</td><td>Jawaban/kontribusi tidak tepat atau tidak relevan</td></tr><tr><td class="crit-name">Keaktifan &amp; Inisiatif<span class="crit-bobot">40%</span></td><td>Aktif bertanya/menjawab dengan inisiatif tinggi sepanjang sesi</td><td>Cukup aktif berkontribusi dalam diskusi</td><td>Berkontribusi hanya ketika diminta</td><td>Tidak berkontribusi dalam sesi diskusi</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Tugas Praktikum (Coding/Lab)</h3>
+      <p class="rubric-scope">Berlaku untuk: Tugas Praktikum 1–6 (Minggu 3, 5, 6, 7, 10, 11, 12, 13)</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Konsep &amp; Pemahaman Teori<span class="crit-bobot">25%</span></td><td>Mampu menjelaskan konsep/algoritma yang diterapkan secara tepat dan mendalam, termasuk alasan pemilihan parameter</td><td>Mampu menjelaskan konsep dengan tepat namun kurang mendalam pada beberapa bagian</td><td>Penjelasan konsep sebagian besar benar namun ada miskonsepsi minor</td><td>Penjelasan konsep tidak tepat atau tidak sesuai dengan implementasi yang dibuat</td></tr><tr><td class="crit-name">Fungsionalitas Implementasi<span class="crit-bobot">35%</span></td><td>Program/model berjalan sempurna, menghasilkan output benar untuk seluruh skenario uji</td><td>Program/model berjalan dengan baik, output benar untuk sebagian besar skenario uji</td><td>Program/model berjalan namun terdapat kesalahan pada beberapa fungsi utama</td><td>Program/model tidak berjalan atau output tidak sesuai spesifikasi</td></tr><tr><td class="crit-name">Kualitas Kode &amp; Dokumentasi<span class="crit-bobot">20%</span></td><td>Kode terstruktur, konsisten, diberi komentar jelas, dan mudah ditelusuri</td><td>Kode cukup terstruktur dengan komentar pada bagian penting</td><td>Kode berjalan namun kurang terstruktur/minim komentar</td><td>Kode tidak terstruktur dan tanpa dokumentasi</td></tr><tr><td class="crit-name">Analisis &amp; Interpretasi Hasil<span class="crit-bobot">20%</span></td><td>Analisis hasil tajam, disertai interpretasi kuantitatif dan implikasi praktis yang relevan</td><td>Analisis hasil cukup baik dengan interpretasi yang relevan</td><td>Analisis hasil terbatas pada deskripsi angka tanpa interpretasi mendalam</td><td>Tidak ada analisis atau interpretasi hasil</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Ujian Tengah Semester (UTS)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 8 — evaluasi CPMK-1 &amp; CPMK-2</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Konsep (Fuzzy, GA, Sistem Pakar, Ensemble)<span class="crit-bobot">40%</span></td><td>Menjawab seluruh konsep dengan tepat, lengkap, dan sistematis</td><td>Menjawab sebagian besar konsep dengan tepat</td><td>Menjawab sebagian konsep dengan benar, sebagian keliru</td><td>Sebagian besar jawaban konsep salah/tidak relevan</td></tr><tr><td class="crit-name">Ketepatan Penerapan pada Studi Kasus<span class="crit-bobot">40%</span></td><td>Mampu menerapkan teknik yang tepat pada studi kasus dengan justifikasi yang kuat</td><td>Mampu menerapkan teknik yang tepat namun justifikasi kurang lengkap</td><td>Penerapan teknik kurang tepat namun logika dasarnya benar</td><td>Penerapan teknik tidak sesuai dengan studi kasus yang diberikan</td></tr><tr><td class="crit-name">Kejelasan &amp; Sistematika Jawaban<span class="crit-bobot">20%</span></td><td>Jawaban runtut, rapi, dan mudah diikuti alur berpikirnya</td><td>Jawaban cukup runtut dengan sedikit lompatan logika</td><td>Jawaban kurang sistematis namun masih dapat dipahami</td><td>Jawaban tidak terstruktur dan sulit dipahami</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Proposal Proyek Akhir</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 14 — proposal integrasi ≥ 2 teknik sistem cerdas</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Kejelasan Rumusan Masalah<span class="crit-bobot">25%</span></td><td>Masalah dirumuskan spesifik, relevan, dan didukung data/konteks yang jelas</td><td>Masalah dirumuskan cukup jelas dan relevan</td><td>Masalah dirumuskan namun kurang spesifik/kurang relevan</td><td>Masalah tidak jelas atau tidak layak diselesaikan dengan sistem cerdas</td></tr><tr><td class="crit-name">Ketepatan Pemilihan &amp; Kombinasi Teknik<span class="crit-bobot">40%</span></td><td>Kombinasi teknik dipilih sangat tepat dengan justifikasi ilmiah yang kuat</td><td>Kombinasi teknik tepat dengan justifikasi memadai</td><td>Kombinasi teknik cukup sesuai namun justifikasi lemah</td><td>Kombinasi teknik tidak sesuai dengan karakteristik masalah</td></tr><tr><td class="crit-name">Kelayakan Rancangan (waktu, data, tools)<span class="crit-bobot">20%</span></td><td>Rancangan realistis, mempertimbangkan ketersediaan data/tools dan estimasi waktu</td><td>Rancangan cukup realistis dengan sedikit celah pada perencanaan</td><td>Rancangan kurang mempertimbangkan kendala praktis</td><td>Rancangan tidak realistis untuk diselesaikan dalam waktu yang tersedia</td></tr><tr><td class="crit-name">Kualitas Penulisan Proposal<span class="crit-bobot">15%</span></td><td>Penulisan sistematis, bahasa ilmiah baik, referensi memadai</td><td>Penulisan cukup sistematis dengan referensi cukup</td><td>Penulisan kurang sistematis atau referensi minim</td><td>Penulisan tidak sistematis dan tanpa referensi</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Implementasi Proyek Akhir</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 15 — implementasi &amp; pengujian sistem</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Fungsionalitas Sistem<span class="crit-bobot">40%</span></td><td>Seluruh fitur berjalan sesuai proposal, teruji pada berbagai skenario</td><td>Sebagian besar fitur berjalan sesuai proposal</td><td>Fitur inti berjalan namun ada fitur pendukung yang tidak berfungsi</td><td>Sistem tidak berjalan sesuai proposal</td></tr><tr><td class="crit-name">Integrasi Teknik yang Digunakan<span class="crit-bobot">25%</span></td><td>Integrasi antar-teknik (mis. ensemble + XAI) berjalan mulus dan saling melengkapi</td><td>Integrasi antar-teknik berjalan baik dengan sedikit kekurangan</td><td>Integrasi antar-teknik berjalan namun kurang optimal</td><td>Teknik-teknik yang digunakan tidak terintegrasi dengan baik</td></tr><tr><td class="crit-name">Pengujian &amp; Validasi<span class="crit-bobot">20%</span></td><td>Pengujian menyeluruh dengan metrik kuantitatif dan skenario uji yang beragam</td><td>Pengujian cukup menyeluruh dengan metrik yang relevan</td><td>Pengujian terbatas pada skenario dasar</td><td>Tidak ada pengujian yang memadai</td></tr><tr><td class="crit-name">Dokumentasi Teknis<span class="crit-bobot">15%</span></td><td>Dokumentasi lengkap (arsitektur, cara pakai, hasil uji) dan mudah ditelusuri</td><td>Dokumentasi cukup lengkap</td><td>Dokumentasi minim namun sistem masih bisa dipahami</td><td>Tidak ada dokumentasi teknis</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Presentasi UAS (Presentasi Proyek Akhir)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 16 — presentasi &amp; tanya-jawab</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Penguasaan Materi &amp; Teknik<span class="crit-bobot">35%</span></td><td>Menguasai seluruh teknik yang digunakan dan mampu menjelaskan alasan teknis secara mendalam</td><td>Menguasai sebagian besar teknik dengan penjelasan yang memadai</td><td>Penguasaan materi terbatas pada bagian permukaan</td><td>Tidak menguasai materi/teknik yang digunakan</td></tr><tr><td class="crit-name">Kemampuan Menjawab Pertanyaan<span class="crit-bobot">30%</span></td><td>Menjawab seluruh pertanyaan dengan tepat, kritis, dan reflektif</td><td>Menjawab sebagian besar pertanyaan dengan tepat</td><td>Menjawab pertanyaan namun kurang tepat/kurang mendalam</td><td>Tidak mampu menjawab sebagian besar pertanyaan</td></tr><tr><td class="crit-name">Kualitas Hasil Proyek yang Dipresentasikan<span class="crit-bobot">20%</span></td><td>Hasil proyek sesuai target proposal dan menunjukkan nilai tambah yang jelas</td><td>Hasil proyek sesuai sebagian besar target proposal</td><td>Hasil proyek sebagian sesuai target, ada penyimpangan signifikan</td><td>Hasil proyek tidak sesuai proposal</td></tr><tr><td class="crit-name">Kualitas Penyampaian &amp; Media Presentasi<span class="crit-bobot">15%</span></td><td>Penyampaian percaya diri, runtut, media presentasi informatif dan rapi</td><td>Penyampaian cukup baik dengan media presentasi memadai</td><td>Penyampaian kurang runtut atau media presentasi kurang informatif</td><td>Penyampaian tidak jelas dan media presentasi tidak memadai</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+  </section>
+</main>
+<footer>
+  Rincian Sub-CPMK ini adalah draf operasional yang diturunkan dari CPMK &amp; CPL mata kuliah Sistem Cerdas pada dokumen kurikulum S1 Informatika UPJB 2024. Perlu direview dan disahkan oleh dosen pengampu / koordinator mata kuliah sebelum digunakan sebagai RPS resmi, termasuk penyesuaian bobot penilaian dengan kebijakan penilaian program studi.
+</footer>
+</body>
+</html>

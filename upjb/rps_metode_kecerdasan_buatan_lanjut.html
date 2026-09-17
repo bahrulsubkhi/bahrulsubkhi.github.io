@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RPS Sub-CPMK 16 Minggu — Metode Kecerdasan Buatan Lanjut (MK Pilihan)</title>
+<style>
+  :root {
+    --bg:#0f1620; --panel:#161f2c; --panel2:#1c2836; --text:#e7edf5; --muted:#93a3b8; --accent:#4f8cff; --border:#26334a;
+    --c6:#06b6d4; --c7:#a78bfa; --c8:#f472b6;
+  }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font-family:'Segoe UI',Roboto,Arial,sans-serif; line-height:1.55; }
+  header { max-width:1200px; margin:0 auto; padding:32px 24px 8px; }
+  header h1 { margin:0 0 6px; font-size:1.6rem; }
+  header p.sub { color:var(--muted); margin:0 0 4px; }
+  .info-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(200px,1fr)); gap:10px; background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin:18px 0; }
+  .info-item .label { font-size:.7rem; color:var(--muted); text-transform:uppercase; letter-spacing:.04em; }
+  .info-item .value { font-weight:600; }
+  .legend { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:16px 20px; margin-bottom:8px; }
+  .legend-title { font-weight:600; margin-bottom:10px; color:var(--accent); }
+  .legend-item { display:flex; align-items:center; gap:10px; margin:6px 0; font-size:.88rem; color:var(--muted); }
+  main { max-width:1200px; margin:0 auto; padding:8px 24px 60px; }
+  section { margin-top:30px; }
+  section h2 { font-size:1.1rem; border-bottom:1px solid var(--border); padding-bottom:10px; }
+  .cpmk-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:12px; margin-top:14px; }
+  .cpmk-card { background:var(--panel); border:1px solid var(--border); border-radius:12px; padding:14px 16px; }
+  .cpmk-head { display:flex; gap:8px; margin-bottom:8px; }
+  .cpmk-card p { margin:0; font-size:.87rem; }
+  .badge { font-size:.68rem; padding:2px 7px; border-radius:999px; font-weight:600; color:#0f1620; }
+  .cpl6 { background:var(--c6); } .cpl7 { background:var(--c7); } .cpl8 { background:var(--c8); }
+  .tag { display:inline-block; font-size:.65rem; font-weight:700; color:#0f1620; padding:1px 6px; border-radius:5px; margin-right:6px; background:var(--accent); }
+  .tag.cmulti { background:#f5a524; }
+  .tag.cpmk1 { background:var(--c6); } .tag.cpmk2 { background:var(--c7); } .tag.cpmk3 { background:var(--c8); }
+  .table-wrap { overflow-x:auto; border:1px solid var(--border); border-radius:12px; margin-top:14px; }
+  table.rps { border-collapse:collapse; width:100%; font-size:.82rem; min-width:1080px; }
+  table.rps thead th { background:var(--panel2); padding:10px 8px; text-align:left; border-bottom:1px solid var(--border); white-space:nowrap; }
+  table.rps td { padding:10px 8px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.rps td.wk-no { text-align:center; font-weight:700; color:var(--accent); }
+  table.rps td.wk-bobot { text-align:center; font-weight:700; white-space:nowrap; }
+  .bloom { display:inline-block; margin-left:6px; font-size:.62rem; color:var(--muted); border:1px solid var(--border); border-radius:5px; padding:0 5px; }
+  tr.examrow { background:#1a2436; }
+  tr.examrow td.wk-no { color:#f5a524; }
+  footer { max-width:1200px; margin:0 auto; padding:0 24px 40px; color:var(--muted); font-size:.8rem; }
+  .total-row td { font-weight:700; background:var(--panel2); }
+
+  .rubric-block { margin-top:26px; }
+  .rubric-block h3 { font-size:.98rem; margin-bottom:2px; color:var(--accent); }
+  .rubric-scope { color:var(--muted); font-size:.8rem; margin:0 0 8px; }
+  table.rubric { border-collapse:collapse; width:100%; font-size:.78rem; min-width:900px; }
+  table.rubric thead th { background:var(--panel2); padding:8px; text-align:center; border-bottom:1px solid var(--border); white-space:nowrap; }
+  table.rubric thead th:first-child { text-align:left; }
+  table.rubric .lvl-label { font-weight:400; color:var(--muted); font-size:.68rem; }
+  table.rubric td { padding:9px 10px; border-bottom:1px solid var(--border); vertical-align:top; }
+  table.rubric td.crit-name { font-weight:600; white-space:nowrap; }
+  table.rubric .crit-bobot { display:block; font-weight:400; color:var(--muted); font-size:.72rem; }
+  .rubric-note { color:var(--muted); font-size:.75rem; margin:6px 0 0; }
+</style>
+</head>
+<body>
+<header>
+  <h1>RPS &mdash; Rincian Sub-CPMK 16 Minggu</h1>
+  <p class="sub">Mata Kuliah <b>Metode Kecerdasan Buatan Lanjut</b> (Mata Kuliah Pilihan — Peminatan Komputasi Cerdas) &middot; Semester 5–7 (Mata Kuliah Pilihan) &middot; Prodi S1 Informatika UPJB &middot; Kurikulum 2024</p>
+  <div class="info-grid">
+    <div class="info-item"><div class="label">Kode MK</div><div class="value">EL-AI-2 (kode resmi belum tercantum di buku pedoman)</div></div>
+    <div class="info-item"><div class="label">SKS</div><div class="value">3 SKS (2 Teori + 1 Praktik, sesuai Tabel 7.3)</div></div>
+    <div class="info-item"><div class="label">Prasyarat</div><div class="value">Kecerdasan Buatan (Semester 4) — sesuai Tabel 7.3 Buku Pedoman Kurikulum</div></div>
+    <div class="info-item"><div class="label">CPL yang Dibebankan</div><div class="value">CPL-6, CPL-7, CPL-8</div></div>
+  </div>
+  <div class="legend">
+    <div class="legend-title">Legenda CPL pada MK ini</div>
+    <div class="legend-item"><span class="badge cpl6">CPL-6</span><span>Rancang, integrasi &amp; kelola platform perangkat keras/lunak, big data</span></div><div class="legend-item"><span class="badge cpl7">CPL-7</span><span>Rancang, bangun &amp; kelola aplikasi berbasis komputer/layanan awan</span></div><div class="legend-item"><span class="badge cpl8">CPL-8</span><span>Rancang, bangun &amp; kelola sistem cerdas &amp; perangkat berbasis sensor/IoT</span></div>
+  </div>
+  <div class="legend" style="border-color:#f5a524;">
+    <div class="legend-title" style="color:#f5a524;">Catatan Sumber &amp; Batas Cakupan</div>
+    <p style="color:var(--muted);font-size:.85rem;margin:0 0 8px;">
+      Buku pedoman kurikulum (Tabel 7.3) hanya mencantumkan <b>SKS (3), CPL yang dibebankan (CPL-6, 7, 8), dan prasyarat (Kecerdasan Buatan)</b> untuk MK pilihan ini &mdash; tidak ada rincian topik mingguan resmi, dan MK ini juga tidak muncul di halaman mapping (yang hanya mencakup 6 MK inti klaster AI &amp; Data). Topik pada RPS ini adalah <b>susunan saya sendiri</b> sebagai kelanjutan logis dari MK Kecerdasan Buatan (Sem 4), dirancang agar <b>tidak tumpang tindih</b> dengan Machine Learning (fondasi matematis/ML klasik), Sistem Cerdas (fuzzy/GA/sistem pakar/ensemble/Transformer-BERT/XAI), dan Data Mining (association rules/text mining) yang berjalan paralel di Semester 5.
+    </p>
+    <p style="color:var(--muted);font-size:.85rem;margin:0;">Perlu direview/disahkan tim kurikulum sebelum dipakai resmi.</p>
+  </div>
+</header>
+<main>
+  <section>
+    <h2>Capaian Pembelajaran Mata Kuliah (CPMK)</h2>
+    <div class="cpmk-grid">
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk1">CPMK-1</span><span class="badge cpl6">CPL-6</span></div>
+    <p>Mahasiswa mampu menjelaskan dan menerapkan arsitektur AI/deep learning lanjutan (transfer learning CNN, object detection, RNN/LSTM/GRU, autoencoder, GAN, reinforcement learning) melampaui cakupan MK Kecerdasan Buatan dasar.</p>
+  </div>
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk2">CPMK-2</span><span class="badge cpl7">CPL-7</span></div>
+    <p>Mahasiswa mampu mengembangkan model AI lanjut untuk kasus kompleks/sekuensial/generatif, termasuk integrasi multi-modal.</p>
+  </div>
+  <div class="cpmk-card">
+    <div class="cpmk-head"><span class="tag cpmk3">CPMK-3</span><span class="badge cpl8">CPL-8</span></div>
+    <p>Mahasiswa mampu mengevaluasi performa model AI lanjut dibanding baseline dan mempertimbangkan aspek deployment sistem cerdas.</p>
+  </div></div>
+  </section>
+
+  <section>
+    <h2>Rincian Sub-CPMK per Minggu (16 Minggu)</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:-4px;">Kolom Bloom menandai level kognitif Taksonomi Bloom target minggu tersebut (progresif C2&rarr;C6). Total bobot penilaian 16 minggu = 100%.</p>
+    <div class="table-wrap">
+      <table class="rps">
+        <thead>
+          <tr>
+            <th>Mgg</th><th>Sub-CPMK</th><th>Bahan Kajian / Materi</th><th>Bentuk &amp; Metode Pembelajaran</th>
+            <th>Indikator &amp; Kriteria Penilaian</th><th>Bentuk Penilaian</th><th>Bobot</th>
+          </tr>
+        </thead>
+        <tbody>
+          
+    <tr class="weekrow">
+      <td class="wk-no">1</td>
+      <td class="wk-sub">Mampu memetakan arsitektur AI lanjut (transfer learning, RNN/LSTM, autoencoder, GAN, RL) ke kasus penggunaannya masing-masing <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">RPS & kontrak kuliah; review singkat CNN dasar (dari MK Kecerdasan Buatan); roadmap topik lanjutan satu semester</td>
+      <td class="wk-bentuk">Ceramah interaktif, diskusi</td>
+      <td class="wk-indikator">Mampu memetakan minimal 5 arsitektur AI lanjut ke jenis masalah yang paling sesuai</td>
+      <td class="wk-penilaian">Partisipasi diskusi</td>
+      <td class="wk-bobot">2%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">2</td>
+      <td class="wk-sub">Mampu menerapkan transfer learning pada model CNN pretrained (ResNet/VGG) untuk klasifikasi citra baru <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Konsep transfer learning, fine-tuning vs feature extraction, model pretrained (ImageNet), freezing layer</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Model hasil transfer learning mencapai akurasi kompetitif pada dataset baru dengan waktu latih yang jauh lebih singkat dibanding training dari nol</td>
+      <td class="wk-penilaian">Tugas praktikum 1</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">3</td>
+      <td class="wk-sub">Mampu menjelaskan prinsip kerja object detection modern (YOLO) dan menerapkan model pretrained untuk deteksi objek <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Konsep bounding box, IoU, non-max suppression, arsitektur YOLO (high-level), penggunaan model pretrained</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Sistem deteksi objek berhasil mendeteksi dan melabeli objek pada citra uji dengan bounding box yang sesuai</td>
+      <td class="wk-penilaian">Tugas praktikum 2</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">4</td>
+      <td class="wk-sub">Mampu menjelaskan arsitektur RNN dan permasalahan vanishing/exploding gradient pada data sekuensial <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Recurrent Neural Network, hidden state, backpropagation through time (BPTT), vanishing/exploding gradient</td>
+      <td class="wk-bentuk">Ceramah, demo visual</td>
+      <td class="wk-indikator">Mampu menjelaskan mengapa RNN vanilla kesulitan mempelajari dependensi jangka panjang</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">5</td>
+      <td class="wk-sub">Mampu menerapkan LSTM/GRU untuk mengatasi vanishing gradient pada data sekuensial <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Arsitektur LSTM (forget/input/output gate), GRU, perbandingan LSTM vs GRU vs RNN vanilla</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Model LSTM/GRU menunjukkan performa lebih baik dibanding RNN vanilla pada data sekuensial yang sama</td>
+      <td class="wk-penilaian">Tugas praktikum 3</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">6</td>
+      <td class="wk-sub">Mampu membangun model LSTM untuk prediksi deret waktu atau generasi teks sederhana <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Time series forecasting dengan LSTM, atau character/word-level text generation</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Model LSTM menghasilkan prediksi/teks yang koheren sesuai pola data latih</td>
+      <td class="wk-penilaian">Tugas praktikum 4</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">7</td>
+      <td class="wk-sub">Mampu menerapkan autoencoder untuk reduksi dimensi dan rekonstruksi data <span class="tag cpmk1">CPMK-1</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Arsitektur encoder-decoder, bottleneck layer, loss rekonstruksi, perbandingan dengan PCA</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Autoencoder berhasil merekonstruksi data dengan error rekonstruksi yang rendah</td>
+      <td class="wk-penilaian">Tugas praktikum 5</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow examrow">
+      <td class="wk-no">8</td>
+      <td class="wk-sub">Evaluasi Tengah Semester — mengukur ketercapaian Sub-CPMK minggu 1&ndash;7 (transfer learning, object detection, RNN/LSTM/GRU, autoencoder) <span class="tag cmulti">CPMK-1</span><span class="bloom">C2&ndash;C3</span></td>
+      <td class="wk-materi">Materi minggu 1&ndash;7</td>
+      <td class="wk-bentuk">Ujian tertulis / take-home case</td>
+      <td class="wk-indikator">Ketepatan konsep arsitektur dan ketepatan penerapan pada studi kasus</td>
+      <td class="wk-penilaian">UTS</td>
+      <td class="wk-bobot">20%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">9</td>
+      <td class="wk-sub">Mampu menerapkan autoencoder untuk deteksi anomali dan denoising data <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Anomaly detection berbasis reconstruction error, denoising autoencoder</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Sistem berhasil mendeteksi data anomali/menghasilkan data bersih dengan threshold error yang tepat</td>
+      <td class="wk-penilaian">Tugas praktikum 6</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">10</td>
+      <td class="wk-sub">Mampu menjelaskan arsitektur generator-discriminator dan proses pelatihan adversarial pada GAN <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Konsep GAN, generator vs discriminator, adversarial loss, mode collapse</td>
+      <td class="wk-bentuk">Ceramah, demo visual</td>
+      <td class="wk-indikator">Mampu menjelaskan proses saling berlawanan antara generator dan discriminator secara runtut</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">11</td>
+      <td class="wk-sub">Mampu mengimplementasikan GAN sederhana untuk menghasilkan data sintetis <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Implementasi GAN sederhana (mis. pada dataset citra kecil), monitoring loss generator vs discriminator</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">GAN berhasil menghasilkan data sintetis yang menyerupai distribusi data asli secara visual/kuantitatif</td>
+      <td class="wk-penilaian">Tugas praktikum 7</td>
+      <td class="wk-bobot">4%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">12</td>
+      <td class="wk-sub">Mampu menjelaskan komponen reinforcement learning (agent, environment, reward, policy) dan algoritma Q-learning <span class="tag cpmk1">CPMK-1</span><span class="bloom">C2</span></td>
+      <td class="wk-materi">Markov Decision Process, agent-environment loop, reward, policy, algoritma Q-learning</td>
+      <td class="wk-bentuk">Ceramah, demo visual</td>
+      <td class="wk-indikator">Mampu menjelaskan siklus interaksi agent-environment dan update Q-value secara runtut</td>
+      <td class="wk-penilaian">Kuis</td>
+      <td class="wk-bobot">3%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">13</td>
+      <td class="wk-sub">Mampu mengimplementasikan algoritma Q-learning pada lingkungan sederhana (grid world/CartPole) <span class="tag cpmk2">CPMK-2</span><span class="bloom">C3</span></td>
+      <td class="wk-materi">Implementasi Q-table, epsilon-greedy exploration, update Bellman equation</td>
+      <td class="wk-bentuk">Praktikum coding (lab)</td>
+      <td class="wk-indikator">Agent menunjukkan peningkatan reward kumulatif seiring bertambahnya episode training</td>
+      <td class="wk-penilaian">Tugas praktikum 8</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">14</td>
+      <td class="wk-sub">Mampu mengevaluasi dan membandingkan performa model AI lanjut terhadap baseline, termasuk pertimbangan integrasi multi-modal <span class="tag cpmk3">CPMK-3</span><span class="bloom">C4</span></td>
+      <td class="wk-materi">Metrik evaluasi lintas-arsitektur, perbandingan model lanjut vs baseline (mis. CNN dasar/ML klasik), konsep dasar multi-modal AI (teks+citra)</td>
+      <td class="wk-bentuk">Praktikum + diskusi</td>
+      <td class="wk-indikator">Laporan perbandingan menunjukkan trade-off (akurasi, waktu latih, kompleksitas) antara model lanjut dan baseline secara kuantitatif</td>
+      <td class="wk-penilaian">Tugas praktikum 9</td>
+      <td class="wk-bobot">5%</td>
+    </tr>
+    <tr class="weekrow">
+      <td class="wk-no">15</td>
+      <td class="wk-sub">Mampu merancang, mengimplementasikan, dan mengevaluasi solusi berbasis metode AI lanjut dibanding baseline pada kasus nyata <span class="tag cmulti">CPMK-1&ndash;3</span><span class="bloom">C5&ndash;C6</span></td>
+      <td class="wk-materi">Pemilihan 1 metode AI lanjut (transfer learning/RNN-LSTM/autoencoder/GAN/RL) untuk kasus nyata, implementasi, dan evaluasi terhadap baseline</td>
+      <td class="wk-bentuk">Praktikum mandiri + asistensi</td>
+      <td class="wk-indikator">Solusi berjalan sesuai rancangan dan menunjukkan keunggulan terukur dibanding baseline yang ditentukan</td>
+      <td class="wk-penilaian">Proyek akhir (implementasi)</td>
+      <td class="wk-bobot">15%</td>
+    </tr>
+    <tr class="weekrow examrow">
+      <td class="wk-no">16</td>
+      <td class="wk-sub">Mampu mempresentasikan dan mempertanggungjawabkan solusi AI lanjut yang dibangun secara ilmiah <span class="tag cmulti">CPMK-1&ndash;3</span><span class="bloom">C6</span></td>
+      <td class="wk-materi">Presentasi hasil proyek, tanya-jawab, evaluasi akhir</td>
+      <td class="wk-bentuk">Presentasi & ujian akhir</td>
+      <td class="wk-indikator">Presentasi jelas, mampu menjawab pertanyaan penguji terkait arsitektur & hasil evaluasi yang dicapai</td>
+      <td class="wk-penilaian">UAS (Presentasi Proyek)</td>
+      <td class="wk-bobot">15%</td>
+    </tr>
+          <tr class="total-row"><td colspan="6" style="text-align:right;">Total Bobot Penilaian</td><td style="text-align:center;">100%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Rubrik Penilaian</h2>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:-4px;">Rubrik analitik per komponen penilaian pada tabel Sub-CPMK di atas. Skor tiap kriteria menggunakan skala 0&ndash;100, nilai komponen akhir = jumlah (skor kriteria &times; bobot kriteria).</p>
+    
+    <div class="rubric-block">
+      <h3>Rubrik Holistik Partisipasi &amp; Kuis</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 1, 4, 10, 12 — partisipasi diskusi &amp; kuis konsep</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Jawaban/Kontribusi Diskusi<span class="crit-bobot">60%</span></td><td>Jawaban/kontribusi tepat, menunjukkan pemahaman arsitektur AI lanjut yang kuat</td><td>Jawaban/kontribusi tepat pada sebagian besar poin</td><td>Jawaban/kontribusi sebagian benar, sebagian keliru</td><td>Jawaban/kontribusi tidak tepat atau tidak relevan</td></tr><tr><td class="crit-name">Keaktifan &amp; Inisiatif<span class="crit-bobot">40%</span></td><td>Aktif bertanya/menjawab dengan inisiatif tinggi sepanjang sesi</td><td>Cukup aktif berkontribusi dalam diskusi</td><td>Berkontribusi hanya ketika diminta</td><td>Tidak berkontribusi dalam sesi diskusi</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Tugas Praktikum (Coding/Lab)</h3>
+      <p class="rubric-scope">Berlaku untuk: Tugas Praktikum 1–9 (Minggu 2, 3, 5, 6, 7, 9, 11, 13, 14)</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Konsep &amp; Pemahaman Arsitektur<span class="crit-bobot">25%</span></td><td>Mampu menjelaskan arsitektur/algoritma yang diterapkan secara tepat dan mendalam, termasuk alasan pemilihan hyperparameter</td><td>Mampu menjelaskan konsep dengan tepat namun kurang mendalam pada beberapa bagian</td><td>Penjelasan konsep sebagian besar benar namun ada miskonsepsi minor</td><td>Penjelasan konsep tidak tepat atau tidak sesuai dengan implementasi yang dibuat</td></tr><tr><td class="crit-name">Fungsionalitas Implementasi<span class="crit-bobot">35%</span></td><td>Model berjalan sempurna, pipeline training/inferensi lengkap tanpa error</td><td>Model berjalan dengan baik dengan sedikit kekurangan minor</td><td>Model berjalan namun ada kesalahan pada tahapan tertentu (mis. training tidak konvergen)</td><td>Model tidak berjalan atau tidak menghasilkan output yang valid</td></tr><tr><td class="crit-name">Kualitas Kode &amp; Dokumentasi<span class="crit-bobot">20%</span></td><td>Kode terstruktur, konsisten, diberi komentar jelas, dan mudah ditelusuri</td><td>Kode cukup terstruktur dengan komentar pada bagian penting</td><td>Kode berjalan namun kurang terstruktur/minim komentar</td><td>Kode tidak terstruktur dan tanpa dokumentasi</td></tr><tr><td class="crit-name">Analisis &amp; Interpretasi Hasil<span class="crit-bobot">20%</span></td><td>Analisis hasil tajam, disertai interpretasi kuantitatif dan perbandingan dengan arsitektur/baseline lain</td><td>Analisis hasil cukup baik dengan interpretasi yang relevan</td><td>Analisis hasil terbatas pada deskripsi angka tanpa interpretasi mendalam</td><td>Tidak ada analisis atau interpretasi hasil</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Ujian Tengah Semester (UTS)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 8 — evaluasi CPMK-1 (transfer learning, object detection, RNN/LSTM/GRU, autoencoder)</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Konsep Arsitektur AI Lanjut<span class="crit-bobot">40%</span></td><td>Menjawab seluruh konsep arsitektur dengan tepat, lengkap, dan sistematis</td><td>Menjawab sebagian besar konsep dengan tepat</td><td>Menjawab sebagian konsep dengan benar, sebagian keliru</td><td>Sebagian besar jawaban konsep salah/tidak relevan</td></tr><tr><td class="crit-name">Ketepatan Penerapan pada Studi Kasus<span class="crit-bobot">40%</span></td><td>Mampu menentukan arsitektur yang tepat untuk suatu kasus dengan justifikasi teknis yang kuat</td><td>Mampu menentukan arsitektur yang tepat namun justifikasi kurang lengkap</td><td>Penentuan arsitektur kurang tepat namun logika dasarnya benar</td><td>Penentuan arsitektur tidak sesuai dengan studi kasus yang diberikan</td></tr><tr><td class="crit-name">Kejelasan &amp; Sistematika Jawaban<span class="crit-bobot">20%</span></td><td>Jawaban runtut, rapi, dan mudah diikuti alur berpikirnya</td><td>Jawaban cukup runtut dengan sedikit lompatan logika</td><td>Jawaban kurang sistematis namun masih dapat dipahami</td><td>Jawaban tidak terstruktur dan sulit dipahami</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Proyek Akhir (Implementasi Metode AI Lanjut)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 15 — implementasi &amp; evaluasi solusi AI lanjut vs baseline</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Ketepatan Pemilihan &amp; Justifikasi Arsitektur<span class="crit-bobot">25%</span></td><td>Arsitektur dipilih sangat tepat sesuai karakteristik masalah dengan justifikasi teknis yang kuat</td><td>Arsitektur dipilih tepat dengan justifikasi memadai</td><td>Arsitektur dipilih cukup sesuai namun justifikasi lemah</td><td>Arsitektur dipilih tidak sesuai karakteristik masalah</td></tr><tr><td class="crit-name">Fungsionalitas &amp; Kelengkapan Implementasi<span class="crit-bobot">30%</span></td><td>Seluruh komponen (training, inferensi, evaluasi) berjalan lengkap dan sempurna</td><td>Sebagian besar komponen berjalan sesuai rencana</td><td>Komponen inti berjalan namun ada bagian pendukung yang tidak berfungsi</td><td>Implementasi tidak berjalan sesuai rencana</td></tr><tr><td class="crit-name">Kualitas Evaluasi vs Baseline<span class="crit-bobot">25%</span></td><td>Perbandingan terhadap baseline menyeluruh, kuantitatif, dan menunjukkan insight yang jelas</td><td>Perbandingan terhadap baseline cukup menyeluruh dengan metrik relevan</td><td>Perbandingan terbatas pada 1-2 metrik dasar tanpa analisis mendalam</td><td>Tidak ada perbandingan terhadap baseline yang memadai</td></tr><tr><td class="crit-name">Dokumentasi Teknis<span class="crit-bobot">20%</span></td><td>Dokumentasi lengkap (arsitektur, cara menjalankan, hasil evaluasi) dan mudah ditelusuri</td><td>Dokumentasi cukup lengkap</td><td>Dokumentasi minim namun sistem masih bisa dipahami</td><td>Tidak ada dokumentasi teknis</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+    <div class="rubric-block">
+      <h3>Rubrik Presentasi UAS (Presentasi Proyek Akhir)</h3>
+      <p class="rubric-scope">Berlaku untuk: Minggu 16 — presentasi &amp; tanya-jawab</p>
+      <div class="table-wrap">
+        <table class="rubric">
+          <thead><tr><th>Kriteria (Bobot)</th><th>86–100<br><span class="lvl-label">Sangat Baik</span></th><th>71–85<br><span class="lvl-label">Baik</span></th><th>56–70<br><span class="lvl-label">Cukup</span></th><th><56<br><span class="lvl-label">Kurang</span></th></tr></thead>
+          <tbody><tr><td class="crit-name">Penguasaan Arsitektur &amp; Metodologi<span class="crit-bobot">35%</span></td><td>Menguasai arsitektur AI lanjut yang digunakan dan mampu menjelaskan alasan teknis secara mendalam</td><td>Menguasai sebagian besar metodologi dengan penjelasan yang memadai</td><td>Penguasaan materi terbatas pada bagian permukaan</td><td>Tidak menguasai arsitektur/metodologi yang digunakan</td></tr><tr><td class="crit-name">Kemampuan Menjawab Pertanyaan<span class="crit-bobot">30%</span></td><td>Menjawab seluruh pertanyaan dengan tepat, kritis, dan reflektif</td><td>Menjawab sebagian besar pertanyaan dengan tepat</td><td>Menjawab pertanyaan namun kurang tepat/kurang mendalam</td><td>Tidak mampu menjawab sebagian besar pertanyaan</td></tr><tr><td class="crit-name">Kualitas Hasil yang Dipresentasikan<span class="crit-bobot">20%</span></td><td>Hasil menunjukkan keunggulan yang jelas dan terukur dibanding baseline</td><td>Hasil sesuai target dengan performa yang memadai</td><td>Hasil sebagian sesuai target, ada penyimpangan signifikan</td><td>Hasil tidak sesuai rencana/tidak layak digunakan</td></tr><tr><td class="crit-name">Kualitas Penyampaian &amp; Media Presentasi<span class="crit-bobot">15%</span></td><td>Penyampaian percaya diri, runtut, media presentasi informatif dan rapi</td><td>Penyampaian cukup baik dengan media presentasi memadai</td><td>Penyampaian kurang runtut atau media presentasi kurang informatif</td><td>Penyampaian tidak jelas dan media presentasi tidak memadai</td></tr></tbody>
+        </table>
+      </div>
+      <p class="rubric-note">Total bobot kriteria: 100% &middot; Nilai akhir komponen = &Sigma;(skor kriteria &times; bobot kriteria)</p>
+    </div>
+  </section>
+</main>
+<footer>
+  Rincian Sub-CPMK dan rubrik ini adalah draf operasional untuk MK pilihan Metode Kecerdasan Buatan Lanjut, disusun berdasarkan CPL &amp; prasyarat resmi pada buku pedoman kurikulum S1 Informatika UPJB 2024 (Tabel 7.3), dilengkapi topik mingguan hasil rancangan sendiri karena tidak tercantum rinci di buku pedoman maupun halaman mapping. Wajib direview dan disahkan oleh dosen pengampu / koordinator mata kuliah sebelum digunakan sebagai RPS resmi.
+</footer>
+</body>
+</html>
