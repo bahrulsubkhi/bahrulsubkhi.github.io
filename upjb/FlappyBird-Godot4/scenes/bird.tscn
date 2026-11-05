@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://scripts/bird.gd" id="1"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_bird"]
-radius = 13.0
+radius = 17.0
 
 [node name="Bird" type="CharacterBody2D"]
 collision_layer = 1
@@ -11,22 +11,27 @@ collision_mask = 2
 script = ExtResource("1")
 
 [node name="Visual" type="Polygon2D" parent="."]
-polygon = PackedVector2Array(-18, -12, 8, -16, 19, -4, 14, 11, -4, 15, -19, 4)
+polygon = PackedVector2Array(-20, -10, -14, -17, 4, -18, 17, -9, 20, 1, 12, 13, -7, 15, -19, 6)
 color = Color(1, 0.82, 0.25, 1)
 
 [node name="Wing" type="Polygon2D" parent="."]
-position = Vector2(-2, 2)
-polygon = PackedVector2Array(-12, -2, 4, -5, 11, 1, -5, 5)
+position = Vector2(-3, 3)
+polygon = PackedVector2Array(-13, -2, 3, -7, 12, -1, 4, 6, -8, 5)
 color = Color(1, 0.65, 0.16, 1)
 
-[node name="Eye" type="Polygon2D" parent="."]
-position = Vector2(9, -6)
-polygon = PackedVector2Array(-3, -4, 3, -4, 4, 2, -2, 3)
-color = Color(0.08, 0.12, 0.18, 1)
+[node name="EyeWhite" type="Polygon2D" parent="."]
+position = Vector2(10, -8)
+polygon = PackedVector2Array(-4, -5, 3, -5, 5, 1, 2, 5, -4, 3)
+color = Color(1, 1, 1, 1)
+
+[node name="Pupil" type="Polygon2D" parent="."]
+position = Vector2(12, -7)
+polygon = PackedVector2Array(-2, -3, 2, -2, 2, 2, -1, 3, -3, 0)
+color = Color(0.08, 0.16, 0.2, 1)
 
 [node name="Beak" type="Polygon2D" parent="."]
 position = Vector2(18, 1)
-polygon = PackedVector2Array(0, -4, 11, 0, 0, 4)
+polygon = PackedVector2Array(0, -4, 12, 0, 0, 4)
 color = Color(1, 0.38, 0.18, 1)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

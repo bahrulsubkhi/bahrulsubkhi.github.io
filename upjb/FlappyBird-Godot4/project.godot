@@ -16,8 +16,12 @@ compatibility/default_parent_skeleton_in_mesh_instance_3d=true
 
 config/name="Flappy Bird - Pengantar Game"
 config/description="Proyek pembelajaran Flappy Bird untuk mata kuliah Pengantar Game UPJB."
-run/main_scene="res://scenes/main.tscn"
+run/main_scene="res://scenes/menu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
+
+[autoload]
+
+GameData="*res://scripts/game_data.gd"
 
 [display]
 
