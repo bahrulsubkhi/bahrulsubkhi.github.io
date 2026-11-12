@@ -1,11 +1,322 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="id">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Welcome</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101d33">
+  <meta name="description" content="Website profesional M. Bahrul Subkhi — dosen, peneliti Artificial Intelligence, dan software engineer. Teaching, research, software engineering, dan learning resources.">
+  <meta property="og:title" content="M. Bahrul Subkhi | Lecturer, AI Researcher & Software Engineer">
+  <meta property="og:description" content="Mengajar teknologi, meneliti kecerdasan buatan, dan membangun perangkat lunak.">
+  <meta property="og:type" content="website">
+  <title>M. Bahrul Subkhi | Lecturer, AI Researcher & Software Engineer</title>
+  <link rel="icon" type="image/svg+xml" href="assets/images/favicon.svg">
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <h1>Welcome !</h1>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#home" aria-label="M. Bahrul Subkhi - Beranda">
+        <span class="brand-mark">BS.</span>
+        <span class="brand-name">
+          <strong>M. Bahrul Subkhi</strong>
+          <span>Academic & Engineering</span>
+        </span>
+      </a>
+      <button class="menu-toggle" id="menuToggle" type="button" aria-label="Buka navigasi" aria-expanded="false" aria-controls="siteNav">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 7h16M4 12h16M4 17h16"/></svg>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="Navigasi utama">
+        <a href="#about">Tentang</a>
+        <a href="#teaching">Teaching</a>
+        <a href="#research">Research</a>
+        <a href="#engineering">Engineering</a>
+        <a href="#publications">Publications</a>
+        <a class="nav-contact" href="#contact">Kontak</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="container hero-grid">
+        <div>
+          <div class="eyebrow">Academic · Technology · Innovation</div>
+          <h1>Mengajar teknologi.<br>Meneliti <span>AI.</span><br>Membangun sistem.</h1>
+          <p class="hero-lead">Saya M. Bahrul Subkhi, dosen dan software engineer yang menghubungkan dunia akademik dengan praktik rekayasa perangkat lunak—melalui pengajaran, penelitian AI, dan pengembangan sistem.</p>
+          <p class="hero-role">LECTURER&nbsp; · &nbsp;AI RESEARCHER&nbsp; · &nbsp;SOFTWARE ENGINEER</p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#about">Kenali Saya <span aria-hidden="true">↗</span></a>
+            <a class="button button-ghost" href="#teaching">Jelajahi Materi Kuliah <span aria-hidden="true">→</span></a>
+          </div>
+          <p class="hero-note">Teaching is sharing knowledge. Engineering is turning ideas into systems.</p>
+        </div>
+        <div class="profile-visual" aria-label="Identitas visual M. Bahrul Subkhi">
+          <div class="profile-orbit"></div>
+          <div class="profile-card">
+            <div class="eyebrow">Professional Profile</div>
+            <div class="monogram">BS<span style="color:#80b2ff">.</span></div>
+            <div class="profile-caption">Build · Learn · Research</div>
+            <div class="profile-code">
+              <div><span>const</span> role = "Lecturer";</div>
+              <div><span>const</span> focus = ["AI", "SE"];</div>
+              <div><span>const</span> goal = "Build & share";</div>
+            </div>
+          </div>
+          <span class="float-chip chip-ai">Artificial Intelligence</span>
+          <span class="float-chip chip-dotnet">.NET · Web · Architecture</span>
+          <span class="float-chip chip-research">Research</span>
+        </div>
+      </div>
+    </section>
+
+    <div class="container stat-strip" aria-label="Fokus profesional">
+      <div class="stat-item"><strong>ACADEMIC</strong><span>Teaching & Learning</span></div>
+      <div class="stat-item"><strong>ARTIFICIAL INTELLIGENCE</strong><span>Research & Experiment</span></div>
+      <div class="stat-item"><strong>SOFTWARE ENGINEERING</strong><span>Design & Development</span></div>
+      <div class="stat-item"><strong>CONTINUOUS LEARNING</strong><span>Explore & Share</span></div>
+    </div>
+
+    <section class="section section-white" id="about">
+      <div class="container about-grid">
+        <div class="section-heading reveal">
+          <div class="kicker">About Me</div>
+          <h2>Berangkat dari ilmu, diwujudkan melalui teknologi.</h2>
+          <p>Ruang profesional yang mempertemukan pendidikan, penelitian, dan rekayasa perangkat lunak.</p>
+        </div>
+        <div class="about-copy reveal">
+          <p>Saya merupakan dosen di Fakultas Ilmu Komputer, Universitas PGRI Jombang, sekaligus software engineer. Dalam pengajaran, saya berfokus membantu mahasiswa memahami konsep komputasi dan menerapkannya melalui studi kasus serta proyek.</p>
+          <p>Di bidang engineering, saya tertarik pada perancangan arsitektur aplikasi, pengembangan backend dan frontend, pengelolaan data, integrasi layanan, serta infrastruktur yang mendukung sistem yang dapat dipelihara dan dikembangkan.</p>
+          <p>Ketertarikan riset saya berada pada Artificial Intelligence, khususnya machine learning, deep learning, Natural Language Processing, dan computer vision.</p>
+          <div class="tag-list">
+            <span class="tag">Higher Education</span><span class="tag">Applied AI</span><span class="tag">Software Architecture</span><span class="tag">System Development</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="areas">
+      <div class="container">
+        <div class="section-heading reveal">
+          <div class="kicker">Professional Focus</div>
+          <h2>Tiga area yang saling terhubung.</h2>
+          <p>Pengajaran membangun pemahaman, penelitian mengeksplorasi pengetahuan, dan engineering menerapkan solusi.</p>
+        </div>
+        <div class="cards-3">
+          <article class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2Z"/><path d="M8 7h8M8 11h6"/></svg>
+            </div>
+            <h3>Teaching & Academic</h3>
+            <p>Menyusun materi, RPS, praktikum, dan pembelajaran berbasis proyek di bidang informatika dan komputasi.</p>
+            <a class="text-link" href="#teaching">Jelajahi pengajaran <span>→</span></a>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a7 7 0 0 0-4 12.7V19h8v-3.3A7 7 0 0 0 12 3Z"/><path d="M9 22h6M9 16h6M12 7v3M9.5 10.5l2.5 1.5 2.5-1.5"/></svg>
+            </div>
+            <h3>AI Research</h3>
+            <p>Mengeksplorasi machine learning, NLP, deep learning, dan computer vision untuk menjawab permasalahan nyata.</p>
+            <a class="text-link" href="#research">Jelajahi penelitian <span>→</span></a>
+          </article>
+          <article class="feature-card reveal">
+            <div class="feature-icon">
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="m8 21 4-4 4 4M8 9l-2 2 2 2M16 9l2 2-2 2M13.5 8l-3 6"/></svg>
+            </div>
+            <h3>Software Engineering</h3>
+            <p>Merancang dan membangun aplikasi, API, integrasi sistem, database, serta solusi infrastruktur.</p>
+            <a class="text-link" href="#engineering">Jelajahi engineering <span>→</span></a>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white" id="teaching">
+      <div class="container">
+        <div class="section-heading reveal">
+          <div class="kicker">Teaching</div>
+          <h2>Mengajar dengan menghubungkan konsep dan praktik.</h2>
+          <p>Pada semester Gasal tahun akademik 2026/2027, saya mendapat penugasan pada lima mata kuliah berikut berdasarkan SK Dekan Fakultas Ilmu Komputer Universitas PGRI Jombang tertanggal 7 Juli 2026. Materi dan RPS yang tersedia di website ini dapat diakses langsung melalui daftar sumber belajar.</p>
+        </div>
+        <div class="split-section">
+          <div class="course-groups reveal">
+            <article class="course-group">
+              <h3>Sistem Cerdas <span>3 SKS</span></h3>
+              <p>Program Studi Informatika · Angkatan 2024</p>
+            </article>
+            <article class="course-group">
+              <h3>Machine Learning <span>2 SKS</span></h3>
+              <p>Program Studi Informatika · Angkatan 2024</p>
+            </article>
+            <article class="course-group">
+              <h3>Metode Kecerdasan Buatan Lanjut <span>3 SKS</span></h3>
+              <p>Mata kuliah pilihan AI · Program Studi Informatika</p>
+            </article>
+            <article class="course-group">
+              <h3>Pengujian dan Implementasi Sistem <span>2 SKS</span></h3>
+              <p>Program Studi Informatika · Angkatan 2023</p>
+            </article>
+            <article class="course-group">
+              <h3>Pengantar Game <span>2 SKS</span></h3>
+              <p>Program Studi Informatika · Angkatan 2025</p>
+            </article>
+            <article class="course-group" style="background:#f6f8fc">
+              <h3>Pengalaman Pengajaran Sebelumnya <span>2025/2026</span></h3>
+              <p>Dasar Pemrograman, Algoritma Pemrograman, Pengantar Kecerdasan Buatan, Pemrograman Mobile, Kecerdasan Buatan, Pemrograman Lanjut, Mobile Programming, dan Sistem Cerdas.</p>
+            </article>
+          </div>
+          <div class="resource-list reveal" aria-label="Materi dan RPS tersedia">
+            <a class="resource-card" href="upjb/rps_pengantar_game_semester3.html">
+              <span class="resource-mark">GAME</span>
+              <span class="resource-info"><strong>RPS Pengantar Game</strong><span>Semester 3 · 16 pertemuan dan rubrik penilaian</span></span>
+              <span class="resource-arrow">↗</span>
+            </a>
+            <a class="resource-card" href="upjb/rps_machine_learning_semester5.html">
+              <span class="resource-mark">ML</span>
+              <span class="resource-info"><strong>RPS Machine Learning</strong><span>Semester 5 · Rencana pembelajaran</span></span>
+              <span class="resource-arrow">↗</span>
+            </a>
+            <a class="resource-card" href="upjb/rps_sistem_cerdas_semester5.html">
+              <span class="resource-mark">AI</span>
+              <span class="resource-info"><strong>RPS Sistem Cerdas</strong><span>Semester 5 · Rencana pembelajaran</span></span>
+              <span class="resource-arrow">↗</span>
+            </a>
+            <a class="resource-card" href="upjb/rps_metode_kecerdasan_buatan_lanjut.html">
+              <span class="resource-mark">ADV</span>
+              <span class="resource-info"><strong>RPS Metode Kecerdasan Buatan Lanjut</strong><span>Rencana pembelajaran dan topik perkuliahan</span></span>
+              <span class="resource-arrow">↗</span>
+            </a>
+            <a class="resource-card" href="upjb/kecerdasanbuatan/">
+              <span class="resource-mark">LAB</span>
+              <span class="resource-info"><strong>Materi Praktikum AI</strong><span>Clustering, CNN, JST, dan klasifikasi AI</span></span>
+              <span class="resource-arrow">↗</span>
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="research">
+      <div class="container">
+        <div class="section-heading reveal">
+          <div class="kicker">Research</div>
+          <h2>Mengeksplorasi AI melalui eksperimen dan penelitian.</h2>
+          <p>Fokus riset berada pada pengembangan dan evaluasi metode machine learning untuk pemrosesan teks maupun citra.</p>
+        </div>
+        <div class="research-grid">
+          <article class="research-card primary reveal">
+            <div class="kicker">Research Direction</div>
+            <h3>Identifikasi Gambar Lukis Ciptaan Manusia atau AI Menggunakan Deep Learning</h3>
+            <p>Eksplorasi pendekatan deep learning untuk membedakan karya gambar/lukis yang dibuat manusia dan yang dihasilkan oleh kecerdasan buatan.</p>
+            <div class="research-points">
+              <div class="research-point">Computer vision dan image classification</div>
+              <div class="research-point">Eksperimen model deep learning dan transfer learning</div>
+              <div class="research-point">Evaluasi dataset, performa, dan generalisasi model</div>
+            </div>
+          </article>
+          <article class="research-card reveal">
+            <div class="kicker">Research Interests</div>
+            <h3>Machine Learning, NLP & Computer Vision</h3>
+            <p>Topik penelitian dan eksplorasi yang menjadi perhatian:</p>
+            <div class="tag-list">
+              <span class="tag">Natural Language Processing</span>
+              <span class="tag">Feature Selection</span>
+              <span class="tag">Arabic Text Classification</span>
+              <span class="tag">Deep Learning</span>
+              <span class="tag">Transfer Learning</span>
+              <span class="tag">Computer Vision</span>
+              <span class="tag">Vision Transformer</span>
+              <span class="tag">Object Detection</span>
+            </div>
+            <p style="margin-top:22px">Saya juga memiliki ketertarikan pada seleksi fitur dan optimasi untuk klasifikasi teks, termasuk teks berbahasa Arab.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section section-white" id="engineering">
+      <div class="container engineering-layout">
+        <div class="section-heading reveal">
+          <div class="kicker">Software Engineering</div>
+          <h2>Membangun sistem yang dapat dikembangkan dan dipelihara.</h2>
+          <p>Fokus engineering mencakup siklus pengembangan perangkat lunak dari perancangan arsitektur, implementasi, integrasi, hingga deployment.</p>
+          <div class="tag-list">
+            <span class="tag">Clean Architecture</span><span class="tag">CQRS</span><span class="tag">REST API</span><span class="tag">System Integration</span><span class="tag">Database Design</span>
+          </div>
+        </div>
+        <div class="reveal">
+          <div class="engineering-panel">
+            <h3>Engineering Toolkit</h3>
+            <p>Teknologi yang pernah digunakan dalam pekerjaan dan eksplorasi pengembangan sistem.</p>
+            <div class="stack-wrap">
+              <small>Backend & Application</small>
+              <div class="tag-list"><span class="tag">C# / .NET</span><span class="tag">ASP.NET Core</span><span class="tag">Node.js</span><span class="tag">Express</span><span class="tag">MediatR</span></div>
+            </div>
+            <div class="stack-wrap">
+              <small>Frontend</small>
+              <div class="tag-list"><span class="tag">Vue.js</span><span class="tag">Nuxt</span><span class="tag">JavaScript</span><span class="tag">Tailwind CSS</span></div>
+            </div>
+            <div class="stack-wrap">
+              <small>Data & Infrastructure</small>
+              <div class="tag-list"><span class="tag">SQL Server</span><span class="tag">PostgreSQL</span><span class="tag">MySQL</span><span class="tag">Docker</span><span class="tag">Kubernetes</span><span class="tag">Redis</span><span class="tag">GitLab</span></div>
+            </div>
+            <div class="stack-wrap">
+              <small>AI & Integration</small>
+              <div class="tag-list"><span class="tag">Ollama</span><span class="tag">Qdrant</span><span class="tag">Semantic Kernel</span><span class="tag">OpenAI-compatible API</span></div>
+            </div>
+          </div>
+          <div class="engineering-list" style="margin-top:14px">
+            <div class="engineering-item"><strong>Application Architecture</strong><span>Modular systems, API, maintainability</span></div>
+            <div class="engineering-item"><strong>Full-stack Development</strong><span>Backend, frontend, database</span></div>
+            <div class="engineering-item"><strong>DevOps & Deployment</strong><span>Containers, CI/CD, infrastructure</span></div>
+            <div class="engineering-item"><strong>AI Integration</strong><span>LLM, RAG, local model integration</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="publications">
+      <div class="container">
+        <div class="section-heading reveal">
+          <div class="kicker">Publications & Knowledge Sharing</div>
+          <h2>Berbagi pengetahuan melalui karya dan dokumentasi.</h2>
+          <p>Publikasi ilmiah, materi pembelajaran, dan catatan teknis merupakan bagian dari proses belajar dan berbagi.</p>
+        </div>
+        <div class="publication-box reveal">
+          <div>
+            <h3>Academic & Research Profile</h3>
+            <p>Telusuri karya ilmiah berdasarkan nama penulis melalui Google Scholar. Tautan ini membuka hasil pencarian, bukan klaim tautan profil yang belum diverifikasi.</p>
+          </div>
+          <div class="publication-actions">
+            <a class="button button-blue" href="https://scholar.google.com/scholar?q=%22M.+Bahrul+Subkhi%22" target="_blank" rel="noopener noreferrer">Cari di Google Scholar ↗</a>
+            <a class="button button-outline" href="https://github.com/bahrulsubkhi" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contact-section" id="contact">
+      <div class="container contact-grid">
+        <div>
+          <div class="eyebrow">Connect & Collaborate</div>
+          <h2>Terbuka untuk kolaborasi, diskusi, dan berbagi pengetahuan.</h2>
+          <p>Untuk topik pengajaran, penelitian Artificial Intelligence, software engineering, maupun pengembangan teknologi, silakan kunjungi kanal publik saya.</p>
+        </div>
+        <a class="button button-primary" href="https://github.com/bahrulsubkhi" target="_blank" rel="noopener noreferrer">Kunjungi GitHub <span>↗</span></a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <span>© <span id="currentYear"></span> M. Bahrul Subkhi. Built with curiosity and code.</span>
+      <div class="footer-links">
+        <a href="#home">Back to top ↑</a>
+        <a href="upjb/rps_pengantar_game_semester3.html">Teaching Resources</a>
+        <a href="https://github.com/bahrulsubkhi" target="_blank" rel="noopener noreferrer">GitHub ↗</a>
+      </div>
+    </div>
+  </footer>
+
+  <script src="assets/js/main.js"></script>
 </body>
 </html>
